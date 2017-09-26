@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 import '../token/MintableToken.sol';
 import '../math/SafeMath.sol';
-import 'SirinSmartToken.sol';
+import '../SirinSmartToken.sol';
 
 /**
  * @title Crowdsale
@@ -56,8 +56,8 @@ contract Crowdsale {
 
   // creates the token to be sold.
   // override this method to have crowdsale of a specific mintable token.
-  function createTokenContract() internal returns (MintableToken) {
-    return new MintableToken();
+  function createTokenContract() internal returns (SirinSmartToken) {
+    return new SirinSmartToken();
   }
 
 
