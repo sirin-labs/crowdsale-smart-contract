@@ -104,7 +104,7 @@ contract Crowdsale {
   }
 
   // @return the crowdsale rate
-  function getRate() public returns (uint256) {
+  function getRate() internal returns (uint256) {
     return rate;
   }
 
