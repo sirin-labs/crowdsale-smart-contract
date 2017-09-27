@@ -60,6 +60,6 @@ contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
     function transferableTokens(address holder, uint64 time) public constant returns (uint256) {
         assert(transfersEnabled);
-        return super.createTokenContract(holder, time);
+        return super.transferableTokens(holder, time);
     }
 }
