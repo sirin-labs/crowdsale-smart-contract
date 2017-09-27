@@ -7,28 +7,21 @@ import './ownership/Ownable.sol';
 
 contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
+    // =========================================
+    // Members
+    // =========================================
+
     string public name = "Sirin Token";
     string public symbol = "SRN";
     uint public decimals = 18;
-    //uint public INITIAL_SUPPLY = 10000 * (10 ** decimals);
 
-
-    bool public transfersEnabled = false;
-
-    //TODO: move to ISmartToken
-
-    // triggered when a smart token is deployed - the _token address is defined for forward compatibility, in case we want to trigger the event from a factory
-    event NewSmartToken(address _token);
-    // triggered when the total supply is increased
-    event Issuance(uint256 _amount);
-    // triggered when the total supply is decreased
-    event Destruction(uint256 _amount);
-
+    // =========================================
+    // Ctors
+    // =========================================
 
     function SirinSmartToken() {
         NewSmartToken(address(this));
     }
-
 
     // =========================================
     // ISmartToken override
