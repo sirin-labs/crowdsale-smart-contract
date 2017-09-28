@@ -60,21 +60,24 @@ contract Crowdsale {
     return new SirinSmartToken();
   }
 
-
   // fallback function can be used to buy tokens
   function () payable {
     buyTokens(msg.sender);
   }
 
-  // low level token purchase function
   function buyTokens(address beneficiary) public payable {
+    buyTokens(beneficiary, getRate());
+  }
+
+  // low level token purchase function
+  function buyTokens(address beneficiary, uint256 rate) internal {
     require(beneficiary != 0x0);
     require(validPurchase());
 
     uint256 weiAmount = msg.value;
 
     // calculate token amount to be created
-    uint256 tokens = weiAmount.mul(getRate());
+    uint256 tokens = weiAmount.mul(rate);
 
     // update state
     weiRaised = weiRaised.add(weiAmount);

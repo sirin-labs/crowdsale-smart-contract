@@ -6,12 +6,20 @@ import './math/SafeMath.sol';
 
 contract SirinCrowdsale is FinalizableCrowdsale {
 
-    function SirinCrowdsale(uint256 _startBlock,
-    uint256 _endBlock,
+    function SirinCrowdsale(uint256 _startTime,
+    uint256 _endTime,
     uint256 _rate,
-    address _wallet)
-    Crowdsale(_startBlock, _endBlock, _rate, _wallet) {
+    address _wallet) Crowdsale(_startTime, _endTime, _rate, _wallet) {
     }
+
+    // =========================================
+    // Public Methods
+    // =========================================
+
+    function buyTokensWithoutBonus(address beneficiary) public payable {
+        buyTokens(beneficiary, rate);
+    }
+
     // =========================================
     // Crowdsale override
     // =========================================
@@ -35,11 +43,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         return newRate;
     }
 
-
     // =========================================
     // FinalizableCrowdsale override
     // =========================================
-
 
     function finalization() internal {
 
