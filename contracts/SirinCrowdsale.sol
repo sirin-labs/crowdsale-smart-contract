@@ -30,7 +30,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         //10% bonus within the first 24 hours
         uint firstStep = startTime + 24 hours;
         //5% bonus after the first 24 hours till 7 days
-        uint secondStep = startTime + 7 days;
+        uint secondStep = firstStep + 6 days;
 
         uint256 newRate = rate;
 
