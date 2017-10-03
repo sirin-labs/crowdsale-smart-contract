@@ -1,10 +1,26 @@
 pragma solidity ^0.4.11;
 
+
 import './crowdsale/FinalizableCrowdsale.sol';
 import './math/SafeMath.sol';
 
 
 contract SirinCrowdsale is FinalizableCrowdsale {
+
+
+    //TODO: CHANGE ADDRESS BEFORE PUBLISH!
+    address constant public PRESALE_WALLET_ADDRESS = 0x4CD5E1dBD38e6bE70EFc86d775a659bf74300892;
+
+    address constant public FOUNDER_WALLET_ADDRESS = 0x00803306C76b1bf476cdCe3b308e146Ee1D201B4;
+
+    address constant public DEVELOPERS_ADDRESS = 0x00eB0E5f489d90455d7BF202fF1a638f510E276b;
+
+    address constant public BOUNTIES_ADDRESS = 0x0059e796c5Bc1F15B9310a8461deBADDC8F8af21;
+
+    address constant public SIRIN_LABS_RESERVE_ADDRESS = 0x00522Ea95d76DFC9AaA8A25B3DD33Ef2d5c86929;
+    // =================================================================================================================
+    //                                      Impl LimitedTransferToken
+    // =================================================================================================================
 
     function SirinCrowdsale(uint256 _startTime,
     uint256 _endTime,
@@ -12,26 +28,28 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address _wallet) Crowdsale(_startTime, _endTime, _rate, _wallet) {
     }
 
-    // =========================================
-    // Public Methods
-    // =========================================
 
-    // creates the token to be sold.
-    // override this method to have crowdsale of a specific mintable token.
+    // =================================================================================================================
+    //                                      Public Methods
+    // =================================================================================================================
+
+    // @Override
     function createTokenContract() internal returns (MintableToken) {
         return new SirinSmartToken();
     }
 
-    function buyTokensWithoutBonus(address beneficiary) public payable {
-        buyTokens(beneficiary, rate);
-    }
-
-    // =========================================
-    // Crowdsale override
-    // =========================================
+    // =================================================================================================================
+    //                                      Impl Crowdsale
+    // =================================================================================================================
 
     // @return the crowdsale rate with bonus
+    //
+    // @Override
     function getRate() internal returns (uint256) {
+
+        if (msg.sender == PRESALE_WALLET_ADDRESS) {
+            return rate;
+        }
 
         //10% bonus within the first 24 hours
         uint firstStep = startTime + 24 hours;
@@ -40,37 +58,39 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         uint256 newRate = rate;
 
-        if(now < (firstStep)){
+        if (now < (firstStep)) {
             newRate += SafeMath.div(rate, 10);
-        }else if(now > firstStep && now < secondStep){
+        }
+        else if (now > firstStep && now < secondStep) {
             newRate += SafeMath.div(rate, 20);
         }
 
         return newRate;
     }
 
-    // =========================================
-    // FinalizableCrowdsale override
-    // =========================================
+    // =================================================================================================================
+    //                                      Impl FinalizableCrowdsale
+    // =================================================================================================================
 
+    //@Override
     function finalization() internal {
 
-        uint256 totalSupply = token.totalSupply();
+        uint256 newTotalSupply = SafeMath.div(SafeMath.mul(token.totalSupply, 25), 100);
 
         //25% from totalSupply which is 10% of the total number of SRN tokens will be allocated to the founders and
         //team and will be gradually vested over a 12-month period
-        ((SirinSmartToken)(token)).issue(0x00803306C76b1bf476cdCe3b308e146Ee1D201B4, SafeMath.div(SafeMath.mul(totalSupply, 250),1000));
+        ((SirinSmartToken)(token)).issue(FOUNDER_WALLET_ADDRESS, SafeMath.div(newTotalSupply, 10));
 
         //25% from totalSupply which is 10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation,
         //SDK developers and rebate to device and Shield OS™ users
-        ((SirinSmartToken)(token)).issue(0x00eB0E5f489d90455d7BF202fF1a638f510E276b, SafeMath.div(SafeMath.mul(totalSupply, 250),1000));
+        ((SirinSmartToken)(token)).issue(DEVELOPERS_ADDRESS, SafeMath.div(newTotalSupply, 10));
 
         //12.5% from totalSupply which is 5% of the total number of SRN tokens will be allocated to professional fees and Bounties
-        ((SirinSmartToken)(token)).issue(0x0059e796c5Bc1F15B9310a8461deBADDC8F8af21, SafeMath.div(SafeMath.mul(totalSupply, 125),1000));
+        ((SirinSmartToken)(token)).issue(BOUNTIES_ADDRESS, SafeMath.div(newTotalSupply, 5));
 
         //87.5% from totalSupply which is 35% of the total number of SRN tokens will be allocated to SIRIN LABS,
         //and as a reserve for the company to be used for future strategic plans for the created ecosystem,
-        ((SirinSmartToken)(token)).issue(0x00522Ea95d76DFC9AaA8A25B3DD33Ef2d5c86929, SafeMath.div(SafeMath.mul(totalSupply, 875),1000));
+        ((SirinSmartToken)(token)).issue(SIRIN_LABS_RESERVE_ADDRESS, SafeMath.div(newTotalSupply, 35));
 
         // Re-enable transfers after the token sale.
         ((SirinSmartToken)(token)).disableTransfers(false);

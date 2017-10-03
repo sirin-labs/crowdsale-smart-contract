@@ -7,35 +7,38 @@ import './ownership/Ownable.sol';
 
 contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
-    // =========================================
-    // Members
-    // =========================================
+    // =================================================================================================================
+    //                                      Members
+    // =================================================================================================================
 
-    string public name = "Sirin Token";
+    string public name = "SIRIN LABS";
     string public symbol = "SRN";
     uint public decimals = 18;
 
-    // =========================================
-    // Ctors
-    // =========================================
+    // =================================================================================================================
+    //                                      Constructor
+    // =================================================================================================================
 
     function SirinSmartToken() {
         NewSmartToken(address(this));
     }
 
-    // =========================================
-    // ISmartToken override
-    // =========================================
+    // =================================================================================================================
+    //                                      Impl ISmartToken
+    // =================================================================================================================
 
+    //@Override
     function disableTransfers(bool _disable) onlyOwner public {
         transfersEnabled = !_disable;
     }
 
+    //@Override
     function issue(address _to, uint256 _amount) onlyOwner public {
         assert(super.mint(_to, _amount));
         Issuance(_amount);
     }
 
+    //@Override
     function destroy(address _from, uint256 _amount) public {
 
         require(msg.sender == _from || msg.sender == owner); // validate input
@@ -47,10 +50,17 @@ contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
         Transfer(0x0, _from, _amount);
     }
 
-    // =========================================
-    // LimitedTransferToken override
-    // =========================================
+    // =================================================================================================================
+    //                                      Impl LimitedTransferToken
+    // =================================================================================================================
 
+
+    // Enable/Disable token transfer
+    // Tokens will be locked in their wallets until the end of the Crowdsale.
+    // @holder - token`s owner
+    // @time - not used (framework unneeded functionality)
+    //
+    // @Override
     function transferableTokens(address holder, uint64 time) public constant returns (uint256) {
         assert(transfersEnabled);
         return super.transferableTokens(holder, time);
