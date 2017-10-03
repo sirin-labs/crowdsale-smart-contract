@@ -16,7 +16,7 @@ contract Crowdsale {
   using SafeMath for uint256;
 
   // The token being sold
-  SirinSmartToken public token;
+  MintableToken public token;
 
   // start and end timestamps where investments are allowed (both inclusive)
   uint256 public startTime;
@@ -56,8 +56,8 @@ contract Crowdsale {
 
   // creates the token to be sold.
   // override this method to have crowdsale of a specific mintable token.
-  function createTokenContract() internal returns (SirinSmartToken) {
-    return new SirinSmartToken();
+  function createTokenContract() internal returns (MintableToken) {
+    return new MintableToken();
   }
 
   // fallback function can be used to buy tokens
