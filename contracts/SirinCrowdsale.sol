@@ -3,21 +3,22 @@ pragma solidity ^0.4.11;
 
 import './crowdsale/FinalizableCrowdsale.sol';
 import './math/SafeMath.sol';
+import './SirinSmartToken.sol';
 
 
 contract SirinCrowdsale is FinalizableCrowdsale {
 
 
-    //TODO: CHANGE ADDRESS BEFORE PUBLISH!
-    address constant public PRESALE_WALLET_ADDRESS = 0x4CD5E1dBD38e6bE70EFc86d775a659bf74300892;
+    address public walletPresale;
 
-    address constant public FOUNDER_WALLET_ADDRESS = 0x00803306C76b1bf476cdCe3b308e146Ee1D201B4;
+    address public walletFounder;
 
-    address constant public DEVELOPERS_ADDRESS = 0x00eB0E5f489d90455d7BF202fF1a638f510E276b;
+    address public walletDeveloper;
 
-    address constant public BOUNTIES_ADDRESS = 0x0059e796c5Bc1F15B9310a8461deBADDC8F8af21;
+    address public walletBounties;
 
-    address constant public SIRIN_LABS_RESERVE_ADDRESS = 0x00522Ea95d76DFC9AaA8A25B3DD33Ef2d5c86929;
+    address public walletReserve;
+
     // =================================================================================================================
     //                                      Impl LimitedTransferToken
     // =================================================================================================================
@@ -25,7 +26,17 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     function SirinCrowdsale(uint256 _startTime,
     uint256 _endTime,
     uint256 _rate,
-    address _wallet) Crowdsale(_startTime, _endTime, _rate, _wallet) {
+    address _wallet,
+    address _walletPresale,
+    address _walletFounder,
+    address _walletDeveloper,
+    address _walletBounties,
+    address _walletReserve) Crowdsale(_startTime, _endTime, _rate, _wallet){
+        walletPresale = _walletPresale;
+        walletFounder = _walletFounder;
+        walletDeveloper = _walletDeveloper;
+        walletBounties = _walletBounties;
+        walletReserve = _walletReserve;
     }
 
 
@@ -47,7 +58,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @Override
     function getRate() internal returns (uint256) {
 
-        if (msg.sender == PRESALE_WALLET_ADDRESS) {
+        if (msg.sender == walletPresale) {
             return rate;
         }
 
@@ -75,22 +86,22 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //@Override
     function finalization() internal {
 
-        uint256 newTotalSupply = SafeMath.div(SafeMath.mul(token.totalSupply, 25), 100);
+        int256 newTotalSupply = SafeMath.div(((uint256)(SafeMath.mul(token.totalSupply(), 25))), 100);
 
         //25% from totalSupply which is 10% of the total number of SRN tokens will be allocated to the founders and
         //team and will be gradually vested over a 12-month period
-        ((SirinSmartToken)(token)).issue(FOUNDER_WALLET_ADDRESS, SafeMath.div(newTotalSupply, 10));
+        ((SirinSmartToken)(token)).issue(walletFounder, SafeMath.div(newTotalSupply, 10));
 
         //25% from totalSupply which is 10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation,
         //SDK developers and rebate to device and Shield OS™ users
-        ((SirinSmartToken)(token)).issue(DEVELOPERS_ADDRESS, SafeMath.div(newTotalSupply, 10));
+        ((SirinSmartToken)(token)).issue(walletDeveloper, SafeMath.div(newTotalSupply, 10));
 
         //12.5% from totalSupply which is 5% of the total number of SRN tokens will be allocated to professional fees and Bounties
-        ((SirinSmartToken)(token)).issue(BOUNTIES_ADDRESS, SafeMath.div(newTotalSupply, 5));
+        ((SirinSmartToken)(token)).issue(walletBounties, SafeMath.div(newTotalSupply, 5));
 
         //87.5% from totalSupply which is 35% of the total number of SRN tokens will be allocated to SIRIN LABS,
         //and as a reserve for the company to be used for future strategic plans for the created ecosystem,
-        ((SirinSmartToken)(token)).issue(SIRIN_LABS_RESERVE_ADDRESS, SafeMath.div(newTotalSupply, 35));
+        ((SirinSmartToken)(token)).issue(walletReserve, SafeMath.div(newTotalSupply, 35));
 
         // Re-enable transfers after the token sale.
         ((SirinSmartToken)(token)).disableTransfers(false);
