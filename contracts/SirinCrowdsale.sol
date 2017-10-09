@@ -29,7 +29,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @Override
     function getRate() internal returns (uint256) {
 
-        if (msg.sender == 0x4CD5E1dBD38e6bE70EFc86d775a659bf74300892) {
+        if (msg.sender == PRESALE_WALLET_ADDRESS) {
             return rate;
         }
 
