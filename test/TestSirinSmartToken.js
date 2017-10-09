@@ -14,7 +14,7 @@ contract('SirinSmartToken', (accounts) => {
         });
 
         it('should return correct name after construction', async () => {
-            assert.equal(await token.name(), "Sirin Token");
+            assert.equal(await token.name(), "SIRIN LABS");
         });
 
         it('should return correct symbol after construction', async () => {

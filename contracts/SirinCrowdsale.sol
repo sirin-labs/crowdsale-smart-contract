@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 
 import './crowdsale/FinalizableCrowdsale.sol';
 import './math/SafeMath.sol';
+import './SirinSmartToken.sol';
 
 
 contract SirinCrowdsale is FinalizableCrowdsale {
