@@ -8,7 +8,7 @@ function unify() {
 
 echo "pragma solidity ^0.4.11;" > Unified.sol
 
-# Bancor
+# OZ
 unify ./contracts/math/Math.sol
 unify ./contracts/math/SafeMath.sol
 unify ./contracts/ownership/Ownable.sol
@@ -18,13 +18,14 @@ unify ./contracts/token/BasicToken.sol
 unify ./contracts/token/LimitedTransferToken.sol
 unify ./contracts/token/StandardToken.sol
 unify ./contracts/token/MintableToken.sol
+
+unify ./contracts/bancor/ISmartToken.sol
+unify ./contracts/SirinSmartToken.sol
+
 # unify ./contracts/token/VestedToken.sol
 unify ./contracts/crowdsale/Crowdsale.sol
 unify ./contracts/crowdsale/FinalizableCrowdsale.sol
 
-# Bancor
-unify ./contracts/bancor/ISmartToken.sol
 
 # Sirin
-unify ./contracts/SirinSmartToken.sol
 unify ./contracts/SirinCrowdsale.sol
