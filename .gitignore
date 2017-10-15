@@ -1,0 +1,12 @@
+*.swp
+*.swo
+node_modules/
+build/
+.DS_Store/
+/coverage
+coverage.json
+allFiredEvents
+scTopics
+Unified.sol
+.idea/*
+node*
