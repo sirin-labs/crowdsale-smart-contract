@@ -7,9 +7,7 @@ module.exports = {
             host: 'localhost',
             port: 8545,
             gas: 4712388,
-            network_id: '*', // Match any network id
-            from:
-
+            network_id: '*' // Match any network id
         },
         coverage: {
             host: "localhost",
