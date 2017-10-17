@@ -4,9 +4,9 @@ pragma solidity ^0.4.11;
 import '../../contracts/crowdsale/FinalizableCrowdsale.sol';
 
 
-contract FinalizableCrowdsaleImpl is FinalizableCrowdsale {
+contract FinalizableCrowdsaleMock is FinalizableCrowdsale {
 
-  function FinalizableCrowdsaleImpl (
+  function FinalizableCrowdsaleMock (
     uint256 _startTime,
     uint256 _endTime,
     uint256 _rate,
@@ -14,7 +14,13 @@ contract FinalizableCrowdsaleImpl is FinalizableCrowdsale {
   )
     Crowdsale(_startTime, _endTime, _rate, _wallet)
     FinalizableCrowdsale()
+
   {
+
+  }
+
+  function finalization() internal {
+    isFinalized = true;
   }
 
 }

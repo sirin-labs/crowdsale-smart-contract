@@ -10,8 +10,8 @@ const should = require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should()
 
-const FinalizableCrowdsale = artifacts.require('../contracts/SirinCrowdsale.sol')
-const MintableToken = artifacts.require('MintableToken')
+const FinalizableCrowdsale = artifacts.require('../helpers/FinalizableCrowdsaleMock.sol')
+const MintableToken = artifacts.require('MintableToken.sol')
 
 contract('FinalizableCrowdsale', function ([_, owner, wallet, thirdparty]) {
 
@@ -26,7 +26,6 @@ contract('FinalizableCrowdsale', function ([_, owner, wallet, thirdparty]) {
     this.startTime = latestTime() + duration.weeks(1)
     this.endTime =   this.startTime + duration.weeks(1)
     this.afterEndTime = this.endTime + duration.seconds(1)
-
 
     this.crowdsale = await FinalizableCrowdsale.new(this.startTime, this.endTime, rate, wallet, {from: owner})
 
