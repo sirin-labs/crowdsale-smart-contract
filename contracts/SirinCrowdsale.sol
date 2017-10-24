@@ -14,6 +14,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address public walletBounties;
     address public walletReserve;
 
+    uint256 public constant MAX_TOKEN_GRANTEES = 100;
+    address[] public granteesMapKeys;
+    mapping (address => uint256) public granteesMap;
+
+    event GrantAdded(address indexed _grantee, uint256 _amount);
+    event GrantUpdated(address indexed _grantee, uint256 _oldAmount, uint256 _newAmount);
+    event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
+
     // =================================================================================================================
     //                                      Impl LimitedTransferToken
     // =================================================================================================================
@@ -69,7 +77,11 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
 
     //@Override
-    function finalization() internal {
+    function finalization()  internal {
+
+
+        //granting bonuses for the pre-ico grantees:
+
 
         uint256 newTotalSupply = SafeMath.div(SafeMath.mul(token.totalSupply(), 250), 100);
 
@@ -94,4 +106,52 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         isFinalized = true;
     }
 
+    // =================================================================================================================
+    //                                      External Methods
+    // =================================================================================================================
+    /// @dev Adds/Updates address for  granted tokens.
+    /// @param _grantee address The address of the token grantee.
+    /// @param _value uint256 The value of the grant.
+    function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner {
+        require(_grantee != address(0));
+        require(_value > 0);
+        require(granteesMapKeys.length + 1 <= MAX_TOKEN_GRANTEES);
+
+        //Adding new key if not presented:
+        if(granteesMap[_grantee] == 0){
+            granteesMapKeys.push(_grantee);
+            GrantAdded(_grantee, _value);
+        }
+        else{
+            GrantUpdated(_grantee,granteesMap[_grantee],_value);
+        }
+
+        granteesMap[_grantee] = _value;
+    }
+
+    /// @dev deletes address for granted tokens.
+    /// @param _grantee address The address of the token grantee
+    function deleteGrantee(address _grantee){
+        require(_grantee != address(0));
+        require(granteesMap[_grantee] != 0);
+
+        GrantDeleted(_grantee, granteesMap[_grantee]);
+        //delete from the map:
+        delete granteesMap[_grantee];
+
+        //delete from the array (keys):
+        //todo iterate and find the basterd
+        uint index;
+        for(uint i=0; i <= granteesMapKeys.length; i++){
+            if(granteesMapKeys[i] == _grantee)
+            {
+                index = i;
+                break;
+            }
+            throw; // todo think of this option
+        }
+        granteesMapKeys[index] = granteesMapKeys[granteesMapKeys.length-1];
+        delete granteesMapKeys[granteesMapKeys.length-1];
+        granteesMapKeys.length--;
+    }
 }
