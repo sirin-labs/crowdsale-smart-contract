@@ -79,9 +79,10 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //@Override
     function finalization()  internal {
 
-
         //granting bonuses for the pre-ico grantees:
-
+        for(uint i=0; i < granteesMapKeys.length; i++){
+            token.issue(granteesMapKeys[i], granteesMap(granteesMapKeys[i]));
+        }
 
         uint256 newTotalSupply = SafeMath.div(SafeMath.mul(token.totalSupply(), 250), 100);
 
@@ -131,7 +132,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     /// @dev deletes address for granted tokens.
     /// @param _grantee address The address of the token grantee
-    function deleteGrantee(address _grantee){
+    function deleteGrantee(address _grantee) external onlyOwner {
         require(_grantee != address(0));
         require(granteesMap[_grantee] != 0);
 
