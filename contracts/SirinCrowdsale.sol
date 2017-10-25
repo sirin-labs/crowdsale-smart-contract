@@ -8,7 +8,6 @@ import './SirinSmartToken.sol';
 
 contract SirinCrowdsale is FinalizableCrowdsale {
 
-    address public walletPresale;
     address public walletFounder;
     address public walletDeveloper;
     address public walletBounties;
@@ -28,14 +27,11 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     function SirinCrowdsale(uint256 _startTime,
     uint256 _endTime,
-    uint256 _rate,
     address _wallet,
-    address _walletPresale,
     address _walletFounder,
     address _walletDeveloper,
     address _walletBounties,
-    address _walletReserve) Crowdsale(_startTime, _endTime, _rate, _wallet){
-        walletPresale = _walletPresale;
+    address _walletReserve) Crowdsale(_startTime, _endTime, 1, _wallet){
         walletFounder = _walletFounder;
         walletDeveloper = _walletDeveloper;
         walletBounties = _walletBounties;
@@ -50,10 +46,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //
     // @Override
     function getRate() internal returns (uint256) {
-
-        if (msg.sender == walletPresale) {
-            return rate;
-        }
 
         //10% bonus within the first 24 hours
         uint firstStep = startTime + 24 hours;
@@ -81,7 +73,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         //granting bonuses for the pre-ico grantees:
         for(uint i=0; i < granteesMapKeys.length; i++){
-            token.issue(granteesMapKeys[i], granteesMap(granteesMapKeys[i]));
+            token.issue(granteesMapKeys[i], granteesMap[granteesMapKeys[i]]);
         }
 
         uint256 newTotalSupply = SafeMath.div(SafeMath.mul(token.totalSupply(), 250), 100);

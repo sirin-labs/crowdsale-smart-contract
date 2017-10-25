@@ -8,8 +8,6 @@ module.exports = function(deployer) {
 
     //TODO: CHANGE ADDRESS BEFORE PUBLISH!
 
-    const PRESALE_WALLET_ADDRESS = "0x00a329c0648769A73afAc7F9381E08FB43dBEA72";
-
     const FOUNDER_WALLET_ADDRESS = "0x00AAD1d92EB0aAb2766dEb44b84CC783941a0C9d";
 
     const DEVELOPERS_ADDRESS = "0x000AB5641cA153Cf75EB28AeFa33AF152222737B";
@@ -26,9 +24,7 @@ module.exports = function(deployer) {
     deployer.deploy(SirinCrowdsale,
                    startTime,
                    endTime,
-                   rate,
                    wallet,
-                   PRESALE_WALLET_ADDRESS,
                    FOUNDER_WALLET_ADDRESS,
                    DEVELOPERS_ADDRESS,
                    BOUNTIES_ADDRESS,
