@@ -140,15 +140,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         delete granteesMap[_grantee];
 
         //delete from the array (keys):
-        //todo iterate and find the basterd
         uint index;
-        for(uint i=0; i <= granteesMapKeys.length; i++){
+        for(uint i=0; i < granteesMapKeys.length; i++){
             if(granteesMapKeys[i] == _grantee)
             {
                 index = i;
                 break;
             }
-            throw; // todo think of this option
         }
         granteesMapKeys[index] = granteesMapKeys[granteesMapKeys.length-1];
         delete granteesMapKeys[granteesMapKeys.length-1];
