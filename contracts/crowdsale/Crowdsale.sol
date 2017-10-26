@@ -1,8 +1,9 @@
 pragma solidity ^0.4.11;
 
+
 import '../token/MintableToken.sol';
 import '../math/SafeMath.sol';
-import 'SirinSmartToken.sol';
+import '../SirinSmartToken.sol';
 
 /**
  * @title Crowdsale
@@ -13,99 +14,101 @@ import 'SirinSmartToken.sol';
  * as they arrive.
  */
 contract Crowdsale {
-  using SafeMath for uint256;
+    using SafeMath for uint256;
 
-  // The token being sold
-  SirinSmartToken public token;
+    // The token being sold
+    SirinSmartToken public token;
 
-  // start and end timestamps where investments are allowed (both inclusive)
-  uint256 public startTime;
-  uint256 public endTime;
+    // start and end timestamps where investments are allowed (both inclusive)
+    uint256 public startTime;
 
-  // address where funds are collected
-  address public wallet;
+    uint256 public endTime;
 
-  // how many token units a buyer gets per wei
-  uint256 public rate;
+    // address where funds are collected
+    address public wallet;
 
-  // amount of raised money in wei
-  uint256 public weiRaised;
+    // how many token units a buyer gets per wei
+    uint256 public rate;
 
-  /**
-   * event for token purchase logging
-   * @param purchaser who paid for the tokens
-   * @param beneficiary who got the tokens
-   * @param value weis paid for purchase
-   * @param amount amount of tokens purchased
-   */
-  event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+    // amount of raised money in wei
+    uint256 public weiRaised;
 
-
-  function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) {
-    require(_startTime >= now);
-    require(_endTime >= _startTime);
-    require(_rate > 0);
-    require(_wallet != 0x0);
-
-    token = createTokenContract();
-    startTime = _startTime;
-    endTime = _endTime;
-    rate = _rate;
-    wallet = _wallet;
-  }
-
-  // creates the token to be sold.
-  // override this method to have crowdsale of a specific mintable token.
-  function createTokenContract() internal returns (MintableToken) {
-    return new MintableToken();
-  }
+    /**
+     * event for token purchase logging
+     * @param purchaser who paid for the tokens
+     * @param beneficiary who got the tokens
+     * @param value weis paid for purchase
+     * @param amount amount of tokens purchased
+     */
+    event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
 
-  // fallback function can be used to buy tokens
-  function () payable {
-    buyTokens(msg.sender);
-  }
+    function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) {
+        require(_startTime >= now);
+        require(_endTime >= _startTime);
+        require(_rate > 0);
+        require(_wallet != 0x0);
 
-  // low level token purchase function
-  function buyTokens(address beneficiary) public payable {
-    require(beneficiary != 0x0);
-    require(validPurchase());
+        token = createTokenContract();
+        startTime = _startTime;
+        endTime = _endTime;
+        rate = _rate;
+        wallet = _wallet;
+    }
 
-    uint256 weiAmount = msg.value;
+    // creates the token to be sold.
+    // override this method to have crowdsale of a specific mintable token.
+    function createTokenContract() internal returns (SirinSmartToken) {
+        return new SirinSmartToken();
+    }
 
-    // calculate token amount to be created
-    uint256 tokens = weiAmount.mul(getRate());
 
-    // update state
-    weiRaised = weiRaised.add(weiAmount);
+    // fallback function can be used to buy tokens
+    function() payable {
+        buyTokens(msg.sender);
+    }
 
-    token.mint(beneficiary, tokens);
-    TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
+    // low level token purchase function
+    function buyTokens(address beneficiary) public payable {
+        require(beneficiary != 0x0);
+        require(validPurchase());
 
-    forwardFunds();
-  }
+        uint256 weiAmount = msg.value;
 
-  // send ether to the fund collection wallet
-  // override to create custom fund forwarding mechanisms
-  function forwardFunds() internal {
-    wallet.transfer(msg.value);
-  }
+        // calculate token amount to be created
+        uint256 tokens = weiAmount.mul(getRate());
 
-  // @return true if the transaction can buy tokens
-  function validPurchase() internal constant returns (bool) {
-    bool withinPeriod = now >= startTime && now <= endTime;
-    bool nonZeroPurchase = msg.value != 0;
-    return withinPeriod && nonZeroPurchase;
-  }
+        // update state
+        weiRaised = weiRaised.add(weiAmount);
 
-  // @return true if crowdsale event has ended
-  function hasEnded() public constant returns (bool) {
-    return now > endTime;
-  }
+        token.mint(beneficiary, tokens);
+        TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
-  // @return the crowdsale rate
-  function getRate() public returns (uint256) {
-    return rate;
-  }
+        forwardFunds();
+    }
+
+    // send ether to the fund collection wallet
+    // override to create custom fund forwarding mechanisms
+    function forwardFunds() internal {
+        wallet.transfer(msg.value);
+    }
+
+    // @return true if the transaction can buy tokens
+    function validPurchase() internal constant returns (bool) {
+        bool withinPeriod = now >= startTime && now <= endTime;
+        bool nonZeroPurchase = msg.value != 0;
+        return withinPeriod && nonZeroPurchase;
+    }
+
+    // @return true if crowdsale event has ended
+    function hasEnded() public constant returns (bool) {
+        return now > endTime;
+    }
+
+    // @return the crowdsale rate
+    function getRate() internal returns (uint256) {
+        return rate;
+    }
+
 
 }
