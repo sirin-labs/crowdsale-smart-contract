@@ -47,21 +47,53 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @Override
     function getRate() internal returns (uint256) {
 
-        //10% bonus within the first 24 hours
-        uint firstStep = startTime + 24 hours;
-        //5% bonus after the first 24 hours till 7 days
-        uint secondStep = firstStep + 6 days;
+        uint day_1 = startTime + 24 hours;
+        uint day_2 = day_1 + 24 hours;
+        uint day_3 = day_2 + 24 hours;
+        uint day_4 = day_3 + 24 hours;
+        uint day_5 = day_4 + 24 hours;
+        uint day_6 = day_5 + 24 hours;
+        uint day_7 = day_6 + 24 hours;
+        uint day_8 = day_7 + 24 hours;
+        uint day_9 = day_8 + 24 hours;
+        uint day_10 = day_9 + 24 hours;
+        uint day_11 = day_10 + 24 hours;
+        uint day_12 = day_11 + 24 hours;
+        uint day_13 = day_12 + 24 hours;
+        uint day_14 = day_13 + 24 hours;
 
         uint256 newRate = rate;
 
-        if (now < (firstStep)) {
-            newRate += SafeMath.div(rate, 10);
+        if (now < (day_1)) {
+            newRate = SafeMath.mul(rate, SafeMath.div(1000, 1000));
+        }else if (now > day_1 && now < day_2) {
+            newRate = SafeMath.mul(rate, SafeMath.div(950, 1000));
+        }else if (now > day_2 && now < day_3) {
+            newRate = SafeMath.mul(rate, SafeMath.div(900, 1000));
+        }else if (now > day_3 && now < day_4) {
+            newRate = SafeMath.mul(rate, SafeMath.div(855, 1000));
+        }else if (now > day_4 && now < day_5) {
+            newRate = SafeMath.mul(rate, SafeMath.div(810, 1000));
+        }else if (now > day_5 && now < day_6) {
+            newRate = SafeMath.mul(rate, SafeMath.div(770, 1000));
+        }else if (now > day_6 && now < day_7) {
+            newRate = SafeMath.mul(rate, SafeMath.div(730, 1000));
+        }else if (now > day_7 && now < day_8) {
+            newRate = SafeMath.mul(rate, SafeMath.div(690, 1000));
+        }else if (now > day_8 && now < day_9) {
+            newRate = SafeMath.mul(rate, SafeMath.div(650, 1000));
+        }else if (now > day_9 && now < day_10) {
+            newRate = SafeMath.mul(rate, SafeMath.div(615, 1000));
+        }else if (now > day_10 && now < day_11) {
+            newRate = SafeMath.mul(rate, SafeMath.div(580, 1000));
+        }else if (now > day_11 && now < day_12) {
+            newRate = SafeMath.mul(rate, SafeMath.div(550, 1000));
+        }else if (now > day_12 && now < day_13) {
+            newRate = SafeMath.mul(rate, SafeMath.div(525, 1000));
+        }else if (now > day_13 && now < day_14) {
+            newRate = SafeMath.mul(rate, SafeMath.div(500, 1000));
         }
-        else if (now > firstStep && now < secondStep) {
-            newRate += SafeMath.div(rate, 20);
-        }
-
-        return newRate;
+        return rate;
     }
 
     // =================================================================================================================
