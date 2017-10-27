@@ -34,7 +34,7 @@ contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
     //@Override
     function issue(address _to, uint256 _amount) onlyOwner public {
-        assert(super.mint(_to, _amount));
+        require(super.mint(_to, _amount));
         Issuance(_amount);
     }
 
@@ -62,7 +62,7 @@ contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
     //
     // @Override
     function transferableTokens(address holder, uint64 time) public constant returns (uint256) {
-        assert(transfersEnabled);
+        require(transfersEnabled);
         return super.transferableTokens(holder, time);
     }
 }
