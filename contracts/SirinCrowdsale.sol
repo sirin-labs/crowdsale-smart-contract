@@ -81,38 +81,38 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     function getRate() internal returns (uint256) {
         uint256 newRate = rate;
 
-        if (now < (24 hours)) {
+        if (now < (startTime + 24 hours)) {
             newRate = 1000;
-        }else if (now < 2 days) {
+        } else if (now < (startTime + 2 days)) {
             newRate = 950;
-        }else if (now < 3 days) {
+        } else if (now < (startTime + 3 days)) {
             newRate = 900;
-        }else if (now < 4 days) {
+        } else if (now < (startTime + 4 days)) {
             newRate = 855;
-        }else if (now < 5 days) {
+        } else if (now < (startTime + 5 days)) {
             newRate = 810;
-        }else if (now < 6 days) {
+        } else if (now < (startTime + 6 days)) {
             newRate = 770;
-        }else if (now < 7 days) {
+        } else if (now < (startTime + 7 days)) {
             newRate = 730;
-        }else if (now < 8 days) {
+        } else if (now < (startTime + 8 days)) {
             newRate = 690;
-        }else if (now < 9 days) {
+        } else if (now < (startTime + 9 days)) {
             newRate = 650;
-        }else if (now < 10 days) {
+        } else if (now < (startTime + 10 days)) {
             newRate = 615;
-        }else if (now < 11 days) {
+        } else if (now < (startTime + 11 days)) {
             newRate =580;
-        }else if (now < 12 days) {
+        } else if (now < (startTime + 12 days)) {
             newRate = 550;
-        }else if (now < 13 days) {
+        } else if (now < (startTime + 13 days)) {
             newRate = 525;
-        }else if (now < 14 days) {
-            newRate = 500;
-        }else{
-            newRate = 500;
+        } else if (now < (startTime + 14 days)) {
+            newRate = BASE_RATE;
+        } else {
+            newRate = BASE_RATE;
         }
-        return rate;
+        return newRate;
     }
 
     // =================================================================================================================
