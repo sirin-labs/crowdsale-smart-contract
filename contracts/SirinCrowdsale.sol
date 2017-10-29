@@ -35,6 +35,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address public _walletOEM;
     address public _walletBounties;
     address public _walletReserve;
+	
+	//Funds collected outside the crowdsale in wei
+	uint256 public _noneETHraised;
 
     //Grantees
     address[] public _granteesMapKeys;
@@ -46,7 +49,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     event GrantAdded(address indexed _grantee, uint256 _amount);
     event GrantUpdated(address indexed _grantee, uint256 _oldAmount, uint256 _newAmount);
     event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
-
+	
     // =================================================================================================================
     //                                      Constructors
     // =================================================================================================================
@@ -192,4 +195,15 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         delete _granteesMapKeys[_granteesMapKeys.length-1];
         _granteesMapKeys.length--;
     }
+	
+	/// @dev Set funds collected outside the crowdsale in wei
+	/// @param noneETHraised number of none eth raised 
+	function setNoneEthRaised(uint256 noneETHraised) external onlyOwner onlyWhileSale{
+		_noneETHraised = noneETHraised;
+	}
+	
+	// @return totatl funds collected (  ETH and none ETH)
+	function getTotalFundsRaised() public constant returns (uint256) {
+		return _noneETHraised + weiRaised;
+	}
 }
