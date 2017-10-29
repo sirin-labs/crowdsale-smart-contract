@@ -214,14 +214,14 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
       assert.equal(total, 0);
     })
 
-    it('should allow only owner', async function() {
+    it('should not allow only owner account to call setNoneEthRaised', async function() {
       await increaseTimeTo(this.startTime)
       await this.crowdsale.setNoneEthRaised(1, {from: owner});
       let total = await this.crowdsale.getTotalFundsRaised();
       total.should.be.bignumber.equal(1);
     })
 
-    it('should not allow only owner', async function() {
+    it('should not allow another account to call setNoneEthRaised', async function() {
       try {
         await increaseTimeTo(this.startTime)
         await this.crowdsale.setNoneEthRaised(1, {from: investor});
