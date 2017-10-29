@@ -206,4 +206,70 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
     })
 
   })
+
+  describe('Total Found', function () {
+
+    it('should start with zero', async function() {
+      let total = await this.crowdsale.getTotalFundsRaised();
+      assert.equal(total, 0);
+    })
+
+    it('should allow only owner account to call setNoneEthRaised', async function() {
+      await increaseTimeTo(this.startTime)
+      await this.crowdsale.setNoneEthRaised(1, {from: owner});
+      let total = await this.crowdsale.getTotalFundsRaised();
+      total.should.be.bignumber.equal(1);
+    })
+
+    it('should not allow non-owner account to call setNoneEthRaised', async function() {
+      try {
+        await increaseTimeTo(this.startTime)
+        await this.crowdsale.setNoneEthRaised(1, {from: investor});
+        assert(false, "didn't throw");
+      }
+      catch (error) {
+          return utils.ensureException(error);
+      }
+    })
+
+    it('should allow to call setNoneEthRaised only during crowdsale is active', async function() {
+      await increaseTimeTo(this.startTime + duration.days(1))
+      await this.crowdsale.setNoneEthRaised(1, {from: owner});
+      let total = await this.crowdsale.getTotalFundsRaised();
+      total.should.be.bignumber.equal(1);
+    })
+
+    it('should not be at before crowdsale time', async function() {
+      try {
+        await increaseTimeTo(this.startTime - duration.days(1))
+        await this.crowdsale.setNoneEthRaised(1, {from: owner});
+        assert(false, "didn't throw");
+      }
+      catch (error) {
+          return utils.ensureException(error);
+      }
+    })
+
+    it('should not be at after crowdsale time', async function() {
+      try {
+        await increaseTimeTo(this.afterEndTime)
+        await this.crowdsale.setNoneEthRaised(1, {from: owner});
+        assert(false, "didn't throw");
+      }
+      catch (error) {
+          return utils.ensureException(error);
+      }
+    })
+
+    it('should total amount be equeal to _weiRasied + _noneEthRaised', async function() {
+      await increaseTimeTo(this.startTime)
+      await this.crowdsale.sendTransaction({value: ether(1), from: investor})
+      await this.crowdsale.setNoneEthRaised(ether(1), {from: owner});
+      let total = await this.crowdsale.getTotalFundsRaised();
+
+      total.should.be.bignumber.equal(ether(2));
+    })
+
+  })
+
 })
