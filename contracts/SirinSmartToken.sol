@@ -5,6 +5,8 @@ import './token/LimitedTransferToken.sol';
 import './bancor/ISmartToken.sol';
 import './ownership/Ownable.sol';
 
+/*A Token which is 'Bancor' compatible and can mint new tokens and pause token-transfer functionality
+*/
 contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
     // =================================================================================================================
@@ -20,6 +22,7 @@ contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
     // =================================================================================================================
 
     function SirinSmartToken() {
+        //Apart of 'Bancor' computability - triggered when a smart token is deployed
         NewSmartToken(address(this));
     }
 

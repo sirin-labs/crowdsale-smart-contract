@@ -12,7 +12,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Constants
     // =================================================================================================================
     //Max amount of known addresses of which will get SRN by 'Grant' method.
-    uint256 public constant MAX_TOKEN_GRANTEES = 100;
+    uint256 public constant MAX_TOKEN_GRANTEES = 10;
+
+    //SRN to ETH base rate
     uint256 public constant BASE_RATE = 500;
 
     // =================================================================================================================
@@ -30,7 +32,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Members
     // =================================================================================================================
 
-    //wallet address for 60% SRN allocation
+    //wallet address for 60% of SRN allocation
     address public _walletFounder;
     address public _walletOEM;
     address public _walletBounties;
@@ -39,9 +41,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 	//Funds collected outside the crowdsale in wei
 	uint256 public _noneETHraised;
 
-    //Grantees
-    address[] public _granteesMapKeys;
-    mapping (address => uint256) public _granteesMap;
+    //Grantees - used for non-ether and presale bonus token generation
+    address[] public _presaleGranteesMapKeys;
+    mapping (address => uint256) public _presaleGranteesMap;
 
     // =================================================================================================================
     //                                      Events
@@ -122,11 +124,12 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //@Override
     function finalization()  internal {
 
-        //granting bonuses for the pre-ico grantees:
-        for(uint i=0; i < _granteesMapKeys.length; i++){
-            token.issue(_granteesMapKeys[i], _granteesMap[_granteesMapKeys[i]]);
+        //granting bonuses for the pre crowdsale grantees:
+        for(uint i=0; i < _presaleGranteesMapKeys.length; i++){
+            token.issue(_presaleGranteesMapKeys[i], _presaleGranteesMap[_presaleGranteesMapKeys[i]]);
         }
 
+        //Creating 60% of the total token supply (40% were generated during the crowdsale)
         uint256 newTotalSupply = SafeMath.div(SafeMath.mul(token.totalSupply(), 250), 100);
 
         //10% of the total number of SRN tokens will be allocated to the founders and
@@ -158,42 +161,42 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale{
         require(_grantee != address(0));
         require(_value > 0);
-        require(_granteesMapKeys.length + 1 <= MAX_TOKEN_GRANTEES);
+        require(_presaleGranteesMapKeys.length < MAX_TOKEN_GRANTEES);
 
         //Adding new key if not presented:
-        if(_granteesMap[_grantee] == 0){
-            _granteesMapKeys.push(_grantee);
+        if(_presaleGranteesMap[_grantee] == 0){
+            _presaleGranteesMapKeys.push(_grantee);
             GrantAdded(_grantee, _value);
         }
         else{
-            GrantUpdated(_grantee, _granteesMap[_grantee],_value);
+            GrantUpdated(_grantee, _presaleGranteesMap[_grantee],_value);
         }
 
-        _granteesMap[_grantee] = _value;
+        _presaleGranteesMap[_grantee] = _value;
     }
 
     /// @dev deletes address for granted tokens.
     /// @param _grantee address The address of the token grantee
     function deleteGrantee(address _grantee) external onlyOwner onlyWhileSale {
         require(_grantee != address(0));
-        require(_granteesMap[_grantee] != 0);
+        require(_presaleGranteesMap[_grantee] != 0);
 
-        GrantDeleted(_grantee, _granteesMap[_grantee]);
+        GrantDeleted(_grantee, _presaleGranteesMap[_grantee]);
         //delete from the map:
-        delete _granteesMap[_grantee];
+        delete _presaleGranteesMap[_grantee];
 
         //delete from the array (keys):
         uint index;
-        for(uint i=0; i < _granteesMapKeys.length; i++){
-            if(_granteesMapKeys[i] == _grantee)
+        for(uint i=0; i < _presaleGranteesMapKeys.length; i++){
+            if(_presaleGranteesMapKeys[i] == _grantee)
             {
                 index = i;
                 break;
             }
         }
-        _granteesMapKeys[index] = _granteesMapKeys[_granteesMapKeys.length-1];
-        delete _granteesMapKeys[_granteesMapKeys.length-1];
-        _granteesMapKeys.length--;
+        _presaleGranteesMapKeys[index] = _presaleGranteesMapKeys[_presaleGranteesMapKeys.length-1];
+        delete _presaleGranteesMapKeys[_presaleGranteesMapKeys.length-1];
+        _presaleGranteesMapKeys.length--;
     }
 	
 	/// @dev Set funds collected outside the crowdsale in wei
