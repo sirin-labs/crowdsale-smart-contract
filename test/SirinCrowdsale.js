@@ -11,7 +11,8 @@ const should = require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should()
 
-const SirinCrowdsale = artifacts.require('SirinCrowdsale.sol')
+//const SirinCrowdsale = artifacts.require('SirinCrowdsale.sol')
+const SirinCrowdsale = artifacts.require('../helpers/SirinCrowdsaleMock.sol')
 const SirinSmartToken = artifacts.require('SirinSmartToken.sol')
 
 contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, walletOEM, walletBounties, walletReserve]) {
@@ -39,6 +40,21 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
 
     this.token = SirinSmartToken.at(await this.crowdsale.token())
   })
+
+  describe('Rate Mechanism', function () {
+
+    beforeEach(async function() {
+      await increaseTimeTo(this.startTime)
+    })
+
+    it('Rate first day ', async function () {
+
+      let rate = await this.crowdsale.getRateMock.call()
+      console.log("Rate:" + rate);
+      assert.equal(rate, 500);
+    })
+  })
+
 
   describe('Finalize allocation', function () {
 
