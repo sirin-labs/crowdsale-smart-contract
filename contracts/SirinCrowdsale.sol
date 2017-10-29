@@ -50,7 +50,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     event GrantUpdated(address indexed _grantee, uint256 _oldAmount, uint256 _newAmount);
     event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
 	
-
     // =================================================================================================================
     //                                      Constructors
     // =================================================================================================================
@@ -197,12 +196,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         _granteesMapKeys.length--;
     }
 	
-	//Set funds collected outside the crowdsale in wei
+	/// @dev Set funds collected outside the crowdsale in wei
+	/// @param noneETHraised number of none eth raised 
 	function setNoneEthRaised(uint256 noneETHraised) external onlyOwner onlyWhileSale{
 		_noneETHraised = noneETHraised;
 	}
 	
-	//Return totatl funds collected (  ETH and none ETH)
+	// @return totatl funds collected (  ETH and none ETH)
 	function getTotalFundsRaised() public constant returns (uint256) {
 		return _noneETHraised + weiRaised;
 	}
