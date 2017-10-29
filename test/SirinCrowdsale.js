@@ -4,6 +4,8 @@ import {increaseTimeTo, duration} from './helpers/increaseTime'
 import latestTime from './helpers/latestTime'
 import EVMThrow from './helpers/EVMThrow'
 
+const utils = require('./helpers/Utils');
+
 const BigNumber = web3.BigNumber
 
 const should = require('chai')
@@ -131,25 +133,77 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
     });
   })
 
-  describe('Finalize allocation', function () {
+  describe('Token transfer', function () {
 
-    beforeEach(async function() {
+    it('should not allow transfer before after finalize', async function() {
+
       await increaseTimeTo(this.startTime)
+      await this.crowdsale.sendTransaction({value: value, from: investor})
+
+      try {
+        await this.token.transfer(walletOEM, 1, {from: investor});
+        assert(false, "didn't throw");
+      }
+      catch (error) {
+          return utils.ensureException(error);
+      }
     })
 
-    it('Allocate founder token amount as 10% of the total supply', async function () {
+    it('should allow transfer after finalize', async function() {
 
+      await increaseTimeTo(this.startTime)
       await this.crowdsale.sendTransaction({value: value, from: investor})
 
       await increaseTimeTo(this.afterEndTime)
       await this.crowdsale.finalize({from: owner})
 
-      const totalSupply = await this.token.totalSupply()
-      const expectedFounderTokenAmount =  totalSupply.div(10);
+      await this.token.transfer(walletOEM, 1, {from: walletBounties});
+    })
+  })
+
+  describe('Finalize allocation', function () {
+
+    beforeEach(async function() {
+      await increaseTimeTo(this.startTime)
+      await this.crowdsale.sendTransaction({value: value, from: investor})
+
+      await increaseTimeTo(this.afterEndTime)
+      await this.crowdsale.finalize({from: owner})
+
+      this.totalSupply = await this.token.totalSupply()
+    })
+
+    it('Allocate founder token amount as 10% of the total supply', async function () {
+      const expectedFounderTokenAmount = this.totalSupply.mul(0.1);
       let walletFounderBalance = await this.token.balanceOf(walletFounder);
 
       walletFounderBalance.should.be.bignumber.equal(expectedFounderTokenAmount);
-
     })
+
+    it('Allocate OEM token amount as 10% of the total supply', async function () {
+       const expectedOEMTokenAmount =  this.totalSupply.mul(0.1);
+       let OEMFounderBalance = await this.token.balanceOf(walletOEM);
+
+       OEMFounderBalance.should.be.bignumber.equal(expectedOEMTokenAmount);
+     })
+
+     it('Allocate professional fees and Bounties token amount as 5% of the total supply', async function () {
+        const expectedBountiesTokenAmount =  this.totalSupply.mul(0.05);
+        let walletFounderBalance = await this.token.balanceOf(walletBounties);
+
+        walletFounderBalance.should.be.bignumber.equal(expectedBountiesTokenAmount);
+     })
+
+    it('Allocate Reserve token amount as 35% of the total supply', async function () {
+       const expectedReserveTokenAmount =  this.totalSupply.mul(0.35);
+       let walletFounderBalance = await this.token.balanceOf(walletReserve);
+
+       walletFounderBalance.should.be.bignumber.equal(expectedReserveTokenAmount);
+    })
+
+    it('should set finalized true value', async function () {
+        assert.equal(await this.crowdsale.isFinalized(), true);
+    })
+
   })
 })
