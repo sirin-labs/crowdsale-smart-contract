@@ -148,8 +148,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         // Re-enable transfers after the token sale.
         token.disableTransfers(false);
-
-        isFinalized = true;
     }
 
     // =================================================================================================================

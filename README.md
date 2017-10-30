@@ -25,7 +25,7 @@ Please see the [contracts/](contracts) directory.
 
 ## SRN PRICING PROGRAM
 
-| Duration from token Crowdsale event start	| SRN / ETH|
+| Duration from token Crowdsale event start	| SRN / ETH |
 | :---: | :---: |
 | First 24 hours | 1000 |
 | 2nd day | 950 |
