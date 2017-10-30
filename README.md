@@ -17,12 +17,30 @@ Please see the [contracts/](contracts) directory.
 *	Token will be ERC-20 compliant.
 *	Token will be [Bancor][bancor] compliant
 *	Token allocation:
-	* 40% of the total number of SRN tokens will be allocated to contributors during the token sale
-	* 10% of the total number of SRN tokens will be allocated to the founders and team and will be gradually vested over a 12-month period
-	* 10% of the total number of SRN tokens will be allocated to OEMs, Operating System implementation, SDK developers and rebate of solds devices
-	* 5% of the total number of SRN tokens will be allocated to professional fees and bounties
+	* 40% of the total number of SRN tokens will be allocated to contributors during the token sale.
+	* 10% of the total number of SRN tokens will be allocated to the founders and team and will be gradually vested over a 12-month period.
+	* 10% of the total number of SRN tokens will be allocated to OEMs, Operating System implementation, SDK developers and rebate of sold devices.
+	* 5% of the total number of SRN tokens will be allocated to professional fees and bounties.
 	* 35% of the total number of SRN tokens will be allocated to SIRIN LABS, to be used for future strategic plans and to develop the SIRIN LABS' ecosystem.
 
+## SRN PRICING PROGRAM
+
+| Duration from token Crowdsale event start	| SRN / ETH|
+| :---: | :---: |
+| First 24 hours | 1000 |
+| 2nd day | 950 |
+| 3rd day | 900 |
+| 4th day | 855 |
+| 5th day | 810 |
+| 6th day | 770 |
+| 7th day | 730 |
+| 8th day | 690 |
+| 9th day | 650 |
+| 10th day | 615 |
+| 11th day | 580 |
+| 12th day | 550 |
+| 13th day | 525 |
+| 14th day | 500 |
 
 ## Develop
 
@@ -39,7 +57,7 @@ Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle
 
 
 * Our smart contract is based on [Open Zeppelin's][openzeppelin] latest code
-* Our token is Bancor compliant. We implemented Bancor functionality according to their guide.
+* SRN token is Bancor compliant, implemented Bancor functionality following Bancor's guide.
 
 
 #### Functions
@@ -49,6 +67,8 @@ Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle
 function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner
 ```
 Adds/Updates address for  granted tokens.
+
+Granted tokens addresses are used for non-ether and presale bonus token generation.
 
 
 **deleteGrantee**
@@ -107,6 +127,7 @@ $ ./scripts/coverage.sh
 * **[Yossi Gruner](https://github.com/yossigruner)**
 * **[Gilad Or](https://github.com/gilador)**
 * **[Yaron Shlomo](https://github.com/yaronshlomo)**
+
 
 
 
