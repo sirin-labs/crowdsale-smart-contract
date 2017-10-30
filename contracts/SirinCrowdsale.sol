@@ -76,7 +76,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @return the rate with bonus according to the time of the tx strting from 1000 down to 500
     // @Override
-    function getRate() public returns (uint256) {
+    function getRate() internal returns (uint256) {
         uint256 newRate = rate;
 
         if (now < (startTime + 24 hours)) {
