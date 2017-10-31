@@ -56,7 +56,8 @@ Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle
 
 
 
-* Our smart contract is based on [Open Zeppelin's][openzeppelin] latest code
+* Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
+
 * SRN token is Bancor compliant, implemented Bancor functionality following Bancor's guide.
 
 
@@ -144,3 +145,4 @@ Apache License v2.0
 [testrpc]: https://github.com/ethereumjs/testrpc
 [bancor]: https://github.com/ethereumjs/testrpc
 [openzeppelin]: https://openzeppelin.org
+[openzeppelin_v1.3.0]: https://github.com/OpenZeppelin/zeppelin-solidity/releases/tag/v1.3.0
