@@ -13,7 +13,7 @@ contract SirinCrowdsaleMock is SirinCrowdsale {
     address _walletDeveloper,
     address _walletBounties,
     address _walletReserve)
-        SirinCrowdsale(_startTime, _endTime, _wallet, walletFounder,_walletDeveloper, walletBounties, walletReserve) {
+        SirinCrowdsale(_startTime, _endTime, _wallet, _walletFounder,_walletDeveloper, _walletBounties, _walletReserve) {
 
     }
 
