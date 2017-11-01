@@ -15,7 +15,7 @@ contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
     string public name = "SIRIN LABS";
     string public symbol = "SRN";
-    uint public decimals = 18;
+    uint8 public decimals = 18;
 
     // =================================================================================================================
     //                                      Constructor

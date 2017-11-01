@@ -27,6 +27,7 @@ contract FinalizableCrowdsale is Crowdsale, Ownable {
     finalization();
     Finalized();
 
+    isFinalized = true;
   }
 
   /**
