@@ -369,7 +369,6 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
         })
   })
 
-
   describe('Total Found', function () {
 
     it('should start with zero', async function() {
@@ -434,5 +433,85 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
     })
 
   })
+
+  describe('constructor parameters', function () {
+      it('should initilaized with a valid walletFounder adderss', async function () {
+      try {
+          this.crowdsale = await SirinCrowdsale.new(this.startTime,
+          this.endTime,
+          wallet,
+          0x0,
+          walletOEM,
+          walletBounties,
+          walletReserve,
+          {from: owner})
+      }catch (error) {
+          return utils.ensureException(error);
+      }
+
+      assert(false, "did not throw with invalid walletFounder address")
+      })
+
+      it('should initilaized with a valid walletOEM adderss', async function () {
+         try {
+          this.crowdsale = await SirinCrowdsale.new(this.startTime,
+          this.endTime,
+          wallet,
+          walletFounder,
+          0x0,
+          walletBounties,
+          walletReserve,
+          {from: owner})
+          }catch (error) {
+             return utils.ensureException(error);
+          }
+
+          assert(false, "did not throw with invalid walletOEM address")
+       })
+
+      it('should initilaized with a valid walletBounties adderss', async function () {
+         try {
+           this.crowdsale = await SirinCrowdsale.new(this.startTime,
+           this.endTime,
+           wallet,
+           walletFounder,
+           walletOEM,
+           0x0,
+           walletReserve,
+           {from: owner})
+         }catch (error) {
+           return utils.ensureException(error);
+         }
+          assert(false, "did not throw with invalid walletBounties address")
+       })
+
+       it('should initilaized with a valid walletReserve adderss', async function () {
+         try {
+           this.crowdsale = await SirinCrowdsale.new(this.startTime,
+           this.endTime,
+           wallet,
+           walletFounder,
+           walletOEM,
+           walletBounties,
+           0x0,
+           {from: owner})
+         }catch (error) {
+           return utils.ensureException(error);
+      }
+
+        assert(false, "did not throw with invalid walletReserve address")
+     })
+
+       it('should initilaized with a valid parametrs', async function () {
+        this.crowdsale = await SirinCrowdsale.new(this.startTime,
+          this.endTime,
+          wallet,
+          walletFounder,
+          walletOEM,
+          walletBounties,
+          walletReserve,
+          {from: owner})
+       })
+    })
 
 })
