@@ -17,10 +17,11 @@ contract('SmartToken', (accounts) => {
         let token = await SmartToken.new();
 
         try {
-            await token.disableTransfers(true, { from: accounts[1] });
+            await token.disableTransfers(true, {
+                from: accounts[1]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -48,26 +49,27 @@ contract('SmartToken', (accounts) => {
         assert.equal(balance, 100);
     });
 
-   /* it('should throw when the owner attempts to issue tokens to the token address', async () => {
-        let token = await SmartToken.new();
+    /* it('should throw when the owner attempts to issue tokens to the token address', async () => {
+         let token = await SmartToken.new();
 
-        try {
-            await token.issue(token.address, 100);
-            assert(false, "didn't throw");
-        }
-        catch (error) {
-            return utils.ensureException(error);
-        }
-    });*/
+         try {
+             await token.issue(token.address, 100);
+             assert(false, "didn't throw");
+         }
+         catch (error) {
+             return utils.ensureException(error);
+         }
+     });*/
 
     it('should throw when a non owner attempts to issue tokens', async () => {
         let token = await SmartToken.new();
 
         try {
-            await token.issue(accounts[1], 100, { from: accounts[2] });
+            await token.issue(accounts[1], 100, {
+                from: accounts[2]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -111,10 +113,11 @@ contract('SmartToken', (accounts) => {
         await token.issue(accounts[1], 100);
 
         try {
-            await token.destroy(accounts[1], 20, { from: accounts[2] });
+            await token.destroy(accounts[1], 20, {
+                from: accounts[2]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -145,8 +148,7 @@ contract('SmartToken', (accounts) => {
         try {
             await token.transfer(accounts[1], 100);
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -168,16 +170,19 @@ contract('SmartToken', (accounts) => {
         await token.approve(accounts[1], 500);
         let allowance = await token.allowance.call(accounts[0], accounts[1]);
         assert.equal(allowance, 500);
-        await token.transferFrom(accounts[0], accounts[2], 50, { from: accounts[1] });
+        await token.transferFrom(accounts[0], accounts[2], 50, {
+            from: accounts[1]
+        });
         await token.disableTransfers(true);
         let transfersEnabled = await token.transfersEnabled.call();
         assert.equal(transfersEnabled, false);
 
         try {
-            await token.transferFrom(accounts[0], accounts[2], 50, { from: accounts[1] });
+            await token.transferFrom(accounts[0], accounts[2], 50, {
+                from: accounts[1]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });

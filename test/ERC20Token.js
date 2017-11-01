@@ -30,8 +30,7 @@ contract('ERC20Token', (accounts) => {
         try {
             await token.transfer(accounts[1], 500);
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -42,8 +41,7 @@ contract('ERC20Token', (accounts) => {
         try {
             await token.transfer(invalidAccount, 10);
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -64,7 +62,9 @@ contract('ERC20Token', (accounts) => {
     it('verifies the balances after transferring from another account', async () => {
         let token = await TestERC20Token.new(1000);
         await token.approve(accounts[1], 500);
-        await token.transferFrom(accounts[0], accounts[2], 50, { from: accounts[1] });
+        await token.transferFrom(accounts[0], accounts[2], 50, {
+            from: accounts[1]
+        });
         let balance;
         balance = await token.balanceOf.call(accounts[0]);
         assert.equal(balance, 950);
@@ -77,14 +77,18 @@ contract('ERC20Token', (accounts) => {
     it('verifies that transferring from another account fires a Transfer event', async () => {
         let token = await TestERC20Token.new(1000);
         await token.approve(accounts[1], 500);
-        let res = await token.transferFrom(accounts[0], accounts[2], 50, { from: accounts[1] });
+        let res = await token.transferFrom(accounts[0], accounts[2], 50, {
+            from: accounts[1]
+        });
         assert(res.logs.length > 0 && res.logs[0].event == 'Transfer');
     });
 
     it('verifies the new allowance after transferring from another account', async () => {
         let token = await TestERC20Token.new(1000);
         await token.approve(accounts[1], 500);
-        await token.transferFrom(accounts[0], accounts[2], 50, { from: accounts[1] });
+        await token.transferFrom(accounts[0], accounts[2], 50, {
+            from: accounts[1]
+        });
         let allowance = await token.allowance.call(accounts[0], accounts[1]);
         assert.equal(allowance, 450);
     });
@@ -94,10 +98,11 @@ contract('ERC20Token', (accounts) => {
         await token.approve(accounts[1], 100);
 
         try {
-            await token.transferFrom(accounts[0], accounts[2], 200, { from: accounts[1] });
+            await token.transferFrom(accounts[0], accounts[2], 200, {
+                from: accounts[1]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -107,10 +112,11 @@ contract('ERC20Token', (accounts) => {
         await token.approve(accounts[1], 100);
 
         try {
-            await token.transferFrom(invalidAccount, accounts[2], 50, { from: accounts[1] });
+            await token.transferFrom(invalidAccount, accounts[2], 50, {
+                from: accounts[1]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
@@ -120,10 +126,11 @@ contract('ERC20Token', (accounts) => {
         await token.approve(accounts[1], 100);
 
         try {
-            await token.transferFrom(accounts[0], invalidAccount, 50, { from: accounts[1] });
+            await token.transferFrom(accounts[0], invalidAccount, 50, {
+                from: accounts[1]
+            });
             assert(false, "didn't throw");
-        }
-        catch (error) {
+        } catch (error) {
             return utils.ensureException(error);
         }
     });
