@@ -38,8 +38,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address public walletBounties;  //5% of the total number of SRN tokens will be allocated to professional fees and Bounties
     address public walletReserve;   //35% of the total number of SRN tokens will be allocated to SIRIN LABS and as a reserve for the company to be used for future strategic plans for the created ecosystem
 
-  	//Funds collected outside the crowdsale in wei
-  	uint256 public fiatRaised;
+    //Funds collected outside the crowdsale in wei
+    uint256 public fiatRaised;
 
     //Grantees - used for non-ether and presale bonus token generation
     address[] public presaleGranteesMapKeys;
@@ -57,7 +57,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
 
     function SirinCrowdsale(uint256 _startTime, uint256 _endTime, address _wallet, address _walletFounder, address _walletOEM, address _walletBounties, address _walletReserve)
-        Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet)
+    Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet)
     {
         require(_walletFounder != address(0));
         require(_walletOEM != address(0));
@@ -76,7 +76,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @return the rate with bonus according to the time of the tx strting from 1000 down to 500
     // @Override
-    function getRate() internal returns (uint256) {
+    function getRate() public returns (uint256) {
         uint256 newRate = rate;
 
         if (now < (startTime + 24 hours)) {
@@ -100,13 +100,11 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         } else if (now < (startTime + 10 days)) {
             newRate = 615;
         } else if (now < (startTime + 11 days)) {
-            newRate =580;
+            newRate = 580;
         } else if (now < (startTime + 12 days)) {
             newRate = 550;
         } else if (now < (startTime + 13 days)) {
             newRate = 525;
-        } else if (now < (startTime + 14 days)) {
-            newRate = EXCHANGE_RATE;
         } else {
             newRate = EXCHANGE_RATE;
         }
@@ -194,14 +192,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         presaleGranteesMapKeys.length--;
     }
 
-  	/// @dev Set funds collected outside the crowdsale in wei
-  	/// @param noneETHraised number of none eth raised
-  	function setNoneEthRaised(uint256 noneETHraised) external onlyOwner onlyWhileSale {
-  		fiatRaised = noneETHraised;
-  	}
+    /// @dev Set funds collected outside the crowdsale in wei
+    /// @param noneETHraised number of none eth raised
+    function setNoneEthRaised(uint256 noneETHraised) external onlyOwner onlyWhileSale {
+        fiatRaised = noneETHraised;
+    }
 
-  	// @return totatl funds collected (  ETH and none ETH)
-  	function getTotalFundsRaised() public constant returns (uint256) {
-  		return fiatRaised.add(weiRaised);
-  	}
+    // @return totatl funds collected (  ETH and none ETH)
+    function getTotalFundsRaised() public constant returns (uint256) {
+        return fiatRaised.add(weiRaised);
+    }
 }

@@ -10,7 +10,7 @@ import './ownership/Ownable.sol';
 contract SirinSmartToken is MintableToken, ISmartToken, LimitedTransferToken  {
 
     // =================================================================================================================
-    //                                      Members
+    //                                           Members
     // =================================================================================================================
 
     string public name = "SIRIN LABS";
