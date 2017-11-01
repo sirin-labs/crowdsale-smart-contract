@@ -25,7 +25,6 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
     //Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
     await advanceBlock()
   })
-
   beforeEach(async function () {
     this.startTime = latestTime() + duration.weeks(1);
     this.endTime =   this.startTime + duration.weeks(1)
@@ -207,111 +206,168 @@ contract('SirinCrowdsale', function ([_,investor, owner, wallet, walletFounder, 
 
   })
 
-//  describe('Grant tokens', function () {
-//
-//        it('should grant by owner', async function() {
-//            await increaseTimeTo(this.startTime)
-//            await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
-//            let total = await this.crowdsale._presaleGranteesMap[investor];
-//            total.should.be.bignumber.equal(100);
-//        })
-//
-//        it('should not grant by none-owner', async function() {
-//            try {
-//                await increaseTimeTo(this.startTime)
-//                await this.crowdsale.addUpdateGrantee(investor, 100, {from: investor});
-//                assert(false, "didn't throw");
-//            }
-//            catch (error) {
-//              return utils.ensureException(error);
-//            }
-//        })
-//
-//        it('should not be at before crowdsale time', async function() {
-//            try {
-//              await increaseTimeTo(this.startTime - duration.days(1))
-//              await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
-//              assert(false, "didn't throw");
-//            }
-//            catch (error) {
-//                return utils.ensureException(error);
-//            }
-//        })
-//
-//        it('should not be at after crowdsale time', async function() {
-//            try {
-//              await increaseTimeTo(this.afterEndTime)
-//              await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
-//              assert(false, "didn't throw");
-//            }
-//            catch (error) {
-//                return utils.ensureException(error);
-//            }
-//        })
-//
-//        it('should not grant to address \'0x0\'', async function() {
-//            try {
-//              await increaseTimeTo(this.afterEndTime)
-//              await this.crowdsale.addUpdateGrantee('0x0', 100, {from: owner});
-//              assert(false, "didn't throw");
-//            }
-//            catch (error) {
-//                return utils.ensureException(error);
-//            }
-//        })
-//
-//        it('should not grant value \'0\'', async function() {
-//            try {
-//              await increaseTimeTo(this.afterEndTime)
-//              await this.crowdsale.addUpdateGrantee(investor, 0, {from: owner});
-//              assert(false, "didn't throw");
-//            }
-//            catch (error) {
-//                return utils.ensureException(error);
-//            }
-//        })
-//
-//        it('should not grant to more than MAX_GRANTEE', async function() {
-//            try {
-//              let max_grantee = await this.crowdsale.MAX_TOKEN_GRANTEES;
-//              await increaseTimeTo(this.afterEndTime)
-//              for(var i = 0; i <= max_grantee; i++){
-//                  (function(){
-//                     await this.crowdsale.addUpdateGrantee(/*TODO add MAX+1 accounts*/, 0, {from: owner});
-//                    })();
-//              }
-//              assert(false, "didn't throw");
-//            }
-//            catch (error) {
-//                return utils.ensureException(error);
-//            }
-//        })
-//
-//        it('should create an \'add\' event', async function() {
-//        })
-//
-//        it('should an update a grantee', async function() {
-//        })
-//
-//        it('should create an \'update event\'', async function() {
-//        })
-//
-//        it('should remove a grantee by owner', async function() {
-//        })
-//
-//        it('should not remove a grantee by none-owner', async function() {
-//        })
-//
-//        it('should not remove address \'0x0\', async function() {
-//        })
-//
-//        it('should create remove \'event\', async function() {
-//        })
-//
-//        it('should allocate token as expected, async function() {
-//        })
-//  })
+  describe('Grant tokens', function () {
 
+        it('should grant by owner', async function() {
+            await increaseTimeTo(this.startTime)
+            await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner})
+            let total = await this.crowdsale.presaleGranteesMap(investor)
+            assert(total == 100, "grant has failed");
+        })
+
+        it('should not grant by none-owner', async function() {
+            try {
+                await increaseTimeTo(this.startTime)
+                await this.crowdsale.addUpdateGrantee(investor, 100, {from: investor});
+                assert(false, "a none owner granted successfully");
+            }
+            catch (error) {
+              return utils.ensureException(error);
+            }
+        })
+
+        it('should not be before crowdsale time', async function() {
+            try {
+              await increaseTimeTo(this.startTime - duration.days(1))
+              await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
+              assert(false, "didn't throw");
+            }
+            catch (error) {
+                return utils.ensureException(error);
+            }
+        })
+
+        it('should not be after crowdsale time', async function() {
+            try {
+              await increaseTimeTo(this.afterEndTime)
+              await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
+              assert(false, "didn't throw");
+            }
+            catch (error) {
+                return utils.ensureException(error);
+            }
+        })
+
+        it('should not grant to address \'0x0\'', async function() {
+            try {
+              await increaseTimeTo(this.startTime)
+              await this.crowdsale.addUpdateGrantee('0x0', 100, {from: owner});
+              assert(false, "didn't throw");
+            }
+            catch (error) {
+                return utils.ensureException(error);
+            }
+        })
+
+        it('should not grant value \'0\'', async function() {
+            try {
+              await increaseTimeTo(this.startTime)
+              await this.crowdsale.addUpdateGrantee(investor, 0, {from: owner});
+              assert(false, "didn't throw");
+            }
+            catch (error) {
+                return utils.ensureException(error);
+            }
+        })
+
+        it('should not grant to more than MAX_GRANTEE', async function() {
+            try {
+              let max_grantees = await this.crowdsale.MAX_TOKEN_GRANTEES()
+              await increaseTimeTo(this.startTime)
+              for(let i = 0; i <= max_grantees; i++){
+                let address = "0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b750" + i
+                await this.crowdsale.addUpdateGrantee(address,100, {from: owner});
+              }
+              assert(false, "didn't throw");
+            }
+            catch (error) {
+                return utils.ensureException(error);
+            }
+        })
+
+        it('should update a grantee', async function() {
+           await increaseTimeTo(this.startTime)
+           await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner})
+           await this.crowdsale.addUpdateGrantee(investor, 50, {from: owner})
+           let total = await this.crowdsale.presaleGranteesMap(investor);
+           assert(total == 50, "update has failed");
+        })
+
+        it('should remove a grantee by owner', async function() {
+           await increaseTimeTo(this.startTime)
+           await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner})
+           await this.crowdsale.deleteGrantee(investor, {from: owner});
+           let total = await this.crowdsale.presaleGranteesMap(investor);
+           assert(total == 0, "failed to delete grantee by owner");
+
+        })
+
+        it('should not remove a grantee by none-owner', async function() {
+            try{
+               await increaseTimeTo(this.startTime)
+               await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner})
+               await this.crowdsale.deleteGrantee(investor, {from: investor});
+               let total = await this.crowdsale.presaleGranteesMap(investor);
+               assert(false, "didnt throw");
+            }
+            catch (error) {
+               return utils.ensureException(error);
+            }
+        })
+
+        it('should not remove address 0x0', async function() {
+            try{
+               await increaseTimeTo(this.startTime)
+               await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner})
+               await this.crowdsale.deleteGrantee("0x0", {from: owner});
+               assert(total == 0, "didnt throw");
+            }
+            catch (error) {
+               return utils.ensureException(error);
+            }
+        })
+
+        it('should create remove event', async function() {
+            await increaseTimeTo(this.startTime)
+            await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner})
+            const {logs} = await this.crowdsale.deleteGrantee(investor, {from: owner})
+            const event = logs.find(e => e.event === "GrantDeleted")
+            should.exist(event)
+        })
+
+        it('should create an add event', async function() {
+           await increaseTimeTo(this.startTime)
+           const {logs} = await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
+           const event = logs.find(e => e.event === "GrantAdded")
+           should.exist(event)
+        })
+
+        it('should create an update event', async function() {
+           await increaseTimeTo(this.startTime)
+           await this.crowdsale.addUpdateGrantee(investor, 100, {from: owner});
+           const {logs} = await this.crowdsale.addUpdateGrantee(investor, 50, {from: owner});
+           const event = logs.find(e => e.event === "GrantUpdated")
+           should.exist(event)
+        })
+
+        it('should allocate token as expected', async function() {
+            await increaseTimeTo(this.startTime)
+            let max_grantees = await this.crowdsale.MAX_TOKEN_GRANTEES()
+            for(let i = 0; i < max_grantees; i++){
+               let address = "0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b750" + i
+               await this.crowdsale.addUpdateGrantee(address,100, {from: owner});
+            }
+
+            await increaseTimeTo(this.afterEndTime)
+            await this.crowdsale.finalize({from: owner})
+            for(let i = 0; i < max_grantees; i++){
+                let grantee = await this.crowdsale.presaleGranteesMapKeys(i);
+                let granteeVolume = await this.crowdsale.presaleGranteesMap(grantee);
+                let granteeBalance = await this.token.balanceOf(grantee);
+                assert.equal(granteeVolume+"", granteeBalance+"", "failed to allocate")
+            }
+        })
+  })
 
   describe('Total Found', function () {
 
