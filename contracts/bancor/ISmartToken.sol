@@ -1,6 +1,4 @@
 pragma solidity ^0.4.11;
-//import './ITokenHolder.sol';
-//import './IERC20Token.sol';
 
 /*
     Smart Token interface
