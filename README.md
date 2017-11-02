@@ -84,11 +84,12 @@ function deleteGrantee(address _grantee) external onlyOwner
 ```
 Deletes address for granted tokens.
 
-**setFiatRaised**
+**setFiatRaisedConvertedToWei**
 ```cs
-function setFiatRaised(uint256 _fiatRaised) external onlyOwner onlyWhileSale 
+function setFiatRaisedConvertedToWei(uint256 _fiatRaised) external onlyOwner onlyWhileSale 
 ```
 Sets funds collected outside the crowdsale in wei.
+funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
 
 #### Events
 

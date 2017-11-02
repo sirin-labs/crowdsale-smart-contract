@@ -39,7 +39,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address public walletReserve;   //35% of the total number of SRN tokens will be allocated to SIRIN LABS and as a reserve for the company to be used for future strategic plans for the created ecosystem
 
     // Funds collected outside the crowdsale in wei
-    uint256 public fiatRaised;
+    uint256 public fiatRaisedConvertedToWei;
 
     //Grantees - used for non-ether and presale bonus token generation
     address[] public presaleGranteesMapKeys;
@@ -150,7 +150,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     // @return the total funds collected in wei(ETH and none ETH).
     function getTotalFundsRaised() public constant returns (uint256) {
-        return fiatRaised.add(weiRaised);
+        return fiatRaisedConvertedToWei.add(weiRaised);
     }
 
     // =================================================================================================================
@@ -201,8 +201,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     }
 
     /// @dev Set funds collected outside the crowdsale in wei.
-    /// @param noneETHraised number of none eth raised.
-    function setFiatRaised(uint256 _fiatRaised) external onlyOwner onlyWhileSale {
-        fiatRaised = _fiatRaised;
+    /// funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
+    /// @param _fiatRaisedConvertedToWei number of none eth raised.
+    function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external onlyOwner onlyWhileSale {
+        fiatRaisedConvertedToWei = _fiatRaisedConvertedToWei;
     }
 }
