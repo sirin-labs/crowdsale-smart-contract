@@ -11,18 +11,18 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      Constants
     // =================================================================================================================
-    //Max amount of known addresses of which will get SRN by 'Grant' method.
+    // Max amount of known addresses of which will get SRN by 'Grant' method.
     uint256 public constant MAX_TOKEN_GRANTEES = 10;
 
-    //SRN to ETH base rate
+    // SRN to ETH base rate
     uint256 public constant EXCHANGE_RATE = 500;
 
     // =================================================================================================================
     //                                      Modifiers
     // =================================================================================================================
     /**
-       * @dev Throws if called by any account other than the owner.
-       */
+     * @dev Throws if called by any account other than the owner.
+     */
     modifier onlyWhileSale() {
         require(now >= startTime && now<endTime);
         _;
@@ -32,13 +32,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Members
     // =================================================================================================================
 
-    //wallets address for 60% of SRN allocation
+    // wallets address for 60% of SRN allocation
     address public walletFounder;   //10% of the total number of SRN tokens will be allocated to the founders and team
     address public walletOEM;       //10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation, SDK developers and rebate to device and Shield OS™ users
     address public walletBounties;  //5% of the total number of SRN tokens will be allocated to professional fees and Bounties
     address public walletReserve;   //35% of the total number of SRN tokens will be allocated to SIRIN LABS and as a reserve for the company to be used for future strategic plans for the created ecosystem
 
-    //Funds collected outside the crowdsale in wei
+    // Funds collected outside the crowdsale in wei
     uint256 public fiatRaised;
 
     //Grantees - used for non-ether and presale bonus token generation
@@ -74,7 +74,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Impl Crowdsale
     // =================================================================================================================
 
-    // @return the rate with bonus according to the time of the tx strting from 1000 down to 500
+    // @return the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
     // @Override
     function getRate() public returns (uint256) {
         uint256 newRate = rate;
@@ -118,31 +118,39 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //@Override
     function finalization() internal onlyOwner {
 
-        //granting bonuses for the pre crowdsale grantees:
+        // granting bonuses for the pre crowdsale grantees:
         for(uint8 i=0; i < presaleGranteesMapKeys.length; i++){
             token.issue(presaleGranteesMapKeys[i], presaleGranteesMap[presaleGranteesMapKeys[i]]);
         }
 
-        //Adding 60% of the total token supply (40% were generated during the crowdsale)
-        //40 * 2.5 = 100
+        // Adding 60% of the total token supply (40% were generated during the crowdsale)
+        // 40 * 2.5 = 100
         uint256 newTotalSupply = token.totalSupply().mul(250).div(100);
 
-        //10% of the total number of SRN tokens will be allocated to the founders and team
+        // 10% of the total number of SRN tokens will be allocated to the founders and team
         token.issue(walletFounder, newTotalSupply.mul(10).div(100));
 
-        //10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation,
-        //SDK developers and rebate to device and Shield OS™ users
+        // 10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation,
+        // SDK developers and rebate to device and Shield OS™ users
         token.issue(walletOEM, newTotalSupply.mul(10).div(100));
 
-        //5% of the total number of SRN tokens will be allocated to professional fees and Bounties
+        // 5% of the total number of SRN tokens will be allocated to professional fees and Bounties
         token.issue(walletBounties, newTotalSupply.mul(5).div(100));
 
-        //35% of the total number of SRN tokens will be allocated to SIRIN LABS,
-        //and as a reserve for the company to be used for future strategic plans for the created ecosystem
+        // 35% of the total number of SRN tokens will be allocated to SIRIN LABS,
+        // and as a reserve for the company to be used for future strategic plans for the created ecosystem
         token.issue(walletReserve, newTotalSupply.mul(35).div(100));
 
         // Re-enable transfers after the token sale.
         token.disableTransfers(false);
+    }
+
+    // =================================================================================================================
+    //                                      Public Methods
+    // =================================================================================================================
+    // @return the total funds collected in wei(ETH and none ETH).
+    function getTotalFundsRaised() public constant returns (uint256) {
+        return fiatRaised.add(weiRaised);
     }
 
     // =================================================================================================================
@@ -155,7 +163,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         require(_grantee != address(0));
         require(_value > 0);
 
-        //Adding new key if not presented:
+        // Adding new key if not presented:
         if(presaleGranteesMap[_grantee] == 0){
             require(presaleGranteesMapKeys.length < MAX_TOKEN_GRANTEES);
             presaleGranteesMapKeys.push(_grantee);
@@ -169,16 +177,16 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     }
 
     /// @dev deletes address for granted tokens.
-    /// @param _grantee address The address of the token grantee
+    /// @param _grantee address The address of the token grantee.
     function deleteGrantee(address _grantee) external onlyOwner onlyWhileSale {
         require(_grantee != address(0));
         require(presaleGranteesMap[_grantee] != 0);
 
         GrantDeleted(_grantee, presaleGranteesMap[_grantee]);
-        //delete from the map:
+        // delete from the map:
         delete presaleGranteesMap[_grantee];
 
-        //delete from the array (keys):
+        // delete from the array (keys):
         uint index;
         for(uint8 i=0; i < presaleGranteesMapKeys.length; i++){
             if(presaleGranteesMapKeys[i] == _grantee)
@@ -192,14 +200,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         presaleGranteesMapKeys.length--;
     }
 
-    /// @dev Set funds collected outside the crowdsale in wei
-    /// @param noneETHraised number of none eth raised
-    function setNoneEthRaised(uint256 noneETHraised) external onlyOwner onlyWhileSale {
-        fiatRaised = noneETHraised;
-    }
-
-    // @return totatl funds collected (  ETH and none ETH)
-    function getTotalFundsRaised() public constant returns (uint256) {
-        return fiatRaised.add(weiRaised);
+    /// @dev Set funds collected outside the crowdsale in wei.
+    /// @param noneETHraised number of none eth raised.
+    function setFiatRaised(uint256 _fiatRaised) external onlyOwner onlyWhileSale {
+        fiatRaised = _fiatRaised;
     }
 }
