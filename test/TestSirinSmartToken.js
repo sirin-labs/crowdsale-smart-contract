@@ -39,10 +39,9 @@ contract('SirinSmartToken', (accounts) => {
             try {
                 await token.transfer(accounts[1], 100);
                 assert(false, "didn't throw");
-            }
-            catch (error) {
+            } catch (error) {
                 return utils.ensureException(error);
             }
-         });
+        });
     });
 });

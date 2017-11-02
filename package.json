@@ -6,7 +6,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "truf test"
+    "test": "scripts/test.sh",
+    "coverage": "scripts/coverage.sh"
   },
   "repository": {
     "type": "git",
