@@ -156,7 +156,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      External Methods
     // =================================================================================================================
-    /// @dev Adds/Updates address for  granted tokens.
+    /// @dev Adds/Updates address and token allocation for token grants.
+    /// Granted tokens are allocated to non-ether, presale, buyers.
     /// @param _grantee address The address of the token grantee.
     /// @param _value uint256 The value of the grant.
     function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale{
@@ -176,7 +177,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         presaleGranteesMap[_grantee] = _value;
     }
 
-    /// @dev deletes address for granted tokens.
+    /// @dev deletes entries from the grants list.
     /// @param _grantee address The address of the token grantee.
     function deleteGrantee(address _grantee) external onlyOwner onlyWhileSale {
         require(_grantee != address(0));

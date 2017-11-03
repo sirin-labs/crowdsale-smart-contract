@@ -74,15 +74,16 @@ Returns the total funds collected in wei(ETH and none ETH).
 ```cs
 function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner
 ```
-Adds/Updates address for  granted tokens.
+Adds/Updates address and token allocation for token grants.
 
-Granted tokens addresses are used for non-ether and presale bonus token generation.
+Granted tokens are allocated to non-ether, presale, buyers.
+
 
 **deleteGrantee**
 ```cs
 function deleteGrantee(address _grantee) external onlyOwner
 ```
-Deletes address for granted tokens.
+Deletes entries from the grants list.
 
 **setFiatRaisedConvertedToWei**
 ```cs
