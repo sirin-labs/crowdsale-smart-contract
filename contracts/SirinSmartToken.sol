@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-import './bancor/BancorSmartToken.sol';
+import './bancor/LimitedTransferBancorSmartToken.sol';
 
 
 /**
