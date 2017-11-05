@@ -8,7 +8,7 @@ import '../ownership/Ownable.sol';
 /**
     BancorSmartToken
 */
-contract BancorSmartToken is MintableToken, ISmartToken, LimitedTransferToken {
+contract LimitedTransferBancorSmartToken is MintableToken, ISmartToken, LimitedTransferToken {
 
   // =================================================================================================================
   //                                      Impl ISmartToken
