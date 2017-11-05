@@ -2,13 +2,14 @@ pragma solidity ^0.4.11;
 
 import './bancor/BancorSmartToken.sol';
 
+
 /**
   A Token which is 'Bancor' compatible and can mint new tokens and pause token-transfer functionality
 */
-contract SirinSmartToken is BancorSmartToken  {
+contract SirinSmartToken is LimitedTransferBancorSmartToken {
 
     // =================================================================================================================
-    //                                           Members
+    //                                         Members
     // =================================================================================================================
 
     string public name = "SIRIN LABS";
