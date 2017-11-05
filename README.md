@@ -14,8 +14,8 @@ SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding 
 Please see the [contracts/](contracts) directory.
 
 ## The Crowdsale Specification
-*	Token will be ERC-20 compliant.
-*	Token will be [Bancor][bancor] compliant
+*	SRN token is ERC-20 compliant.
+*	SRN Token is [Bancor][bancor] compliant.
 *	Token allocation:
 	* 40% of the total number of SRN tokens will be allocated to contributors during the token sale.
 	* 10% of the total number of SRN tokens will be allocated to the founders and team and will be gradually vested over a 12-month period.
@@ -44,10 +44,11 @@ Please see the [contracts/](contracts) directory.
 
 ## Develop
 
-Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle] and [testrpc][testrpc].
+* Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle] and [testrpc][testrpc].
 
+* Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
 
-
+* SRN token is a **SmartToken™**, implementing Bancor's SmartToken contract.
 ## Code
 
 #### Class Diagram  
@@ -55,30 +56,41 @@ Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle
 ![Class Diagram](images/SirinCrowdSale.jpg)
 
 
-
-* Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
-
-* SRN token is Bancor compliant, implemented Bancor functionality following Bancor's guide.
-
-
 #### Functions
+
+**getRate**
+```cs
+function getRate() public returns (uint256) 
+```
+Returns the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
+
+**getTotalFundsRaised**
+```cs
+function getTotalFundsRaised() public constant returns (uint256) 
+```
+Returns the total funds collected in wei(ETH and none ETH).
 
 **addUpdateGrantee**
 ```cs
 function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner
 ```
-Adds/Updates address for  granted tokens.
+Adds/Updates address and token allocation for token grants.
 
-Granted tokens addresses are used for non-ether and presale bonus token generation.
+Granted tokens are allocated to non-ether, presale, buyers.
 
 
 **deleteGrantee**
 ```cs
 function deleteGrantee(address _grantee) external onlyOwner
 ```
-Deletes address for granted tokens.
+Deletes entries from the grants list.
 
-
+**setFiatRaisedConvertedToWei**
+```cs
+function setFiatRaisedConvertedToWei(uint256 _fiatRaised) external onlyOwner onlyWhileSale 
+```
+Sets funds collected outside the crowdsale in wei.
+funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
 
 #### Events
 

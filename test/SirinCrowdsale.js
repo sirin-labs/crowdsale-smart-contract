@@ -435,19 +435,19 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             assert.equal(total, 0);
         })
 
-        it('should allow only owner account to call setNoneEthRaised', async function() {
+        it('should allow only owner account to call setFiatRaisedConvertedToWei', async function() {
             await increaseTimeTo(this.startTime)
-            await this.crowdsale.setNoneEthRaised(1, {
+            await this.crowdsale.setFiatRaisedConvertedToWei(1, {
                 from: owner
             });
             let total = await this.crowdsale.getTotalFundsRaised();
             total.should.be.bignumber.equal(1);
         })
 
-        it('should not allow non-owner account to call setNoneEthRaised', async function() {
+        it('should not allow non-owner account to call setFiatRaisedConvertedToWei', async function() {
             try {
                 await increaseTimeTo(this.startTime)
-                await this.crowdsale.setNoneEthRaised(1, {
+                await this.crowdsale.setFiatRaisedConvertedToWei(1, {
                     from: investor
                 });
                 assert(false, "didn't throw");
@@ -456,9 +456,9 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             }
         })
 
-        it('should allow to call setNoneEthRaised only during crowdsale is active', async function() {
+        it('should allow to call setFiatRaisedConvertedToWei only during crowdsale is active', async function() {
             await increaseTimeTo(this.startTime + duration.days(1))
-            await this.crowdsale.setNoneEthRaised(1, {
+            await this.crowdsale.setFiatRaisedConvertedToWei(1, {
                 from: owner
             });
             let total = await this.crowdsale.getTotalFundsRaised();
@@ -468,7 +468,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         it('should not be at before crowdsale time', async function() {
             try {
                 await increaseTimeTo(this.startTime - duration.days(1))
-                await this.crowdsale.setNoneEthRaised(1, {
+                await this.crowdsale.setFiatRaisedConvertedToWei(1, {
                     from: owner
                 });
                 assert(false, "didn't throw");
@@ -480,7 +480,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         it('should not be at after crowdsale time', async function() {
             try {
                 await increaseTimeTo(this.afterEndTime)
-                await this.crowdsale.setNoneEthRaised(1, {
+                await this.crowdsale.setFiatRaisedConvertedToWei(1, {
                     from: owner
                 });
                 assert(false, "didn't throw");
@@ -495,14 +495,13 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 value: ether(1),
                 from: investor
             })
-            await this.crowdsale.setNoneEthRaised(ether(1), {
+            await this.crowdsale.setFiatRaisedConvertedToWei(ether(1), {
                 from: owner
             });
             let total = await this.crowdsale.getTotalFundsRaised();
 
             total.should.be.bignumber.equal(ether(2));
         })
-
     })
 
     describe('constructor parameters', function() {
