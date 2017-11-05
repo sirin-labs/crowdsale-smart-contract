@@ -174,12 +174,11 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         require(_grantee != address(0));
         require(presaleGranteesMap[_grantee] != 0);
 
-        GrantDeleted(_grantee, presaleGranteesMap[_grantee]);
         //delete from the map:
         delete presaleGranteesMap[_grantee];
 
         //delete from the array (keys):
-        uint index;
+        uint8 index;
         for(uint8 i=0; i < presaleGranteesMapKeys.length; i++){
             if(presaleGranteesMapKeys[i] == _grantee)
             {
@@ -190,6 +189,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         presaleGranteesMapKeys[index] = presaleGranteesMapKeys[presaleGranteesMapKeys.length-1];
         delete presaleGranteesMapKeys[presaleGranteesMapKeys.length-1];
         presaleGranteesMapKeys.length--;
+
+        GrantDeleted(_grantee, presaleGranteesMap[_grantee]);
     }
 
     /// @dev Set funds collected outside the crowdsale in wei
