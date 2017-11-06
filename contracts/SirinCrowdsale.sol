@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 
 import './crowdsale/FinalizableCrowdsale.sol';
@@ -76,7 +76,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @return the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
     // @Override
-    function getRate() public returns (uint256) {
+    function getRate() public constant returns (uint256) {
         uint256 newRate = rate;
 
         if (now < (startTime + 24 hours)) {
