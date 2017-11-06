@@ -9,7 +9,6 @@ function unify() {
 echo "pragma solidity ^0.4.18;" > ../Unified.sol
 
 # OZ
-unify ../contracts/math/Math.sol
 unify ../contracts/math/SafeMath.sol
 unify ../contracts/ownership/Ownable.sol
 unify ../contracts/token/ERC20Basic.sol
@@ -20,6 +19,7 @@ unify ../contracts/token/StandardToken.sol
 unify ../contracts/token/MintableToken.sol
 
 unify ../contracts/bancor/ISmartToken.sol
+unify ../contracts/bancor/LimitedTransferBancorSmartToken.sol
 unify ../contracts/SirinSmartToken.sol
 
 unify ../contracts/crowdsale/Crowdsale.sol
