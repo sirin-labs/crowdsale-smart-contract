@@ -18,4 +18,8 @@ contract SafeMathMock {
   function add(uint256 a, uint256 b) {
     result = SafeMath.add(a, b);
   }
+
+  function div(uint256 a, uint256 b) {
+    result = SafeMath.div(a, b);
+  }
 }
