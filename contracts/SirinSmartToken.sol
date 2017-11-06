@@ -20,7 +20,7 @@ contract SirinSmartToken is LimitedTransferBancorSmartToken {
     //                                         Constructor
     // =================================================================================================================
 
-    function SirinSmartToken() {
+    function SirinSmartToken() public {
         //Apart of 'Bancor' computability - triggered when a smart token is deployed
         NewSmartToken(address(this));
     }

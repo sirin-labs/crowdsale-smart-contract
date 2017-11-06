@@ -56,7 +56,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Constructors
     // =================================================================================================================
 
-    function SirinCrowdsale(uint256 _startTime, uint256 _endTime, address _wallet, address _walletFounder, address _walletOEM, address _walletBounties, address _walletReserve)
+    function SirinCrowdsale(uint256 _startTime,
+                            uint256 _endTime,
+                            address _wallet,
+                            address _walletFounder,
+                            address _walletOEM,
+                            address _walletBounties,
+                            address _walletReserve)
+                            public
     Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet)
     {
         require(_walletFounder != address(0));
