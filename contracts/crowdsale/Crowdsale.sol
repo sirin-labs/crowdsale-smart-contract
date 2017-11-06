@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.18;
 
 
 import '../token/MintableToken.sol';
@@ -106,7 +106,7 @@ contract Crowdsale {
     }
 
     // @return the crowdsale rate
-    function getRate() public returns (uint256) {
+    function getRate() public view returns (uint256) {
         return rate;
     }
 
