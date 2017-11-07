@@ -89,10 +89,10 @@ contract('SafeMath', function(accounts) {
             let b = 0;
 
             try{
-              await safeMath.div(a, b);
+              let subtract = await safeMath.div(a, b);
               assert.fail('should have thrown before');
             }catch(error) {
-              assertJump(error);
+              return utils.ensureException(error);
             }
 
 
