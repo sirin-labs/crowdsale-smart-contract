@@ -68,23 +68,16 @@ contract('SafeMath', function(accounts) {
         }
     });
 
-  describe('div', () => {
-        [
-            [5678, 1234],
-            [2, 1],
-            [123, 575689]
-        ].forEach((pair) => {
-            it(`divides ${pair[0]} and ${pair[1]} correctly`, async () => {
-                let a = pair[0];
-                let b = pair[1];
-                await safeMath.div(a, b);
-                let result = await safeMath.result();
+    it('should div correctly', async function() {
+            let a = 5678;
+            let b = 1234;
+            let div = await safeMath.div(a, b);
+            let result = await safeMath.result();
 
-                assert.equal(result, Math.floor(a / b));
-            });
+            assert.equal(result, Math.floor(a / b));
         });
 
-        it('should throw an error on division by 0', async () => {
+    it('should throw an error on division by 0', async () => {
             let a = 100;
             let b = 0;
 
@@ -95,6 +88,5 @@ contract('SafeMath', function(accounts) {
               return utils.ensureException(error);
             }
         });
-    });
 
 });
