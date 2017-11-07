@@ -157,8 +157,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Public Methods
     // =================================================================================================================
     // @return the total funds collected in wei(ETH and none ETH).
-    function getTotalFundsRaised() public constant returns (uint256) {
+    function getTotalFundsRaised() public view returns (uint256) {
         return fiatRaisedConvertedToWei.add(weiRaised);
+    }
+
+    // @return the total funds collected in wei(ETH and none ETH).
+    function hasStarted() public view returns (bool) {
+        return now >= startTime;
     }
 
     // =================================================================================================================
