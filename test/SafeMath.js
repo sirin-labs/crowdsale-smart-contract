@@ -94,8 +94,6 @@ contract('SafeMath', function(accounts) {
             }catch(error) {
               return utils.ensureException(error);
             }
-
-
         });
     });
 
