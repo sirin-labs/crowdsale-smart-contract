@@ -68,4 +68,25 @@ contract('SafeMath', function(accounts) {
         }
     });
 
+    it('should div correctly', async function() {
+            let a = 5678;
+            let b = 1234;
+            let div = await safeMath.div(a, b);
+            let result = await safeMath.result();
+
+            assert.equal(result, Math.floor(a / b));
+        });
+
+    it('should throw an error on division by 0', async () => {
+            let a = 100;
+            let b = 0;
+
+            try{
+              let subtract = await safeMath.div(a, b);
+              assert.fail('should have thrown before');
+            }catch(error) {
+              return utils.ensureException(error);
+            }
+        });
+
 });
