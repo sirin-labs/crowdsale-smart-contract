@@ -1,29 +1,34 @@
 #!/bin/sh
 
-rm -rf ../Unified.sol
+UNIFIED="Unified.sol";
+rm -rf Unified.sol
+
+cd contracts/
+
+UNIFIED_PATH="../$UNIFIED"
 
 function unify() {
-	grep -v '^[pragma|import]' $1 >> ../Unified.sol
+	grep -v '^[pragma|import]' $1 >> "$UNIFIED_PATH"
 }
 
-echo "pragma solidity ^0.4.18;" > ../Unified.sol
+echo "pragma solidity ^0.4.18;" > "$UNIFIED_PATH"
 
 # OZ
-unify ../contracts/math/SafeMath.sol
-unify ../contracts/ownership/Ownable.sol
-unify ../contracts/token/ERC20Basic.sol
-unify ../contracts/token/ERC20.sol
-unify ../contracts/token/BasicToken.sol
-unify ../contracts/token/LimitedTransferToken.sol
-unify ../contracts/token/StandardToken.sol
-unify ../contracts/token/MintableToken.sol
+unify math/SafeMath.sol
+unify ownership/Ownable.sol
+unify token/ERC20Basic.sol
+unify token/ERC20.sol
+unify token/BasicToken.sol
+unify token/LimitedTransferToken.sol
+unify token/StandardToken.sol
+unify token/MintableToken.sol
 
-unify ../contracts/bancor/ISmartToken.sol
-unify ../contracts/bancor/LimitedTransferBancorSmartToken.sol
-unify ../contracts/SirinSmartToken.sol
+unify bancor/ISmartToken.sol
+unify bancor/LimitedTransferBancorSmartToken.sol
+unify SirinSmartToken.sol
 
-unify ../contracts/crowdsale/Crowdsale.sol
-unify ../contracts/crowdsale/FinalizableCrowdsale.sol
+unify crowdsale/Crowdsale.sol
+unify crowdsale/FinalizableCrowdsale.sol
 
 # Sirin
-unify ../contracts/SirinCrowdsale.sol
+unify SirinCrowdsale.sol
