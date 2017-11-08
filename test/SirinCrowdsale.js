@@ -587,6 +587,14 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                     from: owner
                 })
         })
+
+         it('should create fiat event after update', async function() {
+              await increaseTimeTo(this.startTime)
+              await this.crowdsale.sendTransaction({value: ether(1),from: investor})
+              const {logs} = await this.crowdsale.setFiatRaisedConvertedToWei(ether(1), {from: owner});
+              const event = logs.find(e => e.event === "FiatRaisedUpdated")
+              should.exist(event)
+              })
     })
 
 })
