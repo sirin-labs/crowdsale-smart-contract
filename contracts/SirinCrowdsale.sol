@@ -24,7 +24,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyWhileSale() {
-        require(now >= startTime && now<endTime);
+        require(now >= startTime && now < endTime);
         _;
     }
 
@@ -157,8 +157,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Public Methods
     // =================================================================================================================
     // @return the total funds collected in wei(ETH and none ETH).
-    function getTotalFundsRaised() public constant returns (uint256) {
+    function getTotalFundsRaised() public view returns (uint256) {
         return fiatRaisedConvertedToWei.add(weiRaised);
+    }
+
+
+    // @return true if the crowdsale is active, hence users can buy tokens
+    function isActive() public view returns (bool) {
+        return now >= startTime && now < endTime;
     }
 
     // =================================================================================================================
