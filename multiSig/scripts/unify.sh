@@ -1,6 +1,11 @@
 #!/bin/sh
 
-rm -rf ../Unified.sol
+UNIFIED="Unified.sol";
+rm -rf Unified.sol
+
+cd contracts/
+
+UNIFIED_PATH="../$UNIFIED"
 
 function unify() {
 	grep -v '^[pragma|import]' $1 >> ../Unified.sol
