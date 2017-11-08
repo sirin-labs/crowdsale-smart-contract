@@ -51,6 +51,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     event GrantAdded(address indexed _grantee, uint256 _amount);
     event GrantUpdated(address indexed _grantee, uint256 _oldAmount, uint256 _newAmount);
     event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
+    event FiatRaisedUpdated(address indexed _address, uint256 _fiatRaised);
 
     // =================================================================================================================
     //                                      Constructors
@@ -208,5 +209,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     /// @param _fiatRaisedConvertedToWei number of none eth raised.
     function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external onlyOwner onlyWhileSale {
         fiatRaisedConvertedToWei = _fiatRaisedConvertedToWei;
+        FiatRaisedUpdated(msg.sender, fiatRaisedConvertedToWei);
     }
 }
