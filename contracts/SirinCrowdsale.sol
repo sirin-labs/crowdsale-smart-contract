@@ -84,7 +84,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @return the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
     // @Override
-    function getRate() public pure view returns (uint256) {
+    function getRate() public view returns (uint256) {
         uint256 newRate;
 
         if (now < (startTime + 24 hours))  {return 1000;}
