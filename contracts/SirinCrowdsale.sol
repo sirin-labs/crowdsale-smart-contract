@@ -50,14 +50,18 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     //Grantees - used for non-ether and presale bonus token generation
     address[] public presaleGranteesMapKeys;
+
     mapping (address => uint256) public presaleGranteesMap;
 
     // =================================================================================================================
     //                                      Events
     // =================================================================================================================
     event GrantAdded(address indexed _grantee, uint256 _amount);
+
     event GrantUpdated(address indexed _grantee, uint256 _oldAmount, uint256 _newAmount);
+
     event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
+
     event FiatRaisedUpdated(address indexed _address, uint256 _fiatRaised);
 
     // =================================================================================================================
@@ -65,13 +69,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
 
     function SirinCrowdsale(uint256 _startTime,
-                            uint256 _endTime,
-                            address _wallet,
-                            address _walletFounder,
-                            address _walletOEM,
-                            address _walletBounties,
-                            address _walletReserve)
-                            public
+    uint256 _endTime,
+    address _wallet,
+    address _walletFounder,
+    address _walletOEM,
+    address _walletBounties,
+    address _walletReserve)
+    public
     Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet) {
         require(_walletFounder != address(0));
         require(_walletOEM != address(0));
@@ -92,19 +96,19 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @Override
     function getRate() public view returns (uint256) {
 
-        if (now < (startTime + 24 hours))  {return 1000;}
-        if (now < (startTime + 2 days))    {return 950;}
-        if (now < (startTime + 3 days))    {return 900;}
-        if (now < (startTime + 4 days))    {return 855;}
-        if (now < (startTime + 5 days))    {return 810;}
-        if (now < (startTime + 6 days))    {return 770;}
-        if (now < (startTime + 7 days))    {return 730;}
-        if (now < (startTime + 8 days))    {return 690;}
-        if (now < (startTime + 9 days))    {return 650;}
-        if (now < (startTime + 10 days))   {return 615;}
-        if (now < (startTime + 11 days))   {return 580;}
-        if (now < (startTime + 12 days))   {return 550;}
-        if (now < (startTime + 13 days))   {return 525;}
+        if (now < (startTime + 24 hours)) {return 1000;}
+        if (now < (startTime + 2 days)) {return 950;}
+        if (now < (startTime + 3 days)) {return 900;}
+        if (now < (startTime + 4 days)) {return 855;}
+        if (now < (startTime + 5 days)) {return 810;}
+        if (now < (startTime + 6 days)) {return 770;}
+        if (now < (startTime + 7 days)) {return 730;}
+        if (now < (startTime + 8 days)) {return 690;}
+        if (now < (startTime + 9 days)) {return 650;}
+        if (now < (startTime + 10 days)) {return 615;}
+        if (now < (startTime + 11 days)) {return 580;}
+        if (now < (startTime + 12 days)) {return 550;}
+        if (now < (startTime + 13 days)) {return 525;}
 
         return rate;
 
@@ -117,9 +121,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //@Override
     function finalization() internal onlyOwner {
         super.finalization();
-        
+
         // granting bonuses for the pre crowdsale grantees:
-        for(uint8 i=0; i < presaleGranteesMapKeys.length; i++){
+        for (uint8 i = 0; i < presaleGranteesMapKeys.length; i++) {
             token.issue(presaleGranteesMapKeys[i], presaleGranteesMap[presaleGranteesMapKeys[i]]);
         }
 
@@ -171,13 +175,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         require(_value > 0);
 
         // Adding new key if not present:
-        if(presaleGranteesMap[_grantee] == 0){
+        if (presaleGranteesMap[_grantee] == 0) {
             require(presaleGranteesMapKeys.length < MAX_TOKEN_GRANTEES);
             presaleGranteesMapKeys.push(_grantee);
             GrantAdded(_grantee, _value);
         }
-        else{
-            GrantUpdated(_grantee, presaleGranteesMap[_grantee],_value);
+        else {
+            GrantUpdated(_grantee, presaleGranteesMap[_grantee], _value);
         }
 
         presaleGranteesMap[_grantee] = _value;
@@ -194,15 +198,15 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         //delete from the array (keys):
         uint8 index;
-        for(uint8 i=0; i < presaleGranteesMapKeys.length; i++){
-            if(presaleGranteesMapKeys[i] == _grantee)
+        for (uint8 i = 0; i < presaleGranteesMapKeys.length; i++) {
+            if (presaleGranteesMapKeys[i] == _grantee)
             {
                 index = i;
                 break;
             }
         }
-        presaleGranteesMapKeys[index] = presaleGranteesMapKeys[presaleGranteesMapKeys.length-1];
-        delete presaleGranteesMapKeys[presaleGranteesMapKeys.length-1];
+        presaleGranteesMapKeys[index] = presaleGranteesMapKeys[presaleGranteesMapKeys.length - 1];
+        delete presaleGranteesMapKeys[presaleGranteesMapKeys.length - 1];
         presaleGranteesMapKeys.length--;
 
         GrantDeleted(_grantee, presaleGranteesMap[_grantee]);
