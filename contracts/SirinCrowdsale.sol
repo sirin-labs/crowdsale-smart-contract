@@ -12,7 +12,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Constants
     // =================================================================================================================
     // Max amount of known addresses of which will get SRN by 'Grant' method.
-    uint256 public constant MAX_TOKEN_GRANTEES = 10;
+    //
+    // grantees addresses will be SirinLabs wallets addresses.
+    // these wallets will contain SRN tokens that will be used for 2 purposes only -
+    // 1. SRN tokens against raised fiat money
+    // 2. SRN tokens for presale bonus.
+    // we set the value to 10 (and not to 2) because we want to allow some flexibility for cases like fiat money that is raised close to the crowdsale.
+    // we limit the value to 10 (and not larger) to limit the run time of the function that process the grantees array.
+    uint8 public constant MAX_TOKEN_GRANTEES = 10;
 
     // SRN to ETH base rate
     uint256 public constant EXCHANGE_RATE = 500;
@@ -24,7 +31,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyWhileSale() {
-        require(now >= startTime && now < endTime);
+        require(isActive());
         _;
     }
 
@@ -85,38 +92,23 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @return the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
     // @Override
     function getRate() public view returns (uint256) {
-        uint256 newRate = rate;
 
-        if (now < (startTime + 24 hours)) {
-            newRate = 1000;
-        } else if (now < (startTime + 2 days)) {
-            newRate = 950;
-        } else if (now < (startTime + 3 days)) {
-            newRate = 900;
-        } else if (now < (startTime + 4 days)) {
-            newRate = 855;
-        } else if (now < (startTime + 5 days)) {
-            newRate = 810;
-        } else if (now < (startTime + 6 days)) {
-            newRate = 770;
-        } else if (now < (startTime + 7 days)) {
-            newRate = 730;
-        } else if (now < (startTime + 8 days)) {
-            newRate = 690;
-        } else if (now < (startTime + 9 days)) {
-            newRate = 650;
-        } else if (now < (startTime + 10 days)) {
-            newRate = 615;
-        } else if (now < (startTime + 11 days)) {
-            newRate = 580;
-        } else if (now < (startTime + 12 days)) {
-            newRate = 550;
-        } else if (now < (startTime + 13 days)) {
-            newRate = 525;
-        } else {
-            newRate = EXCHANGE_RATE;
-        }
-        return newRate;
+        if (now < (startTime + 24 hours))  {return 1000;}
+        if (now < (startTime + 2 days))    {return 950;}
+        if (now < (startTime + 3 days))    {return 900;}
+        if (now < (startTime + 4 days))    {return 855;}
+        if (now < (startTime + 5 days))    {return 810;}
+        if (now < (startTime + 6 days))    {return 770;}
+        if (now < (startTime + 7 days))    {return 730;}
+        if (now < (startTime + 8 days))    {return 690;}
+        if (now < (startTime + 9 days))    {return 650;}
+        if (now < (startTime + 10 days))   {return 615;}
+        if (now < (startTime + 11 days))   {return 580;}
+        if (now < (startTime + 12 days))   {return 550;}
+        if (now < (startTime + 13 days))   {return 525;}
+
+        return rate;
+
     }
 
     // =================================================================================================================
@@ -171,15 +163,15 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      External Methods
     // =================================================================================================================
-    /// @dev Adds/Updates address and token allocation for token grants.
-    /// Granted tokens are allocated to non-ether, presale, buyers.
-    /// @param _grantee address The address of the token grantee.
-    /// @param _value uint256 The value of the grant.
+    // @dev Adds/Updates address and token allocation for token grants.
+    // Granted tokens are allocated to non-ether, presale, buyers.
+    // @param _grantee address The address of the token grantee.
+    // @param _value uint256 The value of the grant.
     function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale{
         require(_grantee != address(0));
         require(_value > 0);
 
-        // Adding new key if not presented:
+        // Adding new key if not present:
         if(presaleGranteesMap[_grantee] == 0){
             require(presaleGranteesMapKeys.length < MAX_TOKEN_GRANTEES);
             presaleGranteesMapKeys.push(_grantee);
@@ -192,8 +184,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         presaleGranteesMap[_grantee] = _value;
     }
 
-    /// @dev deletes entries from the grants list.
-    /// @param _grantee address The address of the token grantee.
+    // @dev deletes entries from the grants list.
+    // @param _grantee address The address of the token grantee.
     function deleteGrantee(address _grantee) external onlyOwner onlyWhileSale {
         require(_grantee != address(0));
         require(presaleGranteesMap[_grantee] != 0);
@@ -217,9 +209,10 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         GrantDeleted(_grantee, presaleGranteesMap[_grantee]);
     }
 
-    /// @dev Set funds collected outside the crowdsale in wei.
-    /// funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
-    /// @param _fiatRaisedConvertedToWei number of none eth raised.
+    // @dev Set funds collected outside the crowdsale in wei.
+    //  note: we not to use accumulator to allow flexibility in case of humane mistakes.
+    // funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
+    // @param _fiatRaisedConvertedToWei number of none eth raised.
     function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external onlyOwner onlyWhileSale {
         fiatRaisedConvertedToWei = _fiatRaisedConvertedToWei;
         FiatRaisedUpdated(msg.sender, fiatRaisedConvertedToWei);
