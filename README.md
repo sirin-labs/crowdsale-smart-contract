@@ -60,19 +60,19 @@ Please see the [contracts/](contracts) directory.
 
 **getRate**
 ```cs
-function getRate() public returns (uint256) 
+function getRate() public view returns (uint256) 
 ```
 Returns the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
 
 **getTotalFundsRaised**
 ```cs
-function getTotalFundsRaised() public constant returns (uint256) 
+function getTotalFundsRaised() public view returns (uint256) 
 ```
 Returns the total funds collected in wei(ETH and none ETH).
 
 **addUpdateGrantee**
 ```cs
-function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner
+function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale
 ```
 Adds/Updates address and token allocation for token grants.
 
@@ -81,13 +81,13 @@ Granted tokens are allocated to non-ether, presale, buyers.
 
 **deleteGrantee**
 ```cs
-function deleteGrantee(address _grantee) external onlyOwner
+function deleteGrantee(address _grantee) external onlyOwner onlyWhileSale
 ```
 Deletes entries from the grants list.
 
 **setFiatRaisedConvertedToWei**
 ```cs
-function setFiatRaisedConvertedToWei(uint256 _fiatRaised) external onlyOwner onlyWhileSale 
+function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external onlyOwner onlyWhileSale
 ```
 Sets funds collected outside the crowdsale in wei.
 funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
