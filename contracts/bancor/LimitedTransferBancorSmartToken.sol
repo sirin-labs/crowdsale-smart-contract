@@ -34,7 +34,7 @@ contract LimitedTransferBancorSmartToken is MintableToken, ISmartToken, LimitedT
       totalSupply = totalSupply.sub(_amount);
 
       Destruction(_amount);
-      Transfer(0x0, _from, _amount);
+      Transfer(_from, 0x0, _amount);
   }
 
   // =================================================================================================================
