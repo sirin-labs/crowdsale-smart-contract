@@ -12,7 +12,7 @@ contract SirinSmartToken is LimitedTransferBancorSmartToken {
     //                                         Members
     // =================================================================================================================
 
-    string public name = "SIRIN LABS";
+    string public name = "SIRIN";
     string public symbol = "SRN";
     uint8 public decimals = 18;
 

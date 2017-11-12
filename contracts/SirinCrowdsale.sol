@@ -12,7 +12,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Constants
     // =================================================================================================================
     // Max amount of known addresses of which will get SRN by 'Grant' method.
-    uint256 public constant MAX_TOKEN_GRANTEES = 10;
+    //
+    // grantees addresses will be SirinLabs wallets addresses.
+    // these wallets will contain SRN tokens that will be used for 2 purposes only -
+    // 1. SRN tokens against raised fiat money
+    // 2. SRN tokens for presale bonus.
+    // we set the value to 10 (and not to 2) because we want to allow some flexibility for cases like fiat money that is raised close to the crowdsale.
+    // we limit the value to 10 (and not larger) to limit the run time of the function that process the grantees array.
+    uint8 public constant MAX_TOKEN_GRANTEES = 10;
 
     // SRN to ETH base rate
     uint256 public constant EXCHANGE_RATE = 500;
@@ -100,7 +107,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         if (now < (startTime + 12 days))   {return 550;}
         if (now < (startTime + 13 days))   {return 525;}
 
-        return EXCHANGE_RATE;
+        return rate;
 
     }
 
@@ -156,10 +163,10 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      External Methods
     // =================================================================================================================
-    /// @dev Adds/Updates address and token allocation for token grants.
-    /// Granted tokens are allocated to non-ether, presale, buyers.
-    /// @param _grantee address The address of the token grantee.
-    /// @param _value uint256 The value of the grant.
+    // @dev Adds/Updates address and token allocation for token grants.
+    // Granted tokens are allocated to non-ether, presale, buyers.
+    // @param _grantee address The address of the token grantee.
+    // @param _value uint256 The value of the grant.
     function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale{
         require(_grantee != address(0));
         require(_value > 0);
@@ -177,8 +184,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         presaleGranteesMap[_grantee] = _value;
     }
 
-    /// @dev deletes entries from the grants list.
-    /// @param _grantee address The address of the token grantee.
+    // @dev deletes entries from the grants list.
+    // @param _grantee address The address of the token grantee.
     function deleteGrantee(address _grantee) external onlyOwner onlyWhileSale {
         require(_grantee != address(0));
         require(presaleGranteesMap[_grantee] != 0);
@@ -202,9 +209,10 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         GrantDeleted(_grantee, presaleGranteesMap[_grantee]);
     }
 
-    /// @dev Set funds collected outside the crowdsale in wei.
-    /// funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
-    /// @param _fiatRaisedConvertedToWei number of none eth raised.
+    // @dev Set funds collected outside the crowdsale in wei.
+    //  note: we not to use accumulator to allow flexibility in case of humane mistakes.
+    // funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
+    // @param _fiatRaisedConvertedToWei number of none eth raised.
     function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external onlyOwner onlyWhileSale {
         fiatRaisedConvertedToWei = _fiatRaisedConvertedToWei;
         FiatRaisedUpdated(msg.sender, fiatRaisedConvertedToWei);
