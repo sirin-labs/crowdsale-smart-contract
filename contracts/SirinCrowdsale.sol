@@ -24,7 +24,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyWhileSale() {
-        require(now >= startTime && now < endTime);
+        require(isActive());
         _;
     }
 
@@ -84,39 +84,25 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @return the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
     // @Override
-    function getRate() public view returns (uint256) {
-        uint256 newRate = rate;
+    function getRate() public pure view returns (uint256) {
+        uint256 newRate;
 
-        if (now < (startTime + 24 hours)) {
-            newRate = 1000;
-        } else if (now < (startTime + 2 days)) {
-            newRate = 950;
-        } else if (now < (startTime + 3 days)) {
-            newRate = 900;
-        } else if (now < (startTime + 4 days)) {
-            newRate = 855;
-        } else if (now < (startTime + 5 days)) {
-            newRate = 810;
-        } else if (now < (startTime + 6 days)) {
-            newRate = 770;
-        } else if (now < (startTime + 7 days)) {
-            newRate = 730;
-        } else if (now < (startTime + 8 days)) {
-            newRate = 690;
-        } else if (now < (startTime + 9 days)) {
-            newRate = 650;
-        } else if (now < (startTime + 10 days)) {
-            newRate = 615;
-        } else if (now < (startTime + 11 days)) {
-            newRate = 580;
-        } else if (now < (startTime + 12 days)) {
-            newRate = 550;
-        } else if (now < (startTime + 13 days)) {
-            newRate = 525;
-        } else {
-            newRate = EXCHANGE_RATE;
-        }
-        return newRate;
+        if (now < (startTime + 24 hours))  {return 1000;}
+        if (now < (startTime + 2 days))    {return 950;}
+        if (now < (startTime + 3 days))    {return 900;}
+        if (now < (startTime + 4 days))    {return 855;}
+        if (now < (startTime + 5 days))    {return 810;}
+        if (now < (startTime + 6 days))    {return 770;}
+        if (now < (startTime + 7 days))    {return 730;}
+        if (now < (startTime + 8 days))    {return 690;}
+        if (now < (startTime + 9 days))    {return 650;}
+        if (now < (startTime + 10 days))   {return 615;}
+        if (now < (startTime + 11 days))   {return 580;}
+        if (now < (startTime + 12 days))   {return 550;}
+        if (now < (startTime + 13 days))   {return 525;}
+
+        return EXCHANGE_RATE;
+
     }
 
     // =================================================================================================================
@@ -179,7 +165,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         require(_grantee != address(0));
         require(_value > 0);
 
-        // Adding new key if not presented:
+        // Adding new key if not present:
         if(presaleGranteesMap[_grantee] == 0){
             require(presaleGranteesMapKeys.length < MAX_TOKEN_GRANTEES);
             presaleGranteesMapKeys.push(_grantee);
