@@ -1,5 +1,6 @@
 pragma solidity ^0.4.18;
 
+
 import './bancor/LimitedTransferBancorSmartToken.sol';
 
 
@@ -13,7 +14,9 @@ contract SirinSmartToken is LimitedTransferBancorSmartToken {
     // =================================================================================================================
 
     string public name = "SIRIN";
+
     string public symbol = "SRN";
+
     uint8 public decimals = 18;
 
     // =================================================================================================================
