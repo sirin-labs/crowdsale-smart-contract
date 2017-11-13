@@ -50,8 +50,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     //Grantees - used for non-ether and presale bonus token generation
     address[] public presaleGranteesMapKeys;
-
-    mapping (address => uint256) public presaleGranteesMap;
+    mapping (address => uint256) public presaleGranteesMap;  //address=>wei token amount
 
     // =================================================================================================================
     //                                      Events
@@ -166,11 +165,11 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      External Methods
     // =================================================================================================================
-    // @dev Adds/Updates address and token allocation for token grants.
-    // Granted tokens are allocated to non-ether, presale, buyers.
-    // @param _grantee address The address of the token grantee.
-    // @param _value uint256 The value of the grant.
-    function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale {
+    /// @dev Adds/Updates address and token allocation for token grants.
+    /// Granted tokens are allocated to non-ether, presale, buyers.
+    /// @param _grantee address The address of the token grantee.
+    /// @param _value uint256 The value of the grant in wei token.
+    function addUpdateGrantee(address _grantee, uint256 _value) external onlyOwner onlyWhileSale{
         require(_grantee != address(0));
         require(_value > 0);
 
