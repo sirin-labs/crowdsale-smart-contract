@@ -60,13 +60,13 @@ Please see the [contracts/](contracts) directory.
 
 **getRate**
 ```cs
-function getRate() public view returns (uint256) 
+function getRate() public view returns (uint256)
 ```
 Returns the rate in SRN per 1 ETH according to the time of the tx and the SRN pricing program.
 
 **getTotalFundsRaised**
 ```cs
-function getTotalFundsRaised() public view returns (uint256) 
+function getTotalFundsRaised() public view returns (uint256)
 ```
 Returns the total funds collected in wei(ETH and none ETH).
 
@@ -140,6 +140,7 @@ $ ./scripts/coverage.sh
 * **[Yossi Gruner](https://github.com/yossigruner)**
 * **[Gilad Or](https://github.com/gilador)**
 * **[Yaron Shlomo](https://github.com/yaronshlomo)**
+* **[Lior David](https://github.com/liordavid)**
 
 
 
@@ -155,6 +156,6 @@ Apache License v2.0
 [solidity]: https://solidity.readthedocs.io/en/develop/
 [truffle]: http://truffleframework.com/
 [testrpc]: https://github.com/ethereumjs/testrpc
-[bancor]: https://github.com/ethereumjs/testrpc
+[bancor]: https://github.com/bancorprotocol/contracts
 [openzeppelin]: https://openzeppelin.org
 [openzeppelin_v1.3.0]: https://github.com/OpenZeppelin/zeppelin-solidity/releases/tag/v1.3.0
