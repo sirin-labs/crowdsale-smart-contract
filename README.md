@@ -136,11 +136,7 @@ funds are converted to wei using the market conversion rate of USD\ETH on the da
 function claimTokenOwnership() external onlyOwner
 ```
 Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used, by the token sale contract itself to claim back ownership of the SirinSmartToken contract.
-<<<<<<< HEAD
 
-=======
-
->>>>>>> package-lock.json updated
 **claimRefundVaultOwnership**
 ```cs
 function claimRefundVaultOwnership() external onlyOwner
@@ -151,11 +147,7 @@ Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used
 ```cs
 function buyTokensWithGuarantee() public payable
 ```
-<<<<<<< HEAD
 Buy tokes with guarantee, these tokens and the ETH are saved in refundVault, so investor can refund them up to 60 days after the crowdsale ends.
-=======
-Buy tokes with guarantee, these tokens and the ETH are saved in refundVault, so investor can refund them up to 60 days after the crowdsale ends.
->>>>>>> package-lock.json updated
 
 #### SirinCrowdsale Events
 
