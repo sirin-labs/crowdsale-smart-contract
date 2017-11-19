@@ -146,6 +146,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         // Re-enable transfers after the token sale.
         token.disableTransfers(false);
+
+        // transfer ownership to crowdsale owner
+        token.transferOwnership(owner);
     }
 
     // =================================================================================================================
