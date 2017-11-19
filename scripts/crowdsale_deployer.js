@@ -1,3 +1,6 @@
+//run with DdayDeployer.js <unified contract file>
+//e.g: node scripts/crowdsale_deployer.js Unified.sol
+
 //libs
 const ABI   = require('ethereumjs-abi');
 const SOLC  = require('solc');
