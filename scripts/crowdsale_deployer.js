@@ -1,5 +1,5 @@
 //libs
-const ABI   = require('ethereumjs-ABI');
+const ABI   = require('ethereumjs-abi');
 const SOLC  = require('solc');
 const FS    = require("fs");
 const Eth   = require('web3-eth');
@@ -10,7 +10,7 @@ const CONTRACT_NAME     = "SirinCrowdsale";
 
 //general:
 const DAY               = 86400;
-const OWNER             ="0x00a329c0648769A73afAc7F9381E08FB43dBEA72";
+const OWNER             ="0x0886fa060da6f1e8aeb01a11bff3df096cf0acd4";
 
 //SirinCrowdsale constructor params:
 const startTime       = 1513000800;
