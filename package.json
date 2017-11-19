@@ -32,5 +32,10 @@
     "solidity-coverage": "^0.2.2",
     "truffle": "^4.0.1",
     "truffle-hdwallet-provider": "0.0.3"
+  },
+  "dependencies": {
+    "ethereumjs-abi": "^0.6.4",
+    "fs": "0.0.1-security",
+    "web3-eth": "^1.0.0-beta.26"
   }
 }
