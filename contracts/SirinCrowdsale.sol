@@ -28,7 +28,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     //                                      Modifiers
     // =================================================================================================================
     /**
-     * @dev Throws if called not during the crowdsale time frame
+     * @dev Throws if called not during the crowdsale time frame 
      */
     modifier onlyWhileSale() {
         require(isActive());
