@@ -44,6 +44,7 @@ function processContract(contractFilePAth){
     printToFile(CONTRACT_NAME + "_bin.BIN", bytecode.toString('hex'));
     printToFile(CONTRACT_NAME + "_ctor_params.txt", ctorParamsEncoded.toString('hex'));
     printToFile(CONTRACT_NAME + "_abi.ABI", abi);
+    //TODO create md5
 
     console.log("\nConstructor parameters:" + "\n-----------------------" + "\nstartTime:       " + startTime + "\nendTime:         " + endTime + "\nwallet:          " + wallet + "\nwalletFounder:   " + walletFounder + "\nwalletOEM:       " +walletOEM + "\nwalletBounties:  " +walletBounties + "\nwalletReserve:   " + walletReserve);
 
