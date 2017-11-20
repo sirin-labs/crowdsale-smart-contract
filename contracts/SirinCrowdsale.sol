@@ -27,6 +27,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      Modifiers
     // =================================================================================================================
+
     /**
      * @dev Throws if called by any account other than the owner.
      */
@@ -149,6 +150,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         // transfer ownership to crowdsale owner
         token.transferOwnership(owner);
+
+        // Re-enable destroy function after the token sale.
+        token.setDestroyEnable(true);
     }
 
     // =================================================================================================================

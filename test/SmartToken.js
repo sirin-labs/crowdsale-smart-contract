@@ -74,8 +74,25 @@ contract('SmartToken', (accounts) => {
         }
     });
 
+    it('verifies that destroy enable flag must be true before calling the destroy function', async () => {
+        let token = await SmartToken.new();
+
+        await token.issue(accounts[1], 100);
+        try {
+            await token.destroy(accounts[1], 20);
+            assert(false, "didn't throw");
+        } catch (error) {
+            assert(true,utils.ensureException(error));
+        }
+        await token.setDestroyEnable(true);
+        await token.destroy(accounts[1], 20);
+        let balance = await token.balanceOf.call(accounts[1]);
+        assert.equal(balance, 80);
+    });
+
     it('verifies that destroy tokens updates the target balance and the total supply', async () => {
         let token = await SmartToken.new();
+        await token.setDestroyEnable(true);
         await token.issue(accounts[1], 100);
         await token.destroy(accounts[1], 20);
         let totalSupply = await token.totalSupply.call();
@@ -86,6 +103,7 @@ contract('SmartToken', (accounts) => {
 
     it('verifies that the owner can destroy tokens', async () => {
         let token = await SmartToken.new();
+        await token.setDestroyEnable(true);
         await token.issue(accounts[1], 100);
         await token.destroy(accounts[1], 20);
         let balance = await token.balanceOf.call(accounts[1]);
@@ -94,6 +112,7 @@ contract('SmartToken', (accounts) => {
 
     it('verifies that the owner can destroy tokens from his/her own account', async () => {
         let token = await SmartToken.new();
+        await token.setDestroyEnable(true);
         await token.issue(accounts[0], 100);
         await token.destroy(accounts[0], 20);
         let balance = await token.balanceOf.call(accounts[0]);
@@ -102,6 +121,7 @@ contract('SmartToken', (accounts) => {
 
     it('verifies that a holder can destroy tokens from his/her own account', async () => {
         let token = await SmartToken.new();
+        await token.setDestroyEnable(true);
         await token.issue(accounts[1], 100);
         await token.destroy(accounts[1], 20);
         let balance = await token.balanceOf.call(accounts[1]);
@@ -110,6 +130,7 @@ contract('SmartToken', (accounts) => {
 
     it('should throw when a non owner attempts to destroy tokens', async () => {
         let token = await SmartToken.new();
+        await token.setDestroyEnable(true);
         await token.issue(accounts[1], 100);
 
         try {

@@ -10,46 +10,50 @@ import '../ownership/Ownable.sol';
 */
 contract LimitedTransferBancorSmartToken is MintableToken, ISmartToken, LimitedTransferToken {
 
-  // =================================================================================================================
-  //                                      Impl ISmartToken
-  // =================================================================================================================
+    // =================================================================================================================
+    //                                      Impl ISmartToken
+    // =================================================================================================================
 
-  //@Override
-  function disableTransfers(bool _disable) onlyOwner public {
-      transfersEnabled = !_disable;
-  }
+    //@Override
+    function disableTransfers(bool _disable) onlyOwner public {
+        transfersEnabled = !_disable;
+    }
 
-  //@Override
-  function issue(address _to, uint256 _amount) onlyOwner public {
-      require(super.mint(_to, _amount));
-      Issuance(_amount);
-  }
+    function setDestroyEnable(bool _enable) public {
+        destroyEnabled = _enable;
+    }
 
-  //@Override
-  function destroy(address _from, uint256 _amount) public {
+    //@Override
+    function issue(address _to, uint256 _amount) onlyOwner public {
+        require(super.mint(_to, _amount));
+        Issuance(_amount);
+    }
 
-      require(msg.sender == _from || msg.sender == owner); // validate input
+    //@Override
+    function destroy(address _from, uint256 _amount) canDestroy public {
 
-      balances[_from] = balances[_from].sub(_amount);
-      totalSupply = totalSupply.sub(_amount);
+        require(msg.sender == _from || msg.sender == owner); // validate input
 
-      Destruction(_amount);
-      Transfer(_from, 0x0, _amount);
-  }
+        balances[_from] = balances[_from].sub(_amount);
+        totalSupply = totalSupply.sub(_amount);
 
-  // =================================================================================================================
-  //                                      Impl LimitedTransferToken
-  // =================================================================================================================
+        Destruction(_amount);
+        Transfer(_from, 0x0, _amount);
+    }
+
+    // =================================================================================================================
+    //                                      Impl LimitedTransferToken
+    // =================================================================================================================
 
 
-  // Enable/Disable token transfer
-  // Tokens will be locked in their wallets until the end of the Crowdsale.
-  // @holder - token`s owner
-  // @time - not used (framework unneeded functionality)
-  //
-  // @Override
-  function transferableTokens(address holder, uint64 time) public constant returns (uint256) {
-      require(transfersEnabled);
-      return super.transferableTokens(holder, time);
-  }
+    // Enable/Disable token transfer
+    // Tokens will be locked in their wallets until the end of the Crowdsale.
+    // @holder - token`s owner
+    // @time - not used (framework unneeded functionality)
+    //
+    // @Override
+    function transferableTokens(address holder, uint64 time) public constant returns (uint256) {
+        require(transfersEnabled);
+        return super.transferableTokens(holder, time);
+    }
 }

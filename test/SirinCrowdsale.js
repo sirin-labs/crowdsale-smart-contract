@@ -133,6 +133,41 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         });
     })
 
+    describe('Token destroy', function() {
+
+        it('should not allow destroy before after finalize', async function() {
+
+            await increaseTimeTo(this.startTime)
+            await this.crowdsale.sendTransaction({
+                value: value,
+                from: investor
+            })
+
+            try {
+                await this.token.destroy(investor, 20, {from: investor});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+        })
+
+        it('should allow destroy after finalize', async function() {
+
+            await increaseTimeTo(this.startTime)
+            await this.crowdsale.sendTransaction({
+                value: value,
+                from: investor
+            })
+
+            await increaseTimeTo(this.afterEndTime)
+            await this.crowdsale.finalize({
+                from: owner
+            })
+
+            await this.token.destroy(investor, 20, {from: investor});
+        })
+    })
+
+
     describe('Token transfer', function() {
 
         it('should not allow transfer before after finalize', async function() {
@@ -171,6 +206,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             });
         })
     })
+
 
     describe('Finalize allocation', function() {
 
