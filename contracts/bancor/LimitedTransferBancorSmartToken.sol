@@ -19,7 +19,7 @@ contract LimitedTransferBancorSmartToken is MintableToken, ISmartToken, LimitedT
         transfersEnabled = !_disable;
     }
 
-    function setDestroyEnabled(bool _enable) public {
+    function setDestroyEnabled(bool _enable) onlyOwner public {
         destroyEnabled = _enable;
     }
 

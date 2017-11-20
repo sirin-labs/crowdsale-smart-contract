@@ -74,6 +74,29 @@ contract('SmartToken', (accounts) => {
         }
     });
 
+    it('verifies that the owner can disable & re-enable destroy', async () => {
+        let token = await SmartToken.new();
+        await token.setDestroyEnabled(true);
+        let destroyEnabled = await token.destroyEnabled.call();
+        assert.equal(destroyEnabled, true);
+        await token.setDestroyEnabled(false);
+        destroyEnabled  = await token.destroyEnabled.call();
+        assert.equal(destroyEnabled, false);
+    });
+
+    it('should throw when a non owner attempts to enable destroy flag', async () => {
+        let token = await SmartToken.new();
+
+        try {
+            await token.setDestroyEnabled(true, {
+                from: accounts[1]
+            });
+            assert(false, "didn't throw");
+        } catch (error) {
+            return utils.ensureException(error);
+        }
+    });
+
     it('verifies that destroy enable flag must be true before calling the destroy function', async () => {
         let token = await SmartToken.new();
 
