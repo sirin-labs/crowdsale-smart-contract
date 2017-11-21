@@ -6,23 +6,10 @@ pragma solidity ^0.4.18;
 contract ISmartToken {
 
     // =================================================================================================================
-    //                                      Modifiers
-    // =================================================================================================================
-
-    /**
-     * @dev Throws if destroy flag is not enabled.
-     */
-    modifier canDestroy() {
-        require(destroyEnabled);
-        _;
-    }
-
-    // =================================================================================================================
     //                                      Members
     // =================================================================================================================
 
     bool public transfersEnabled = false;
-    bool public destroyEnabled = false;
 
     // =================================================================================================================
     //                                      Event
@@ -40,7 +27,6 @@ contract ISmartToken {
     // =================================================================================================================
 
     function disableTransfers(bool _disable) public;
-    function setDestroyEnabled(bool _enable) public;
     function issue(address _to, uint256 _amount) public;
     function destroy(address _from, uint256 _amount) public;
 }

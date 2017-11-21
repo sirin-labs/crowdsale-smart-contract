@@ -11,16 +11,38 @@ import '../ownership/Ownable.sol';
 contract LimitedTransferBancorSmartToken is MintableToken, ISmartToken, LimitedTransferToken {
 
     // =================================================================================================================
+    //                                      Modifiers
+    // =================================================================================================================
+
+    /**
+     * @dev Throws if destroy flag is not enabled.
+     */
+    modifier canDestroy() {
+        require(destroyEnabled);
+        _;
+    }
+
+    // =================================================================================================================
+    //                                      Members
+    // =================================================================================================================
+
+    bool public destroyEnabled = false;
+
+    // =================================================================================================================
+    //                                      Public Functions
+    // =================================================================================================================
+
+    function setDestroyEnabled(bool _enable) onlyOwner public {
+        destroyEnabled = _enable;
+    }
+
+    // =================================================================================================================
     //                                      Impl ISmartToken
     // =================================================================================================================
 
     //@Override
     function disableTransfers(bool _disable) onlyOwner public {
         transfersEnabled = !_disable;
-    }
-
-    function setDestroyEnabled(bool _enable) onlyOwner public {
-        destroyEnabled = _enable;
     }
 
     //@Override
