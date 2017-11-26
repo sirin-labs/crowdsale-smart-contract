@@ -18,7 +18,7 @@ Please see the [contracts/](contracts) directory.
 *	SRN Token is [Bancor][bancor] compliant.
 *	Token allocation:
 	* 40% of the total number of SRN tokens will be allocated to contributors during the token sale.
-	* 10% of the total number of SRN tokens will be allocated to the founders and team and will be gradually vested over a 12-month period.
+	* 10% of the total number of SRN tokens will be allocated to the founders and team.
 	* 10% of the total number of SRN tokens will be allocated to OEMs, Operating System implementation, SDK developers and rebate of sold devices.
 	* 5% of the total number of SRN tokens will be allocated to professional fees and bounties.
 	* 35% of the total number of SRN tokens will be allocated to SIRIN LABS, to be used for future strategic plans and to develop the SIRIN LABS' ecosystem.
@@ -56,7 +56,7 @@ Please see the [contracts/](contracts) directory.
 ![Class Diagram](images/SirinCrowdSale.jpg)
 
 
-#### Functions
+#### SirinCrowdsale Functions
 
 **getRate**
 ```cs
@@ -92,7 +92,7 @@ function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external
 Sets funds collected outside the crowdsale in wei.
 funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
 
-#### Events
+#### SirinCrowdsale Events
 
 **GrantAdded**
 ```cs
@@ -111,6 +111,11 @@ event GrantUpdated(address indexed _grantee, uint256 _oldAmount, uint256 _newAmo
 event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
 ```
 
+
+**FiatRaisedUpdated**
+```cs
+event FiatRaisedUpdated(address indexed _address, uint256 _fiatRaised)
+```
 
 ### Dependencies
 
