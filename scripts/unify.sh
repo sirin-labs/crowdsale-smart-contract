@@ -15,6 +15,7 @@ echo "pragma solidity ^0.4.18;" > "$UNIFIED_PATH"
 
 # OZ
 unify math/SafeMath.sol
+unify ownership/Claimable.sol
 unify ownership/Ownable.sol
 unify token/ERC20Basic.sol
 unify token/ERC20.sol
