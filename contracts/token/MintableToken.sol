@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 import './StandardToken.sol';
-import '../ownership/Ownable.sol';
+import '../ownership/Claimable.sol';
 
 
 
@@ -13,7 +13,7 @@ import '../ownership/Ownable.sol';
  * Based on code by TokenMarketNet: https://github.com/TokenMarketNet/ico/blob/master/contracts/MintableToken.sol
  */
 
-contract MintableToken is StandardToken, Ownable {
+contract MintableToken is StandardToken, Claimable {
   event Mint(address indexed to, uint256 amount);
   event MintFinished();
 

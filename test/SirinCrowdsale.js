@@ -258,6 +258,11 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
 
         it('should set token owner to crowdsale owner', async function() {
+
+            await this.token.claimOwnership({
+                from: owner
+            })
+
             let tokenOwner = await this.token.owner();
             assert.equal(tokenOwner, owner);
         })
