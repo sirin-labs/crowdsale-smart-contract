@@ -25,7 +25,9 @@ contract RefundVault is Ownable {
 
     event Closed();
     event RefundsEnabled();
-    event Refunded(address indexed beneficiary, uint256 weiAmount);
+    event RefundedETH(address indexed beneficiary, uint256 weiAmount);
+    event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
+
 
     function RefundVault(address _wallet, ERC20 _token, address _sirinBeneficiary) public {
         require(_wallet != address(0));
@@ -67,7 +69,7 @@ contract RefundVault is Ownable {
         token.transferFrom(address(this), sirinBeneficiary, depositedTokenValue);
         investor.transfer(depositedValue);
 
-        Refunded(investor, depositedValue);
+        RefundedETH(investor, depositedValue);
     }
 
     function claimToken(address investor, uint256 tokensToClaim) public {
@@ -89,6 +91,6 @@ contract RefundVault is Ownable {
         depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
         token.transferFrom(address(this), investor, tokensToClaim);
         wallet.transfer(claimedETH);
-        Refunded(investor, depositedTokenValue);
+        TokensClaimed(investor, depositedTokenValue);
     }
 }
