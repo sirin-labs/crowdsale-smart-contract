@@ -76,7 +76,7 @@ contract RefundVault is Ownable {
         require(msg.sender == investor || msg.sender == owner); // validate input
 
 
-    uint256 depositedTokenValue = depositedToken[investor];
+        uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
         if (depositedTokenValue < tokensToClaim) {

@@ -7,7 +7,6 @@ import './math/SafeMath.sol';
 import './SirinSmartToken.sol';
 
 
-
 contract SirinCrowdsale is FinalizableCrowdsale {
 
     // =================================================================================================================
