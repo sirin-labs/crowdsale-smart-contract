@@ -93,7 +93,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         walletBounties = _walletBounties;
         walletReserve = _walletReserve;
 
-        refundVault  = new RefundVault(_wallet, token);
+        refundVault  = new RefundVault(_wallet, token, _walletReserve);
 
     }
 
@@ -280,6 +280,4 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     function goalReached() public view returns (bool) {
         return endTime + 60 days >= now;
     }
-
-
 }

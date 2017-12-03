@@ -28,6 +28,7 @@ unify bancor/ISmartToken.sol
 unify bancor/LimitedTransferBancorSmartToken.sol
 unify SirinSmartToken.sol
 
+unify crowdsale/RefundVault.sol
 unify crowdsale/Crowdsale.sol
 unify crowdsale/FinalizableCrowdsale.sol
 

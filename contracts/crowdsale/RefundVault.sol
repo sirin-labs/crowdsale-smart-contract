@@ -21,15 +21,17 @@ contract RefundVault is Ownable {
     address public wallet;
     ERC20 public token;
     State public state;
+    address public sirinBeneficiary;
 
     event Closed();
     event RefundsEnabled();
     event Refunded(address indexed beneficiary, uint256 weiAmount);
 
-    function RefundVault(address _wallet, ERC20 _token) public {
+    function RefundVault(address _wallet, ERC20 _token, address _sirinBeneficiary) public {
         require(_wallet != address(0));
         wallet = _wallet;
         token = _token;
+        sirinBeneficiary = _sirinBeneficiary;
         state = State.Active;
     }
 
@@ -56,8 +58,14 @@ contract RefundVault is Ownable {
         require(state == State.Refunding);
 
         uint256 depositedValue = depositedETH[investor];
+        uint256 depositedTokenValue = depositedToken[investor];
+
         depositedETH[investor] = 0;
+        depositedToken[investor] = 0;
+
+        token.transferFrom(address(this), sirinBeneficiary, depositedTokenValue);
         investor.transfer(depositedValue);
+
         Refunded(investor, depositedValue);
     }
 
