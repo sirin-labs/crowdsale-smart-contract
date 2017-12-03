@@ -248,7 +248,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         uint256 weiAmount = msg.value;
 
         // calculate token amount to be created
-        uint256 tokens = weiAmount.mul(rate);
+        uint256 tokens = weiAmount.mul(getRate());
         tokens = tokens.div(2);
 
         // update state
