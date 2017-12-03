@@ -31,6 +31,8 @@ contract RefundVault is Ownable {
 
     function RefundVault(address _wallet, ERC20 _token, address _sirinBeneficiary) public {
         require(_wallet != address(0));
+        require(_sirinBeneficiary != address(0));
+
         wallet = _wallet;
         token = _token;
         sirinBeneficiary = _sirinBeneficiary;
