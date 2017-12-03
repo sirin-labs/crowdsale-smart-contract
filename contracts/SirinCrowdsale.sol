@@ -1,9 +1,11 @@
 pragma solidity ^0.4.18;
 
 
+import './crowdsale/RefundVault.sol';
 import './crowdsale/FinalizableCrowdsale.sol';
 import './math/SafeMath.sol';
 import './SirinSmartToken.sol';
+
 
 
 contract SirinCrowdsale is FinalizableCrowdsale {
@@ -53,6 +55,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address[] public presaleGranteesMapKeys;
     mapping (address => uint256) public presaleGranteesMap;  //address=>wei token amount
 
+    RefundVault private refundVault;
+
     // =================================================================================================================
     //                                      Events
     // =================================================================================================================
@@ -63,6 +67,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
 
     event FiatRaisedUpdated(address indexed _address, uint256 _fiatRaised);
+
+    event TokenPurchaseWithGuarantee(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
     // =================================================================================================================
     //                                      Constructors
@@ -86,6 +92,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         walletOEM = _walletOEM;
         walletBounties = _walletBounties;
         walletReserve = _walletReserve;
+
+        refundVault  = new RefundVault(_wallet, token);
+
     }
 
     // =================================================================================================================
@@ -151,8 +160,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // Re-enable destroy function after the token sale.
         token.setDestroyEnabled(true);
 
+        refundVault.enableRefunds();
+
         // transfer ownership to crowdsale owner
         token.transferOwnership(owner);
+
+        refundVault.transferOwnership(owner);
+
     }
 
     // =================================================================================================================
@@ -226,4 +240,46 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         fiatRaisedConvertedToWei = _fiatRaisedConvertedToWei;
         FiatRaisedUpdated(msg.sender, fiatRaisedConvertedToWei);
     }
+
+    // low level token purchase function
+    function buyTokensWithGuarantee() public payable {
+        require(msg.sender != address(0));
+        require(validPurchase());
+
+        uint256 weiAmount = msg.value;
+
+        // calculate token amount to be created
+        uint256 tokens = weiAmount.mul(rate);
+        tokens = tokens.div(2);
+
+        // update state
+        weiRaised = weiRaised.add(weiAmount);
+
+        token.mint(address(refundVault), tokens);
+        TokenPurchaseWithGuarantee(msg.sender, address(refundVault), weiAmount, tokens);
+
+        refundVault.deposit.value(msg.value)(msg.sender, tokens);
+    }
+
+    // if crowdsale is unsuccessful, investors can claim refunds here
+    function claimETHRefund() public {
+        require(isFinalized);
+        require(!goalReached());
+
+        refundVault.refundETH(msg.sender);
+    }
+
+    function claimToken(uint256 tokenToClaimAmount) public {
+        require(isFinalized);
+        require(msg.sender != address(0));
+        require(tokenToClaimAmount != 0);
+
+        refundVault.claimToken(msg.sender, tokenToClaimAmount);
+    }
+
+    function goalReached() public view returns (bool) {
+        return endTime + 60 days >= now;
+    }
+
+
 }

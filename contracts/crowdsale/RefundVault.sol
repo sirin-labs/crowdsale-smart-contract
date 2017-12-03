@@ -1,0 +1,83 @@
+pragma solidity ^0.4.18;
+
+import '../math/SafeMath.sol';
+import '../ownership/Ownable.sol';
+import '../token/ERC20.sol';
+
+
+/**
+ * @title RefundVault
+ * @dev This contract is used for storing funds while a crowdsale
+ * is in progress. Supports refunding the money if crowdsale fails,
+ * and forwarding it if crowdsale is successful.
+ */
+contract RefundVault is Ownable {
+    using SafeMath for uint256;
+
+    enum State { Active, Refunding, Closed }
+
+    mapping (address => uint256) public depositedETH;
+    mapping (address => uint256) public depositedToken;
+    address public wallet;
+    ERC20 public token;
+    State public state;
+
+    event Closed();
+    event RefundsEnabled();
+    event Refunded(address indexed beneficiary, uint256 weiAmount);
+
+    function RefundVault(address _wallet, ERC20 _token) public {
+        require(_wallet != address(0));
+        wallet = _wallet;
+        token = _token;
+        state = State.Active;
+    }
+
+    function deposit(address investor, uint256 tokensAmount) onlyOwner public payable {
+        require(state == State.Active);
+        depositedETH[investor] = depositedETH[investor].add(msg.value);
+        depositedToken[investor] = depositedToken[investor].add(tokensAmount);
+    }
+
+    function close() onlyOwner public {
+        require(state == State.Active);
+        state = State.Closed;
+        Closed();
+        wallet.transfer(this.balance);
+    }
+
+    function enableRefunds() onlyOwner public {
+        require(state == State.Active);
+        state = State.Refunding;
+        RefundsEnabled();
+    }
+
+    function refundETH(address investor) public {
+        require(state == State.Refunding);
+
+        uint256 depositedValue = depositedETH[investor];
+        depositedETH[investor] = 0;
+        investor.transfer(depositedValue);
+        Refunded(investor, depositedValue);
+    }
+
+    function claimToken(address investor, uint256 tokensToClaim) public {
+        require(state == State.Refunding);
+        require(tokensToClaim != 0);
+
+        uint256 depositedTokenValue = depositedToken[investor];
+        uint256 depositedETHValue = depositedETH[investor];
+
+        if (depositedTokenValue < tokensToClaim) {
+            revert();
+        }
+
+        uint256 claimedETH = tokensToClaim.mul(depositedETHValue).div(depositedETHValue);
+
+        depositedETH[investor] = claimedETH.sub(claimedETH);
+        depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
+        token.transferFrom(address(this), investor, tokensToClaim);
+        wallet.transfer(claimedETH);
+        Refunded(investor, depositedTokenValue);
+    }
+}
