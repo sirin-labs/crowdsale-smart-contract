@@ -166,7 +166,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // Re-enable destroy function after the token sale.
         token.setDestroyEnabled(true);
 
-        // Enable enable ETH refunds and token claim.
+        // Enable ETH refunds and token claim.
         refundVault.enableRefunds();
 
         // transfer token ownership to crowdsale owner
