@@ -18,16 +18,16 @@ const OUTPUT_FOLDER = "output"
 
 //general:
 const DAY = 86400;
-const OWNER = "0x00a329c0648769A73afAc7F9381E08FB43dBEA72";
+const OWNER = "0x00e2fD99e23389235238552838de01414D5399c3";
 
 //SirinCrowdsale constructor params:
 const startTime         = 1513080000; //(Tue, 12 Dec 2017 12:00:00 GMT)
 const endTime           = startTime + 14 * DAY;
-const wallet            = "0x00a329c0648769A73afAc7F9381E08FB43dBEA72";
-const walletFounder     = "0x00F757ced08EA8591B027e2070E1d8E6c09d709d";
-const walletOEM         = "0x0029ff4cfc6824aC4ae662804FF1767C104d6C9d";
-const walletBounties    = "0x007876b87F84c946f61b16978c2ec043aAD1B433";
-const walletReserve     = "0x00e00ed4828e405e7d41Fa7C8Fa37b1692a85efa";
+const wallet            = "0x00e2fD99e23389235238552838de01414D5399c3";
+const walletFounder     = "0x00e2fD99e23389235238552838de01414D5399c3";
+const walletOEM         = "0x00e2fD99e23389235238552838de01414D5399c3";
+const walletBounties    = "0x00e2fD99e23389235238552838de01414D5399c3";
+const walletReserve     = "0x00e2fD99e23389235238552838de01414D5399c3";
 
 
 var eth = new Eth(Eth.givenProvider || 'http://127.0.0.1:8545');

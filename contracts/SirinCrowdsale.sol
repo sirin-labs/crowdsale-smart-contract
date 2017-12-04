@@ -60,7 +60,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address[] public presaleGranteesMapKeys;
     mapping (address => uint256) public presaleGranteesMap;  //address=>wei token amount
 
-    RefundVault private refundVault;
+    // The refund vault
+    RefundVault public refundVault;
 
     // =================================================================================================================
     //                                      Events
@@ -171,9 +172,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // transfer token ownership to crowdsale owner
         token.transferOwnership(owner);
 
-        // transfer refundVault ownership to crowdsale owner
-        refundVault.transferOwnership(owner);
-
     }
 
     // =================================================================================================================
@@ -267,18 +265,19 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         refundVault.deposit.value(msg.value)(msg.sender, tokens);
     }
 
-
     // @dev investors can claim refunds by calling the function
-    function claimETHRefund() public {
+    // @param ETHToRefundAmountWei - amount of the ETH to Refund
+    function refundETH(uint256 ETHToRefundAmountWei) public {
         require(isFinalized);
         require(!refundExpired());
+        require(ETHToRefundAmountWei != 0);
 
-        refundVault.refundETH(msg.sender);
+        refundVault.refundETH(msg.sender, ETHToRefundAmountWei);
     }
 
-    // @dev investors can claim  tokens by calling the function
+    // @dev investors can claim tokens by calling the function
     // @param tokenToClaimAmount - amount of the token to claim
-    function claimToken(uint256 tokenToClaimAmount) public {
+    function claimTokens(uint256 tokenToClaimAmount) public {
         require(isFinalized);
         require(!refundExpired());
         require(tokenToClaimAmount != 0);
@@ -289,5 +288,18 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @dev declared the refund time frame
     function refundExpired() public view returns (bool) {
         return endTime + REFUND_TIME_FRAME >= now;
+    }
+
+    // @dev can be called after crowdsale ended and 60 days after, only by the owner
+    // will transfer all the funds from the vault to sirin ETH wallet and move the ownership
+    // of the vault to sirin crowdsale's owner
+    function closeVault() public onlyOwner {
+        require(isFinalized);
+        require(refundExpired());
+
+        refundVault.close();
+
+        // transfer refundVault ownership to crowdsale owner
+        refundVault.transferOwnership(owner);
     }
 }

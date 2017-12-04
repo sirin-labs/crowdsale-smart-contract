@@ -80,21 +80,32 @@ contract RefundVault is Ownable {
         RefundsEnabled();
     }
 
-    function refundETH(address investor) public {
+    function refundETH(address investor, uint256 ETHToRefundAmountWei) public {
         require(state == State.Refunding);
         require(investor != address(0));
-        require(msg.sender == investor || msg.sender == owner); // validate input
+        require(ETHToRefundAmountWei != 0);
+        require(msg.sender == investor); // validate input
 
-        uint256 depositedValue = depositedETH[investor];
         uint256 depositedTokenValue = depositedToken[investor];
+        uint256 depositedETHValue = depositedETH[investor];
 
-        depositedETH[investor] = 0;
-        depositedToken[investor] = 0;
+        if (ETHToRefundAmountWei <= depositedETHValue) {
+            revert();
+        }
+
+        uint256 refundTokens = ETHToRefundAmountWei.mul(depositedTokenValue).div(depositedETHValue);
+
+        if(refundTokens = 0) {
+            revert();
+        }
+
+        depositedETH[investor] = depositedETHValue.sub(ETHToRefundAmountWei);
+        depositedToken[investor] = depositedTokenValue.sub(refundTokens);
 
         token.transferFrom(address(this), tokenRefundWallet, depositedTokenValue);
-        investor.transfer(depositedValue);
+        investor.transfer(ETHToRefundAmountWei);
 
-        RefundedETH(investor, depositedValue);
+        RefundedETH(investor, ETHToRefundAmountWei);
     }
 
     function claimToken(address investor, uint256 tokensToClaim) public {
@@ -106,19 +117,19 @@ contract RefundVault is Ownable {
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
-        if (depositedTokenValue < tokensToClaim) {
+        if (tokensToClaim <= depositedTokenValue) {
             revert();
         }
 
         uint256 claimedETH = tokensToClaim.mul(depositedETHValue).div(depositedTokenValue);
+        if(claimedETH = 0) {
+            revert();
+        }
 
         depositedETH[investor] = claimedETH.sub(claimedETH);
         depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
 
-        token.transferFrom(address(this), investor, tokensToClaim);
-        if(claimedETH != 0) {
-            wallet.transfer(claimedETH);
-        }
+        token.transferFrom(address(this), investor, tokensToClaim); wallet.transfer(claimedETH);
 
         TokensClaimed(investor, depositedTokenValue);
     }
