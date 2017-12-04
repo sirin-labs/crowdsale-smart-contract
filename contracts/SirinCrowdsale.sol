@@ -25,6 +25,12 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // SRN to ETH base rate
     uint256 public constant EXCHANGE_RATE = 500;
 
+    // Refund division rate
+    uint256 public constant REFUND_DIVISION_RATE = 2;
+
+    // Refund time frame
+    uint256 public constant REFUND_TIME_FRAME = 60 days;
+
     // =================================================================================================================
     //                                      Modifiers
     // =================================================================================================================
@@ -178,7 +184,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         return fiatRaisedConvertedToWei.add(weiRaised);
     }
 
-
     // @return true if the crowdsale is active, hence users can buy tokens
     function isActive() public view returns (bool) {
         return now >= startTime && now < endTime;
@@ -251,7 +256,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
         // calculate token amount to be created
         uint256 tokens = weiAmount.mul(getRate());
-        tokens = tokens.div(2);
+        tokens = tokens.div(REFUND_DIVISION_RATE);
 
         // update state
         weiRaised = weiRaised.add(weiAmount);
@@ -283,6 +288,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @dev declared the refund time frame
     function refundExpired() public view returns (bool) {
-        return endTime + 60 days >= now;
+        return endTime + REFUND_TIME_FRAME >= now;
     }
 }
