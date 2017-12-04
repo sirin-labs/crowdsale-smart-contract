@@ -95,7 +95,7 @@ contract RefundVault is Ownable {
 
         uint256 refundTokens = ETHToRefundAmountWei.mul(depositedTokenValue).div(depositedETHValue);
 
-        if(refundTokens = 0) {
+        if(refundTokens == 0) {
             revert();
         }
 
@@ -122,7 +122,7 @@ contract RefundVault is Ownable {
         }
 
         uint256 claimedETH = tokensToClaim.mul(depositedETHValue).div(depositedTokenValue);
-        if(claimedETH = 0) {
+        if(claimedETH == 0) {
             revert();
         }
 
