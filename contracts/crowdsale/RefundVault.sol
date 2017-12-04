@@ -14,20 +14,36 @@ import '../token/ERC20.sol';
 contract RefundVault is Ownable {
     using SafeMath for uint256;
 
+    // =================================================================================================================
+    //                                      Enums
+    // =================================================================================================================
+
     enum State { Active, Refunding, Closed }
+
+    // =================================================================================================================
+    //                                      Members
+    // =================================================================================================================
 
     mapping (address => uint256) public depositedETH;
     mapping (address => uint256) public depositedToken;
+
     address public wallet;
     ERC20 public token;
     State public state;
     address public tokenRefundWallet;
+
+    // =================================================================================================================
+    //                                      Events
+    // =================================================================================================================
 
     event Closed();
     event RefundsEnabled();
     event RefundedETH(address indexed beneficiary, uint256 weiAmount);
     event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
 
+    // =================================================================================================================
+    //                                      Ctors
+    // =================================================================================================================
 
     function RefundVault(address _wallet, ERC20 _token, address _tokenRefundWallet) public {
         require(_wallet != address(0));
@@ -38,6 +54,10 @@ contract RefundVault is Ownable {
         tokenRefundWallet = _tokenRefundWallet;
         state = State.Active;
     }
+
+    // =================================================================================================================
+    //                                      Public Functions
+    // =================================================================================================================
 
     function deposit(address investor, uint256 tokensAmount) onlyOwner public payable {
         require(state == State.Active);
