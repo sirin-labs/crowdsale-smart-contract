@@ -67,7 +67,7 @@ contract RefundVault is Ownable {
     }
 
     function close() onlyOwner public {
-        require(state == State.Active);
+        require(state == State.Refunding);
 
         state = State.Closed;
         Closed();
@@ -98,7 +98,6 @@ contract RefundVault is Ownable {
     }
 
     function claimToken(address investor, uint256 tokensToClaim) public {
-        require(state == State.Refunding);
         require(tokensToClaim != 0);
         require(investor != address(0));
         require(msg.sender == investor || msg.sender == owner); // validate input
@@ -116,7 +115,9 @@ contract RefundVault is Ownable {
         depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
 
         token.transferFrom(address(this), investor, tokensToClaim);
-        wallet.transfer(claimedETH);
+        if(claimedETH != 0) {
+            wallet.transfer(claimedETH);
+        }
 
         TokensClaimed(investor, depositedTokenValue);
     }
