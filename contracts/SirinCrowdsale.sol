@@ -290,8 +290,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         return endTime + REFUND_TIME_FRAME >= now;
     }
 
-    // @dev can be called after crowdsale ended and 60 days after, only by the owner
-    // will transfer all the funds from the vault to sirin ETH wallet and move the ownership
+    // @dev Can be called 60 days after crowdsale has been finalized and only by the owner.
+    // Transfer all funds from the vault to sirin`s ETH wallet and move the ownership
     // of the vault to sirin crowdsale's owner
     function closeVault() public onlyOwner {
         require(isFinalized);

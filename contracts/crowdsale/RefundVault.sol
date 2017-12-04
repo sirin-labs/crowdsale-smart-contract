@@ -4,13 +4,12 @@ import '../math/SafeMath.sol';
 import '../ownership/Ownable.sol';
 import '../token/ERC20.sol';
 
-
 /**
  * @title RefundVault
- * @dev This contract is used for storing funds while a crowdsale
- * is in progress. Supports refunding the money if crowdsale fails,
- * and forwarding it if crowdsale is successful.
- */
+ * @dev This contract is used for storing TOKENS AND ETHER while a crowdsale is in progress for a period of 60 DAYS.
+ * Investor can ask for a full/part refund for his ether against token. Once tokens are Claimed by the investor, they cannot be refunded.
+ * After 60 days, all ether will be withdrawn from the vault`s wallet, leaving all tokens to be claimed by the their owners.
+ **/
 contract RefundVault is Ownable {
     using SafeMath for uint256;
 
@@ -27,7 +26,7 @@ contract RefundVault is Ownable {
     mapping (address => uint256) public depositedETH;
     mapping (address => uint256) public depositedToken;
 
-    address public wallet;
+    address public etherWallet;
     ERC20 public token;
     State public state;
     address public tokenRefundWallet;
@@ -45,11 +44,11 @@ contract RefundVault is Ownable {
     //                                      Ctors
     // =================================================================================================================
 
-    function RefundVault(address _wallet, ERC20 _token, address _tokenRefundWallet) public {
-        require(_wallet != address(0));
+    function RefundVault(address _etherWallet, ERC20 _token, address _tokenRefundWallet) public {
+        require(_etherWallet != address(0));
         require(_tokenRefundWallet != address(0));
 
-        wallet = _wallet;
+        etherWallet = _etherWallet;
         token = _token;
         tokenRefundWallet = _tokenRefundWallet;
         state = State.Active;
@@ -71,7 +70,7 @@ contract RefundVault is Ownable {
 
         state = State.Closed;
         Closed();
-        wallet.transfer(this.balance);
+        etherWallet.transfer(this.balance);
     }
 
     function enableRefunds() onlyOwner public {
@@ -80,6 +79,8 @@ contract RefundVault is Ownable {
         RefundsEnabled();
     }
 
+    //@dev Refund ether back to the investor in returns of proportional amount of SRN
+    //back to the Sirin`s wallet
     function refundETH(address investor, uint256 ETHToRefundAmountWei) public {
         require(state == State.Refunding);
         require(investor != address(0));
@@ -89,7 +90,7 @@ contract RefundVault is Ownable {
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
-        if (ETHToRefundAmountWei <= depositedETHValue) {
+        if (ETHToRefundAmountWei > depositedETHValue) {
             revert();
         }
 
@@ -102,12 +103,15 @@ contract RefundVault is Ownable {
         depositedETH[investor] = depositedETHValue.sub(ETHToRefundAmountWei);
         depositedToken[investor] = depositedTokenValue.sub(refundTokens);
 
-        token.transferFrom(address(this), tokenRefundWallet, depositedTokenValue);
+        token.transferFrom(address(this), tokenRefundWallet, refundTokens);
         investor.transfer(ETHToRefundAmountWei);
 
         RefundedETH(investor, ETHToRefundAmountWei);
     }
 
+    //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
+    //to Sirin`s wallet.
+    //Can be triggerd by the investor or by the owner of the vault (in our case - Sirin`s owner after 60 days)
     function claimToken(address investor, uint256 tokensToClaim) public {
         require(state == State.Refunding || state == State.Closed);
         require(tokensToClaim != 0);
@@ -117,7 +121,7 @@ contract RefundVault is Ownable {
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
-        if (tokensToClaim <= depositedTokenValue) {
+        if (tokensToClaim > depositedTokenValue) {
             revert();
         }
 
@@ -129,8 +133,9 @@ contract RefundVault is Ownable {
         depositedETH[investor] = claimedETH.sub(claimedETH);
         depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
 
-        token.transferFrom(address(this), investor, tokensToClaim); wallet.transfer(claimedETH);
+        token.transferFrom(address(this), investor, tokensToClaim);
+        etherWallet.transfer(claimedETH);
 
-        TokensClaimed(investor, depositedTokenValue);
+        TokensClaimed(investor, tokensToClaim);
     }
 }
