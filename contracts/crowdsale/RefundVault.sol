@@ -98,6 +98,7 @@ contract RefundVault is Ownable {
     }
 
     function claimToken(address investor, uint256 tokensToClaim) public {
+        require(state == State.Refunding || state == State.Closed);
         require(tokensToClaim != 0);
         require(investor != address(0));
         require(msg.sender == investor || msg.sender == owner); // validate input
