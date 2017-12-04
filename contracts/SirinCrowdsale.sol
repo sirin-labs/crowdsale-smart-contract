@@ -240,7 +240,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         FiatRaisedUpdated(msg.sender, fiatRaisedConvertedToWei);
     }
 
-    // low level token purchase function
+    // @dev Buy tokes with guarantee
     function buyTokensWithGuarantee() public payable {
         require(msg.sender != address(0));
         require(validPurchase());
@@ -260,14 +260,17 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         refundVault.deposit.value(msg.value)(msg.sender, tokens);
     }
 
-    // if crowdsale is unsuccessful, investors can claim refunds here
+
+    // @dev investors can claim refunds by calling the function
     function claimETHRefund() public {
         require(isFinalized);
-        require(!goalReached());
+        require(!refundExpired());
 
         refundVault.refundETH(msg.sender);
     }
 
+    // @dev investors can claim  tokens by calling the function
+    // @param tokenToClaimAmount - amount of the token to claim
     function claimToken(uint256 tokenToClaimAmount) public {
         require(isFinalized);
         require(msg.sender != address(0));
@@ -276,7 +279,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         refundVault.claimToken(msg.sender, tokenToClaimAmount);
     }
 
-    function goalReached() public view returns (bool) {
+    function refundExpired() public view returns (bool) {
         return endTime + 60 days >= now;
     }
 }
