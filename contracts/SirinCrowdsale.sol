@@ -159,11 +159,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // Re-enable destroy function after the token sale.
         token.setDestroyEnabled(true);
 
+        // Enable enable ETH refunds and token claim.
         refundVault.enableRefunds();
 
-        // transfer ownership to crowdsale owner
+        // transfer token ownership to crowdsale owner
         token.transferOwnership(owner);
 
+        // transfer refundVault ownership to crowdsale owner
         refundVault.transferOwnership(owner);
 
     }
@@ -273,12 +275,13 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @param tokenToClaimAmount - amount of the token to claim
     function claimToken(uint256 tokenToClaimAmount) public {
         require(isFinalized);
-        require(msg.sender != address(0));
+        require(!refundExpired());
         require(tokenToClaimAmount != 0);
 
         refundVault.claimToken(msg.sender, tokenToClaimAmount);
     }
 
+    // @dev declared the refund time frame
     function refundExpired() public view returns (bool) {
         return endTime + 60 days >= now;
     }
