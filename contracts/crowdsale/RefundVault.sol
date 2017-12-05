@@ -85,7 +85,7 @@ contract RefundVault is Ownable {
         require(state == State.Refunding);
         require(investor != address(0));
         require(ETHToRefundAmountWei != 0);
-        require(msg.origin == investor); // validate input
+        require(tx.origin == investor); // validate input
 
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
@@ -116,7 +116,7 @@ contract RefundVault is Ownable {
         require(state == State.Refunding || state == State.Closed);
         require(tokensToClaim != 0);
         require(investor != address(0));
-        require(msg.origin == investor || msg.sender == owner); // validate input
+        require(tx.origin == investor || msg.sender == owner); // validate input
 
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
