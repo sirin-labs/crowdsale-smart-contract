@@ -269,7 +269,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @param ETHToRefundAmountWei - amount of the ETH to Refund
     function refundETH(uint256 ETHToRefundAmountWei) public {
         require(isFinalized);
-        require(!refundExpired());
+        require(canRefund());
         require(ETHToRefundAmountWei != 0);
 
         refundVault.refundETH(msg.sender, ETHToRefundAmountWei);
@@ -285,8 +285,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     }
 
     // @dev declared the refund time frame
-    function refundExpired() public view returns (bool) {
-        return endTime + REFUND_TIME_FRAME >= now;
+    function canRefund() public view returns (bool) {
+        return endTime + REFUND_TIME_FRAME > now;
     }
 
     // @dev Can be called 60 days after crowdsale has been finalized and only by the owner.
@@ -294,7 +294,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // of the vault to sirin crowdsale's owner
     function closeVault() public onlyOwner {
         require(isFinalized);
-        require(refundExpired());
+        require(!canRefund());
 
         refundVault.close();
 
