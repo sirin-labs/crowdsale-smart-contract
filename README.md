@@ -7,7 +7,7 @@ Please see below Sirin Labs smart contracts' for the [Sirin Crowdsale][sirinlabs
 SRN is an ERC-20 compliant cryptocurrency built on top of the [Ethereum][ethereum] blockchain.
 
 ## Overview
-SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEYâ„¢,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEYâ„¢) with SIRIN LABS token, the SRN.
+SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEY™,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEY™) with SIRIN LABS token, the SRN.
 
 ## Contracts
 
@@ -48,7 +48,7 @@ Please see the [contracts/](contracts) directory.
 
 * Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
 
-* SRN token is a **SmartTokenâ„¢**, implementing Bancor's SmartToken contract.
+* SRN token is a **SmartToken™**, implementing Bancor's SmartToken contract.
 ## Code
 
 #### Class Diagram  
@@ -96,21 +96,21 @@ funds are converted to wei using the market conversion rate of USD\ETH on the da
 ```cs
 function buyTokensWithGuarantee() public payable
 ```
-Buy tokes with guarantee, these tokens and the ETH are saved in refundVault,so investor can refund them up to 60 days after the crowdsale ends. 
+Buy tokes with guarantee, these tokens and the ETH are saved in refundVault, so investor can refund them up to 60 days after the crowdsale ends. 
 
 **refundETH**
 ```cs
 function refundETH(uint256 ETHToRefundAmountWei) public
 ```
-Investors can claim refunds of part or all of the ETH used to buy the tokens (givven that investor bought tokens using the buyTokensWithGuarantee function).
-The relative part of the tokens will be taken from the Investor.
+Investors can claim refunds of part or all of the ETH used to buy the tokens (given that investor bought tokens using the buyTokensWithGuarantee function).
+The proportional amount of the tokens will be taken from the Investor.
 
 **claimTokens**
 ```cs
 function claimTokens(uint256 tokenToClaimAmount) public 
 ```
-Investors can claim part or all of their tokens (givven that investor bought tokens using the buyTokensWithGuarantee function).
-The relative part of the ETH will be transfered to the Sirin ETH wallat.
+Investors can claim part or all of their tokens (given that investor bought tokens using the buyTokensWithGuarantee function).
+The proportional amount of the ETH will be transfered to the Sirin ETH wallat.
 
 **refundExpired**
 ```cs
@@ -156,6 +156,64 @@ event FiatRaisedUpdated(address indexed _address, uint256 _fiatRaised)
 event TokenPurchaseWithGuarantee(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 ```
 
+#### RefundVault Functions
+
+**deposit**
+```cs
+function deposit(address investor, uint256 tokensAmount) onlyOwner public payable
+```
+Adds Investor tokens and ETH to the vault.
+
+**close**
+```cs
+function close() onlyOwner public
+```
+Closes the refunds, all ETH is transfered to Sirin ETH wallet.
+After this function is called investors cannot refund their ETH anymore but can claim their tokens.
+
+**enableRefunds**
+```cs
+function enableRefunds() onlyOwner public
+```
+Start the refunding. Should be called after the crowdsale.
+
+**refundETH**
+```cs
+function refundETH(address investor, uint256 ETHToRefundAmountWei) public
+```
+Refund ETH back to the investor in return of proportional amount of SRN back to Sirin wallet.
+
+**claimToken**
+```cs
+function claimToken(address investor, uint256 tokensToClaim) public 
+```
+Transfer tokens from the vault to the investor while transfering proportional amount of ETH to Sirin ETH wallet.
+
+
+#### RefundVault Events
+
+**Closed**
+```cs
+event Closed();
+```
+
+
+**RefundsEnabled**
+```cs
+event RefundsEnabled();
+```
+
+
+**RefundedETH**
+```cs
+event RefundedETH(address indexed beneficiary, uint256 weiAmount);
+```
+
+
+**TokensClaimed**
+```cs
+event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
+```
 
 ### Dependencies
 
