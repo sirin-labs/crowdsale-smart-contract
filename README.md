@@ -42,6 +42,24 @@ Please see the [contracts/](contracts) directory.
 | 13th day | 525 |
 | 14th day | 500 |
 
+#### Refund Route - SRN tokens with guarentee
+
+Investors can choose to buy SRN tokens with guarentee.
+refund routh rates are 50% of the regular rate (starting from 500 SRNs for 1 ETH at the first day and ending at 250 SRNs for 1 ETH at the last day of the crowdsale).
+
+SRN tokens and the ETH used to buy it are deposited to a RefundVault contract owned by the SirinCrowdsale contract.
+
+Investors bought SRNs on the refund routh can get refund of their ETH or claim their SRN tokens only after the crowdsale ends.
+Refund ETH period is limited to 60 days after the crowdsale ends. SRN token claim is not limited.
+
+Any of the actions (refund ETH and SRN token claim) can be executed by the investor directly on the contract.
+Any of the actions (refund ETH and SRN token claim) can be done on parts of the amount.
+
+In case of refund ETH, the proprotinal amount of SRN tokens will be transfered to Sirin Wallet.
+In case of SRN token claim, the proprotinal amount of ETH will be transfered to Sirin ETH Wallet.
+In Case of partial action the remaining ETH and SRN tokens will be available to more refund or claim actions according to the refund period and updated amounts. 
+
+
 ## Develop
 
 * Contracts are written in [Solidity][solidity] and tested using [Truffle][truffle] and [testrpc][testrpc].
