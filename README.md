@@ -92,6 +92,39 @@ function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external
 Sets funds collected outside the crowdsale in wei.
 funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
 
+**buyTokensWithGuarantee**
+```cs
+function buyTokensWithGuarantee() public payable
+```
+Buy tokes with guarantee, these tokens and the ETH are saved in refundVault,so investor can refund them up to 60 days after the crowdsale ends. 
+
+**refundETH**
+```cs
+function refundETH(uint256 ETHToRefundAmountWei) public
+```
+Investors can claim refunds of part or all of the ETH used to buy the tokens (givven that investor bought tokens using the buyTokensWithGuarantee function).
+The relative part of the tokens will be taken from the Investor.
+
+**claimTokens**
+```cs
+function claimTokens(uint256 tokenToClaimAmount) public 
+```
+Investors can claim part or all of their tokens (givven that investor bought tokens using the buyTokensWithGuarantee function).
+The relative part of the ETH will be transfered to the Sirin ETH wallat.
+
+**refundExpired**
+```cs
+function refundExpired() public view returns (bool)
+```
+Check if we passed the refund time frame
+
+**closeVault**
+```cs
+function closeVault() public onlyOwner
+```
+Can be called 60 days after crowdsale has been finalized and only by the owner.
+Transfer all funds from the vault to sirin ETH wallet and move the ownership of the vault to sirin crowdsale owner.
+
 #### SirinCrowdsale Events
 
 **GrantAdded**
@@ -116,6 +149,13 @@ event GrantDeleted(address indexed _grantee, uint256 _hadAmount);
 ```cs
 event FiatRaisedUpdated(address indexed _address, uint256 _fiatRaised)
 ```
+
+
+**TokenPurchaseWithGuarantee**
+```cs
+event TokenPurchaseWithGuarantee(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+```
+
 
 ### Dependencies
 
