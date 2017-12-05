@@ -127,10 +127,63 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         it('Should require state  \'Refunding\'', async function() {
         });
 
-        it('Should require state  \'Refunding\'', async function() {
+        it('Should fail if investor is \'0x0\'', async function() {
+        });
+
+        it('Should fail if investor is not the origin of the tx', async function() {
+        });
+
+        it('Should fail if ETHToRefundAmountWei is 0', async function() {
+        });
+
+        it('Should fail if investor try to ask for a refund more then he invested', async function() {
+        });
+
+        it('Should decrease investor investment according to ether withdrawal', async function() {
+        });
+
+        it('Should send investor withdrawal amount', async function() {
+        });
+
+        it('Should decrease investor token balance according to ether withdrawal proportion', async function() {
+        });
+
+        it('Should transfer tokens to sirin according to ether withdrawal proportion', async function() {
+        });
+
+        it('Should have \'RefundedETH\' event', async function() {
         });
     });
 
     describe('ClaimToken', function() {
+        it('Should require state  \'Refunding\' or \'Closed\'', async function() {
+        });
+
+        it('Should fail if investor is \'0x0\'', async function() {
+        });
+
+        it('Should fail if investor is not the origin or the sender is the owner', async function() {
+        });
+
+        it('Should fail if tokensToClaim is 0', async function() {
+        });
+
+        it('Should fail if investor try to claim more tokens then he has bought', async function() {
+        });
+
+        it('Should decrease investor tokens balance according to token withdrawal', async function() {
+        });
+
+        it('Should transfer the investor tokens according to claim amount', async function() {
+        });
+
+        it('Should decrease investor ether balance according to token withdrawal proportion', async function() {
+        });
+
+        it('Should send ether to sirin according to token withdrawal proportion', async function() {
+        });
+
+        it('Should have \'TokensClaimed\' event', async function() {
+        });
     });
 })
