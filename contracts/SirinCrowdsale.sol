@@ -279,7 +279,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // @param tokenToClaimAmount - amount of the token to claim
     function claimTokens(uint256 tokenToClaimAmount) public {
         require(isFinalized);
-        require(!refundExpired());
         require(tokenToClaimAmount != 0);
 
         refundVault.claimToken(msg.sender, tokenToClaimAmount);
