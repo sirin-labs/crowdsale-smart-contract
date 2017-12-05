@@ -18,16 +18,16 @@ const OUTPUT_FOLDER = "output"
 
 //general:
 const DAY = 86400;
-const OWNER = "0x00e2fD99e23389235238552838de01414D5399c3";
+const OWNER = "0xcbc7efe0bf2664198176defb7f2cfbc9675dc60e";
 
 //SirinCrowdsale constructor params:
 const startTime         = 1513080000; //(Tue, 12 Dec 2017 12:00:00 GMT)
 const endTime           = startTime + 14 * DAY;
-const wallet            = "0x00e2fD99e23389235238552838de01414D5399c3";
-const walletFounder     = "0x00e2fD99e23389235238552838de01414D5399c3";
-const walletOEM         = "0x00e2fD99e23389235238552838de01414D5399c3";
-const walletBounties    = "0x00e2fD99e23389235238552838de01414D5399c3";
-const walletReserve     = "0x00e2fD99e23389235238552838de01414D5399c3";
+const wallet            = "0x0012A1A4619bFdC0535Ab50E7c51D64d5C768d79";
+const walletFounder     = "0x0012A1A4619bFdC0535Ab50E7c51D64d5C768d79";
+const walletOEM         = "0x0012A1A4619bFdC0535Ab50E7c51D64d5C768d79";
+const walletBounties    = "0x0012A1A4619bFdC0535Ab50E7c51D64d5C768d79";
+const walletReserve     = "0x0012A1A4619bFdC0535Ab50E7c51D64d5C768d79";
 
 
 var eth = new Eth(Eth.givenProvider || 'http://127.0.0.1:8545');
@@ -84,7 +84,7 @@ function deployContract() {
             arguments: [startTime, endTime, wallet, walletFounder, walletOEM, walletBounties, walletReserve]
         }).send({
         from: OWNER,
-        gas: 4500000,
+        gas: 6700000,
         gasPrice: '99990000000'
     })
         .then(function (newContractInstance) {
