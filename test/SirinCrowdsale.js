@@ -845,6 +845,29 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
 
              })
 
+            it('should allow to claim all', async function() {
+               await increaseTimeTo(this.startTime)
+
+               await this.crowdsale.buyTokensWithGuarantee({
+                   value: ether(1),
+                   from: investor
+               })
+               let tokensToClaim = await this.refundVault.depositedToken(investor);
+
+               await increaseTimeTo(this.afterEndTime)
+               await this.crowdsale.finalize({
+                   from: owner
+               })
+
+               await this.crowdsale.claimAllTokens({
+                     from: investor
+               });
+
+               let claimedTokensAmount = await this.token.balanceOf(investor);
+
+               assert.equal(tokensToClaim + "", claimedTokensAmount + "", "investor failed to claim tokens" );
+            })
+
 
      })
 
