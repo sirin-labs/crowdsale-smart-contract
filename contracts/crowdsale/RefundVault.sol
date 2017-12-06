@@ -3,6 +3,7 @@ pragma solidity ^0.4.18;
 import '../math/SafeMath.sol';
 import '../ownership/Claimable.sol';
 import '../token/ERC20.sol';
+import '../SirinSmartToken.sol';
 
 /**
  * @title RefundVault
@@ -27,7 +28,7 @@ contract RefundVault is Claimable {
     mapping (address => uint256) public depositedToken;
 
     address public etherWallet;
-    ERC20 public token;
+    SirinSmartToken public token;
     State public state;
     address public tokenRefundWallet;
 
@@ -37,14 +38,14 @@ contract RefundVault is Claimable {
 
     event Closed();
     event RefundsEnabled();
-    event RefundedETH(address indexed beneficiary, uint256 weiAmount);
+    event RefundedETH(address beneficiary, uint256 weiAmount);
     event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
 
     // =================================================================================================================
     //                                      Ctors
     // =================================================================================================================
 
-    function RefundVault(address _etherWallet, ERC20 _token, address _tokenRefundWallet) public {
+    function RefundVault(address _etherWallet, SirinSmartToken _token, address _tokenRefundWallet) public {
         require(_etherWallet != address(0));
         require(_tokenRefundWallet != address(0));
 
@@ -82,6 +83,7 @@ contract RefundVault is Claimable {
     //@dev Refund ether back to the investor in returns of proportional amount of SRN
     //back to the Sirin`s wallet
     function refundETH(address investor, uint256 ETHToRefundAmountWei) public {
+
         require(state == State.Refunding);
         require(investor != address(0));
         require(ETHToRefundAmountWei != 0);
@@ -96,6 +98,7 @@ contract RefundVault is Claimable {
 
         uint256 refundTokens = ETHToRefundAmountWei.mul(depositedTokenValue).div(depositedETHValue);
 
+
         if(refundTokens == 0) {
             revert();
         }
@@ -103,7 +106,7 @@ contract RefundVault is Claimable {
         depositedETH[investor] = depositedETHValue.sub(ETHToRefundAmountWei);
         depositedToken[investor] = depositedTokenValue.sub(refundTokens);
 
-        token.transferFrom(address(this), tokenRefundWallet, refundTokens);
+        token.destroy(address(this),refundTokens);
         investor.transfer(ETHToRefundAmountWei);
 
         RefundedETH(investor, ETHToRefundAmountWei);
