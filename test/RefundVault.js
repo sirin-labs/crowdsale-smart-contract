@@ -3,6 +3,8 @@ import {advanceBlock} from './helpers/advanceToBlock'
 import {increaseTimeTo, duration} from './helpers/increaseTime'
 import latestTime from './helpers/latestTime'
 import EVMThrow from './helpers/EVMThrow'
+import EVMRevert from './helpers/EVMRevert';
+
 
 const utils = require('./helpers/Utils');
 
@@ -34,7 +36,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         this.afterEndTime = this.endTime + duration.seconds(1);
 
         this.token = await SirinSmartToken.new({from: owner});
-        this.refundVault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
+        this.vault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
 
         this.crowdsale = await SirinCrowdsale.new(this.startTime,
             this.endTime,
@@ -44,13 +46,13 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             walletBounties,
             walletReserve,
             this.token.address,
-            this.refundVault.address,
+            this.vault.address,
             {
                 from: owner
             })
 
         await this.token.transferOwnership(this.crowdsale.address, {from: owner});
-        await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+        await this.vault.transferOwnership(this.crowdsale.address, {from: owner});
 
         await this.crowdsale.claimTokenOwnership({from: owner})
         await this.crowdsale.claimRefundVaultOwnership({from: owner})
@@ -60,32 +62,32 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
     describe('Valid initialization', function() {
 
         it('state Should be \'active\' ', async function() {
-            let state = await this.refundVault.state();
+            let state = await this.vault.state();
             assert.equal(state, STATE_ACTIVE);
         });
 
         it('Token Refund Wallet Should be set ', async function() {
-            let tokenRefundWallet = await this.refundVault.tokenRefundWallet()
+            let tokenRefundWallet = await this.vault.tokenRefundWallet()
             assert.notEqual(tokenRefundWallet, null);
         });
 
         it('Token Refund Wallet Should not be \'0x0\' ', async function() {
-            let tokenRefundWallet = await this.refundVault.tokenRefundWallet()
+            let tokenRefundWallet = await this.vault.tokenRefundWallet()
             assert.notEqual(tokenRefundWallet, "0x0");
         });
 
         it('Ether Wallet Should be set ', async function() {
-            let etherWallet = await this.refundVault.etherWallet()
+            let etherWallet = await this.vault.etherWallet()
             assert.notEqual(etherWallet, null);
         });
 
         it('Ether Wallet Should not be \'0x0\' ', async function() {
-            let etherWallet = await this.refundVault.etherWallet()
+            let etherWallet = await this.vault.etherWallet()
             assert.notEqual(etherWallet, "0x0");
         });
 
         it('Token Should be set ', async function() {
-            let token = await this.refundVault.token()
+            let token = await this.vault.token()
             assert.notEqual(token, null);
         });
     });
@@ -99,7 +101,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             await increaseTimeTo(this.startTime);
             let value = 100;
             await this.crowdsale.buyTokensWithGuarantee({value: value, from:investor});
-            let tokensAmount = await this.refundVault.depositedToken(investor);
+            let tokensAmount = await this.vault.depositedToken(investor);
             assert.equal(tokensAmount, value * 500);
         });
 
@@ -109,20 +111,6 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         it('Should have \'Deposit\' event', async function() {
         });
 
-    });
-
-    describe('Close', function() {
-        it('Should require state  \'Refunding\'', async function() {
-        });
-
-        it('Should change state to \'Closed\'', async function() {
-        });
-
-        it('Should transfer all ether balance to Sirin Labs wallet \'Close\'', async function() {
-        });
-
-        it('Should have \'Closed\' event', async function() {
-        });
     });
 
     describe('EnableRefunds', function() {
@@ -138,6 +126,15 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
     describe('RefundETH', function() {
         it('Should require state  \'Refunding\'', async function() {
+
+        });
+
+        it('Should fail to refund while state is  \'Active\'', async function() {
+
+        });
+
+        it('Should fail to refund while state is  \'Closed\'', async function() {
+
         });
 
         it('Should fail if investor is \'0x0\'', async function() {
@@ -168,8 +165,28 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         });
     });
 
+    describe('Close', function() {
+        it('Should require state  \'Refunding\'', async function() {
+        });
+
+        it('Should change state to \'Closed\'', async function() {
+        });
+
+        it('Should transfer all ether balance to Sirin Labs wallet \'Close\'', async function() {
+        });
+
+        it('Should fail to refund while state is \'Closed\'', async function() {
+        });
+
+        it('Should have \'Closed\' event', async function() {
+        });
+    });
+
     describe('ClaimToken', function() {
         it('Should require state  \'Refunding\' or \'Closed\'', async function() {
+        });
+
+        it('Should fail to claim while \'Active\'', async function() {
         });
 
         it('Should fail if investor is \'0x0\'', async function() {
