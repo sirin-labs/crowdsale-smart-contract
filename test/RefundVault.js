@@ -3,7 +3,6 @@ import {advanceBlock} from './helpers/advanceToBlock'
 import {increaseTimeTo, duration} from './helpers/increaseTime'
 import latestTime from './helpers/latestTime'
 import EVMThrow from './helpers/EVMThrow'
-import EVMRevert from './helpers/EVMRevert';
 
 
 const utils = require('./helpers/Utils');
