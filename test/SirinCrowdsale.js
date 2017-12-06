@@ -757,4 +757,102 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
     })
 
+   describe('Refund Vault', function() {
+      it('should refund ether', async function() {
+
+             await increaseTimeTo(this.startTime)
+             await this.crowdsale.buyTokensWithGuarantee({
+                 value: ether(10),
+                 from: investor
+             })
+             let fundAfterBuy = web3.eth.getBalance(investor);
+             await increaseTimeTo(this.afterEndTime)
+             await this.crowdsale.finalize({
+                from: owner
+             })
+             await this.crowdsale.refundETH(ether(1), {
+                from: investor
+             })
+             let fundAfterRefund = web3.eth.getBalance(investor);
+
+
+             assert(fundAfterRefund >= fundAfterBuy, "investor did not received refund");
+            })
+
+            it('should claim ether', async function() {
+               await increaseTimeTo(this.startTime)
+
+               await this.crowdsale.buyTokensWithGuarantee({
+                   value: ether(1),
+                   from: investor
+               })
+               let tokensToClaim = await this.refundVault.depositedToken(investor);
+
+               await increaseTimeTo(this.afterEndTime)
+               await this.crowdsale.finalize({
+                   from: owner
+               })
+
+               await this.crowdsale.claimTokens(tokensToClaim, {
+                     from: investor
+               });
+
+               let claimedTokensAmount = await this.token.balanceOf(investor);
+
+               assert.equal(tokensToClaim + "", claimedTokensAmount + "", "investor failed to claim tokens" );
+            })
+
+            it('should not allow to refund ether before finalize', async function() {
+               try {
+                   await increaseTimeTo(this.startTime);
+                   await this.crowdsale.buyTokensWithGuarantee({
+                         value: ether(1),
+                         from: investor
+                   })
+                   await increaseTimeTo(this.afterEndTime);
+                   await this.crowdsale.refundETH(ether(1), {
+                         from: investor
+                   })
+               }catch (error) {
+                   return utils.ensureException(error);
+               }
+
+               assert(false, "did not throw if user trying to refund before finalize")
+
+             })
+
+            it('should not allow refund ether after REFUND_TIME_FRAME', async function() {
+              try {
+                  await increaseTimeTo(this.startTime);
+                  await this.crowdsale.buyTokensWithGuarantee({
+                        value: ether(1),
+                        from: investor
+                  })
+                  await increaseTimeTo(this.afterEndTime);
+                  await this.crowdsale.finalize({
+                     from: owner
+                  })
+                  await increaseTimeTo(this.afterEndTime + duration.days(await this.crowdsale.REFUND_TIME_FRAME())
+                  + duration.seconds(1));
+                  await this.crowdsale.refundETH(ether(1), {
+                        from: investor
+                  })
+              }catch (error) {
+                  return utils.ensureException(error);
+              }
+
+              assert(false, "did not throw if user trying to refund before finalize")
+
+             })
+
+
+     })
+
+     describe('vault ownership', function() {
+         it('crowdsale is vaults owner', async function() {
+            assert(await this.refundVault.owner() == await this.crowdsale.address, "RefundVault is not crowdsale owner")
+         })
+     })
+
+
 })
