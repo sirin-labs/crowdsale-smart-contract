@@ -35,7 +35,9 @@ contract RefundVault is Claimable {
     //                                      Events
     // =================================================================================================================
 
+    event Active();
     event Closed();
+    event Deposit(address indexed beneficiary, uint256 etherWeiAmount, uint256 tokenWeiAmount);
     event RefundsEnabled();
     event RefundedETH(address beneficiary, uint256 weiAmount);
     event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
@@ -50,6 +52,7 @@ contract RefundVault is Claimable {
         etherWallet = _etherWallet;
         token = _token;
         state = State.Active;
+        Active();
     }
 
     // =================================================================================================================
@@ -61,6 +64,8 @@ contract RefundVault is Claimable {
 
         depositedETH[investor] = depositedETH[investor].add(msg.value);
         depositedToken[investor] = depositedToken[investor].add(tokensAmount);
+
+        Deposit(investor, msg.value, tokensAmount);
     }
 
     function close() onlyOwner public {
