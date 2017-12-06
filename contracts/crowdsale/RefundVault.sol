@@ -85,7 +85,6 @@ contract RefundVault is Claimable {
     //@dev Refund ether back to the investor in returns of proportional amount of SRN
     //back to the Sirin`s wallet
     function refundETH(address investor, uint256 ETHToRefundAmountWei) public {
-
         require(state == State.Refunding);
         require(investor != address(0));
         require(ETHToRefundAmountWei != 0);
@@ -99,7 +98,6 @@ contract RefundVault is Claimable {
         }
 
         uint256 refundTokens = ETHToRefundAmountWei.mul(depositedTokenValue).div(depositedETHValue);
-
 
         if(refundTokens == 0) {
             revert();
