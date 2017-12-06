@@ -7,7 +7,7 @@ Please see below Sirin Labs smart contracts' for the [Sirin Crowdsale][sirinlabs
 SRN is an ERC-20 compliant cryptocurrency built on top of the [Ethereum][ethereum] blockchain.
 
 ## Overview
-SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEY™,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEY™) with SIRIN LABS token, the SRN.
+SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEYï¿½,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEYï¿½) with SIRIN LABS token, the SRN.
 
 ## Contracts
 
@@ -42,24 +42,24 @@ Please see the [contracts/](contracts) directory.
 | 13th day | 525 |
 | 14th day | 500 |
 
-#### Refund Route - SRN tokens with guarentee
+#### Refund Route - SRN tokens with guarantee
 
-Investors can choose to buy SRN tokens with guarentee.
+Investors can choose to buy SRN tokens with guarantee.
 
-refund routh rates are 50% of the regular rate (starting from 500 SRNs for 1 ETH at the first day and ending at 250 SRNs for 1 ETH at the last day of the crowdsale).
+refund route rates are 50% of the regular rate (starting from 500 SRNs for 1 ETH at the first day and ending at 250 SRNs for 1 ETH at the last day of the crowd sale).
 
 SRN tokens and the ETH funds are deposited to a RefundVault contract owned by the SirinCrowdsale contract.
 
-Investors bought SRNs on the refund routh can get refund of their ETH or claim their SRN tokens only after the crowdsale ends.
+Investors bought SRNs on the refund route can get refund of their ETH or claim their SRN tokens only after the crowd sale ends.
 
-Refund ETH period is limited to 60 days after the crowdsale ends. SRN token claim is not limited.
+Refund ETH period is limited to 60 days after the crowd sale ends. SRN token claim is not limited in time.
 
 Any of the actions (refund ETH and SRN token claim) can be executed by the investor directly on the contract.
 
 Any of the actions (refund ETH and SRN token claim) can be done on parts of the amount.
 
-* In case of refund ETH, the proprotinal amount of SRN tokens will be transfered to Sirin Wallet.
-* In case of SRN token claim, the proprotinal amount of ETH will be transfered to Sirin ETH Wallet.
+* In case of refund ETH, the proportional amount of SRN tokens will be burned.
+* In case of SRN token claim, the proportional amount of ETH will be transferred to Sirin ETH Wallet.
 * In Case of partial action the remaining ETH and SRN tokens will be available to more refund or claim actions according to the refund period and updated amounts. 
 
 
@@ -69,7 +69,7 @@ Any of the actions (refund ETH and SRN token claim) can be done on parts of the 
 
 * Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
 
-* SRN token is a **SmartToken™**, implementing Bancor's SmartToken contract.
+* SRN token is a **SmartTokenï¿½**, implementing Bancor's SmartToken contract.
 ## Code
 
 #### Class Diagram  
