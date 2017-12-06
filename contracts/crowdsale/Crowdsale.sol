@@ -42,7 +42,6 @@ contract Crowdsale {
      */
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-
     function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) public {
         require(_startTime >= now);
         require(_endTime >= _startTime);
@@ -61,7 +60,6 @@ contract Crowdsale {
     function createTokenContract() internal returns (SirinSmartToken) {
         return new SirinSmartToken();
     }
-
 
     // fallback function can be used to buy tokens
     function() external payable {

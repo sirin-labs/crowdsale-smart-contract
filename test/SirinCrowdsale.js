@@ -15,6 +15,7 @@ const should = require('chai')
 
 //const SirinCrowdsale = artifacts.require('SirinCrowdsale.sol')
 const SirinCrowdsale = artifacts.require('../contracts/SirinCrowdsale.sol')
+const RefundVault = artifacts.require('../contracts/crowdsale/RefundVault.sol')
 const SirinSmartToken = artifacts.require('SirinSmartToken.sol')
 
 contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, walletOEM, walletBounties, walletReserve]) {
@@ -30,17 +31,28 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         this.endTime = this.startTime + duration.weeks(1)
         this.afterEndTime = this.endTime + duration.seconds(1)
 
+        this.token = await SirinSmartToken.new({from: owner});
+        this.refundVault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
+
         this.crowdsale = await SirinCrowdsale.new(this.startTime,
             this.endTime,
             wallet,
             walletFounder,
             walletOEM,
             walletBounties,
-            walletReserve, {
+            walletReserve,
+            this.token.address,
+            this.refundVault.address,
+            {
                 from: owner
             })
 
-        this.token = SirinSmartToken.at(await this.crowdsale.token())
+        await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+        await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+        await this.crowdsale.claimTokenOwnership({from: owner})
+        await this.crowdsale.claimRefundVaultOwnership({from: owner})
+
     })
 
     describe('Rate Mechanism', function() {
@@ -553,15 +565,27 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
     describe('constructor parameters', function() {
         it('should initilaized with a valid walletFounder adderss', async function() {
             try {
+                this.token = await SirinSmartToken.new({from: owner});
+                this.refundVault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
+
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,
                     wallet,
                     0x0,
                     walletOEM,
                     walletBounties,
-                    walletReserve, {
+                    walletReserve,
+                    this.token.address,
+                    this.refundVault.address,
+                    {
                         from: owner
                     })
+
+                await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+                await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+                await this.crowdsale.claimTokenOwnership({from: owner})
+                await this.crowdsale.claimRefundVaultOwnership({from: owner})
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -577,9 +601,18 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                     walletFounder,
                     0x0,
                     walletBounties,
-                    walletReserve, {
+                    walletReserve,
+                    this.token.address,
+                    this.refundVault.address,
+                    {
                         from: owner
                     })
+
+                await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+                await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+                await this.crowdsale.claimTokenOwnership({from: owner})
+                await this.crowdsale.claimRefundVaultOwnership({from: owner})
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -595,9 +628,18 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                     walletFounder,
                     walletOEM,
                     0x0,
-                    walletReserve, {
+                    walletReserve,
+                    this.token.address,
+                    this.refundVault.address,
+                    {
                         from: owner
                     })
+
+                await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+                await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+                await this.crowdsale.claimTokenOwnership({from: owner})
+                await this.crowdsale.claimRefundVaultOwnership({from: owner})
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -612,9 +654,72 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                     walletFounder,
                     walletOEM,
                     walletBounties,
-                    0x0, {
+                    0x0,
+                    this.token.address,
+                    this.refundVault.address,
+                    {
                         from: owner
                     })
+
+                await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+                await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+                await this.crowdsale.claimTokenOwnership({from: owner})
+                await this.crowdsale.claimRefundVaultOwnership({from: owner})
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+
+            assert(false, "did not throw with invalid walletReserve address")
+        })
+
+        it('should initilaized with a valid token adderss', async function() {
+            try {
+                this.crowdsale = await SirinCrowdsale.new(this.startTime,
+                    this.endTime,
+                    wallet,
+                    walletFounder,
+                    walletOEM,
+                    walletBounties,
+                    walletReserve,
+                    0x0,
+                    this.refundVault.address,
+                    {
+                        from: owner
+                    })
+
+                await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+                await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+                await this.crowdsale.claimTokenOwnership({from: owner})
+                await this.crowdsale.claimRefundVaultOwnership({from: owner})
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+
+            assert(false, "did not throw with invalid walletReserve address")
+        })
+
+        it('should initilaized with a valid refundVault adderss', async function() {
+            try {
+                await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+
+                this.crowdsale = await SirinCrowdsale.new(this.startTime,
+                    this.endTime,
+                    wallet,
+                    walletFounder,
+                    walletOEM,
+                    walletBounties,
+                    walletReserve,
+                    this.token.address,
+                    0x0,
+                    {
+                        from: owner
+                    })
+                await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+                await this.crowdsale.claimTokenOwnership({from: owner})
+                await this.crowdsale.claimRefundVaultOwnership({from: owner})
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -629,18 +734,27 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 walletFounder,
                 walletOEM,
                 walletBounties,
-                walletReserve, {
+                walletReserve,
+                this.token.address,
+                this.refundVault.address,
+                {
                     from: owner
                 })
+
+            await this.token.transferOwnership(this.crowdsale.address, {from: owner});
+            await this.refundVault.transferOwnership(this.crowdsale.address, {from: owner});
+
+            await this.crowdsale.claimTokenOwnership({from: owner})
+            await this.crowdsale.claimRefundVaultOwnership({from: owner})
         })
 
-         it('should create fiat event after update', async function() {
-              await increaseTimeTo(this.startTime)
-              await this.crowdsale.sendTransaction({value: ether(1),from: investor})
-              const {logs} = await this.crowdsale.setFiatRaisedConvertedToWei(ether(1), {from: owner});
-              const event = logs.find(e => e.event === "FiatRaisedUpdated")
-              should.exist(event)
-              })
+        it('should create fiat event after update', async function() {
+            await increaseTimeTo(this.startTime)
+            await this.crowdsale.sendTransaction({value: ether(1),from: investor})
+            const {logs} = await this.crowdsale.setFiatRaisedConvertedToWei(ether(1), {from: owner});
+            const event = logs.find(e => e.event === "FiatRaisedUpdated")
+            should.exist(event)
+        })
     })
 
 })

@@ -21,12 +21,12 @@ module.exports = function(deployer) {
     const rate = new web3.BigNumber(1000)
     const wallet = web3.eth.accounts[0]
 
-    deployer.deploy(SirinCrowdsale,
-                   startTime,
-                   endTime,
-                   wallet,
-                   FOUNDER_WALLET_ADDRESS,
-                   DEVELOPERS_ADDRESS,
-                   BOUNTIES_ADDRESS,
-                   SIRIN_LABS_RESERVE_ADDRESS)
+    // deployer.deploy(SirinCrowdsale,
+    //                startTime,
+    //                endTime,
+    //                wallet,
+    //                FOUNDER_WALLET_ADDRESS,
+    //                DEVELOPERS_ADDRESS,
+    //                BOUNTIES_ADDRESS,
+    //                SIRIN_LABS_RESERVE_ADDRESS)
 };

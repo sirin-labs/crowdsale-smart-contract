@@ -86,21 +86,25 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     address _walletFounder,
     address _walletOEM,
     address _walletBounties,
-    address _walletReserve)
+    address _walletReserve,
+    SirinSmartToken _sirinSmartToken,
+    RefundVault _refundVault)
     public
     Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet) {
         require(_walletFounder != address(0));
         require(_walletOEM != address(0));
         require(_walletBounties != address(0));
         require(_walletReserve != address(0));
+        require(_sirinSmartToken != address(0));
+        require(_refundVault != address(0));
 
         walletFounder = _walletFounder;
         walletOEM = _walletOEM;
         walletBounties = _walletBounties;
         walletReserve = _walletReserve;
 
-        refundVault  = new RefundVault(_wallet, token, _walletReserve);
-
+        token = _sirinSmartToken;
+        refundVault  = _refundVault;
     }
 
     // =================================================================================================================
@@ -132,6 +136,12 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      Impl FinalizableCrowdsale
     // =================================================================================================================
+
+    // creates the token to be sold.
+    // override this method to have crowdsale of a specific mintable token.
+    function createTokenContract() internal returns (SirinSmartToken) {
+        // we not create the token here, we got it on the Ctor
+    }
 
     //@Override
     function finalization() internal onlyOwner {
@@ -243,6 +253,18 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external onlyOwner onlyWhileSale {
         fiatRaisedConvertedToWei = _fiatRaisedConvertedToWei;
         FiatRaisedUpdated(msg.sender, fiatRaisedConvertedToWei);
+    }
+
+    /// @dev Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used, by the token sale
+    /// contract itself to claim back ownership of the SirinSmartToken contract.
+    function claimTokenOwnership() external onlyOwner {
+        token.claimOwnership();
+    }
+
+    /// @dev Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used, by the token sale
+    /// contract itself to claim back ownership of the refundVault contract.
+    function claimRefundVaultOwnership() external onlyOwner {
+        refundVault.claimOwnership();
     }
 
     // @dev Buy tokes with guarantee

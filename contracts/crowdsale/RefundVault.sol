@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 import '../math/SafeMath.sol';
-import '../ownership/Ownable.sol';
+import '../ownership/Claimable.sol';
 import '../token/ERC20.sol';
 
 /**
@@ -10,7 +10,7 @@ import '../token/ERC20.sol';
  * Investor can ask for a full/part refund for his ether against token. Once tokens are Claimed by the investor, they cannot be refunded.
  * After 60 days, all ether will be withdrawn from the vault`s wallet, leaving all tokens to be claimed by the their owners.
  **/
-contract RefundVault is Ownable {
+contract RefundVault is Claimable {
     using SafeMath for uint256;
 
     // =================================================================================================================
