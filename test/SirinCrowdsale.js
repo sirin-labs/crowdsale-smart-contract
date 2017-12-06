@@ -32,7 +32,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         this.afterEndTime = this.endTime + duration.seconds(1)
 
         this.token = await SirinSmartToken.new({from: owner});
-        this.refundVault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
+        this.refundVault = await RefundVault.new(wallet, this.token.address,{from: owner});
 
         this.crowdsale = await SirinCrowdsale.new(this.startTime,
             this.endTime,
@@ -566,7 +566,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         it('should initilaized with a valid walletFounder adderss', async function() {
             try {
                 this.token = await SirinSmartToken.new({from: owner});
-                this.refundVault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
+                this.refundVault = await RefundVault.new(wallet, this.token.address,{from: owner});
 
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,

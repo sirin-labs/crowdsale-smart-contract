@@ -1,7 +1,8 @@
 /* global assert */
 function isException(error) {
     let strError = error.toString();
-    return strError.includes('invalid opcode') || strError.includes('invalid JUMP') ||  strError.includes('revert');
+    return strError.includes('invalid opcode') || strError.includes('invalid JUMP') ||  strError.includes('revert')
+        ||  strError.includes('invalid address');
 }
 
 function ensureException(error) {

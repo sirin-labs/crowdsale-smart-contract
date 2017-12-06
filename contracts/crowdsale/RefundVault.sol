@@ -30,7 +30,6 @@ contract RefundVault is Claimable {
     address public etherWallet;
     SirinSmartToken public token;
     State public state;
-    address public tokenRefundWallet;
 
     // =================================================================================================================
     //                                      Events
@@ -45,13 +44,11 @@ contract RefundVault is Claimable {
     //                                      Ctors
     // =================================================================================================================
 
-    function RefundVault(address _etherWallet, SirinSmartToken _token, address _tokenRefundWallet) public {
+    function RefundVault(address _etherWallet, SirinSmartToken _token) public {
         require(_etherWallet != address(0));
-        require(_tokenRefundWallet != address(0));
 
         etherWallet = _etherWallet;
         token = _token;
-        tokenRefundWallet = _tokenRefundWallet;
         state = State.Active;
     }
 
@@ -133,11 +130,13 @@ contract RefundVault is Claimable {
             revert();
         }
 
-        depositedETH[investor] = claimedETH.sub(claimedETH);
+        depositedETH[investor] = depositedETHValue.sub(claimedETH);
         depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
 
-        token.transferFrom(address(this), investor, tokensToClaim);
-        etherWallet.transfer(claimedETH);
+        token.transfer(investor, tokensToClaim);
+        if(state != State.Closed) {
+            etherWallet.transfer(claimedETH);
+        }
 
         TokensClaimed(investor, tokensToClaim);
     }
