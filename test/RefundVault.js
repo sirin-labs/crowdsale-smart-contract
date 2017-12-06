@@ -14,12 +14,12 @@ const should = require('chai')
     .use(require('chai-bignumber')(BigNumber))
     .should()
 
-const SirinCrowdsale = artifacts.require('../contracts/SirinCrowdsale.sol')
 const SirinSmartToken = artifacts.require('SirinSmartToken.sol')
 const RefundVault = artifacts.require('../contracts/crowdsale/RefundVault.sol')
 const STATE_ACTIVE = "0";
 const STATE_REFUNDING = "1";
 const STATE_CLOSED = "2";
+
 contract('RefundVault', function([_, investor, owner, wallet, walletFounder, walletOEM, walletBounties, walletReserve]) {
 
     const value = ether(1)
@@ -36,25 +36,6 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
         this.token = await SirinSmartToken.new({from: owner});
         this.vault = await RefundVault.new(wallet, this.token.address, wallet,{from: owner});
-
-        this.crowdsale = await SirinCrowdsale.new(this.startTime,
-            this.endTime,
-            wallet,
-            walletFounder,
-            walletOEM,
-            walletBounties,
-            walletReserve,
-            this.token.address,
-            this.vault.address,
-            {
-                from: owner
-            })
-
-        await this.token.transferOwnership(this.crowdsale.address, {from: owner});
-        await this.vault.transferOwnership(this.crowdsale.address, {from: owner});
-
-        await this.crowdsale.claimTokenOwnership({from: owner})
-        await this.crowdsale.claimRefundVaultOwnership({from: owner})
 
     })
 
@@ -99,9 +80,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         it('Should deposit 100 wei and get 50 tokens on the first day', async function() {
             await increaseTimeTo(this.startTime);
             let value = 100;
-            await this.crowdsale.buyTokensWithGuarantee({value: value, from:investor});
-            let tokensAmount = await this.vault.depositedToken(investor);
-            assert.equal(tokensAmount, value * 500);
+            let tokensAmount = 100 * 500;
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            assert.equal(tokensAmountActual, tokensAmount);
         });
 
         it('Should deposit 100 and have 100wei ether balance', async function() {
@@ -183,9 +165,38 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
     describe('ClaimToken', function() {
         it('Should require state  \'Refunding\' or \'Closed\'', async function() {
+
+            // await increaseTimeTo(this.startTime);
+            // let value = 100;
+            // let tokensAmount = 100 * 500;
+            // await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            // let tokensAmountActual = await this.vault.depositedToken(investor);
+            // assert.equal(tokensAmountActual, tokensAmount);
+            //
+            // this.vault.enableRefunds({from:owner});
+            // await await this.vault.claimToken(investor, tokensAmountActual/2 ,{from:investor});
+            // this.vault.close({from:owner});
+            // await await this.vault.claimToken(investor, tokensAmountActual/2 ,{from:investor});
+
         });
 
         it('Should fail to claim while \'Active\'', async function() {
+
+            await increaseTimeTo(this.startTime);
+            let value = 100;
+            let tokensAmount = 100 * 500;
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            assert.equal(tokensAmountActual, tokensAmount);
+
+            try {
+                await await this.vault.claimToken(investor, tokensAmount ,{from:investor});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+
+            assert(false, "did not throw with error claim without Refund or Close state")
+
         });
 
         it('Should fail if investor is \'0x0\'', async function() {
