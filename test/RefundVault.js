@@ -39,129 +39,129 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
     })
 
-    // describe('Valid initialization', function() {
-    //
-    //     it('state Should be \'active\' ', async function() {
-    //         let state = await this.vault.state();
-    //         assert.equal(state, STATE_ACTIVE);
-    //     });
-    //
-    //     // it('Token Refund Wallet Should be set ', async function() {
-    //     //     let tokenRefundWallet = await this.vault.tokenRefundWallet()
-    //     //     assert.notEqual(tokenRefundWallet, null);
-    //     // });
-    //
-    //     // it('Token Refund Wallet Should not be \'0x0\' ', async function() {
-    //     //     let tokenRefundWallet = await this.vault.tokenRefundWallet()
-    //     //     assert.notEqual(tokenRefundWallet, "0x0");
-    //     // });
-    //
-    //     it('Ether Wallet Should be set ', async function() {
-    //         let etherWallet = await this.vault.etherWallet()
-    //         assert.notEqual(etherWallet, null);
-    //     });
-    //
-    //     it('Ether Wallet Should not be \'0x0\' ', async function() {
-    //         let etherWallet = await this.vault.etherWallet()
-    //         assert.notEqual(etherWallet, "0x0");
-    //     });
-    //
-    //     it('Token Should be set ', async function() {
-    //         let token = await this.vault.token()
-    //         assert.notEqual(token, null);
-    //     });
-    // });
-    //
-    // describe('Deposit', function() {
-    //
-    //     it('Should require state  \'Active\'', async function() {
-    //     });
-    //
-    //     it('Should deposit 100 wei and get 50 tokens on the first day', async function() {
-    //         await increaseTimeTo(this.startTime);
-    //         let value = 100;
-    //         let tokensAmount = 100 * 500;
-    //         await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-    //         let tokensAmountActual = await this.vault.depositedToken(investor);
-    //         assert.equal(tokensAmountActual, tokensAmount);
-    //     });
-    //
-    //     it('Should deposit 100 and have 100wei ether balance', async function() {
-    //     });
-    //
-    //     it('Should have \'Deposit\' event', async function() {
-    //     });
-    //
-    // });
-    //
-    // describe('EnableRefunds', function() {
-    //     it('Should require state  \'Active\'', async function() {
-    //     });
-    //
-    //     it('Should change state to \'Refunding\'', async function() {
-    //     });
-    //
-    //     it('Should have \'Refunding\' event', async function() {
-    //     });
-    // });
-    //
-    // describe('RefundETH', function() {
-    //     it('Should require state  \'Refunding\'', async function() {
-    //
-    //     });
-    //
-    //     it('Should fail to refund while state is  \'Active\'', async function() {
-    //
-    //     });
-    //
-    //     it('Should fail to refund while state is  \'Closed\'', async function() {
-    //
-    //     });
-    //
-    //     it('Should fail if investor is \'0x0\'', async function() {
-    //     });
-    //
-    //     it('Should fail if investor is not the origin of the tx', async function() {
-    //     });
-    //
-    //     it('Should fail if ETHToRefundAmountWei is 0', async function() {
-    //     });
-    //
-    //     it('Should fail if investor try to ask for a refund more then he invested', async function() {
-    //     });
-    //
-    //     it('Should decrease investor investment according to ether withdrawal', async function() {
-    //     });
-    //
-    //     it('Should send investor withdrawal amount', async function() {
-    //     });
-    //
-    //     it('Should decrease investor token balance according to ether withdrawal proportion', async function() {
-    //     });
-    //
-    //     it('Should transfer tokens to sirin according to ether withdrawal proportion', async function() {
-    //     });
-    //
-    //     it('Should have \'RefundedETH\' event', async function() {
-    //     });
-    // });
-    //
-    // describe('Close', function() {
-    //     it('Should require state  \'Refunding\'', async function() {
-    //     });
-    //
-    //     it('Should change state to \'Closed\'', async function() {
-    //     });
-    //
-    //     it('Should transfer all ether balance to Sirin Labs wallet \'Close\'', async function() {
-    //     });
-    //
-    //     it('Should fail to refund while state is \'Closed\'', async function() {
-    //     });
-    //
-    //     it('Should have \'Closed\' event', async function() {
-    //     });
-    // });
+    describe('Valid initialization', function() {
+
+        it('state Should be \'active\' ', async function() {
+            let state = await this.vault.state();
+            assert.equal(state, STATE_ACTIVE);
+        });
+
+        // it('Token Refund Wallet Should be set ', async function() {
+        //     let tokenRefundWallet = await this.vault.tokenRefundWallet()
+        //     assert.notEqual(tokenRefundWallet, null);
+        // });
+
+        // it('Token Refund Wallet Should not be \'0x0\' ', async function() {
+        //     let tokenRefundWallet = await this.vault.tokenRefundWallet()
+        //     assert.notEqual(tokenRefundWallet, "0x0");
+        // });
+
+        it('Ether Wallet Should be set ', async function() {
+            let etherWallet = await this.vault.etherWallet()
+            assert.notEqual(etherWallet, null);
+        });
+
+        it('Ether Wallet Should not be \'0x0\' ', async function() {
+            let etherWallet = await this.vault.etherWallet()
+            assert.notEqual(etherWallet, "0x0");
+        });
+
+        it('Token Should be set ', async function() {
+            let token = await this.vault.token()
+            assert.notEqual(token, null);
+        });
+    });
+
+    describe('Deposit', function() {
+
+        it('Should require state  \'Active\'', async function() {
+        });
+
+        it('Should deposit 100 wei and get 50 tokens on the first day', async function() {
+            await increaseTimeTo(this.startTime);
+            let value = 100;
+            let tokensAmount = 100 * 500;
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            assert.equal(tokensAmountActual, tokensAmount);
+        });
+
+        it('Should deposit 100 and have 100wei ether balance', async function() {
+        });
+
+        it('Should have \'Deposit\' event', async function() {
+        });
+
+    });
+
+    describe('EnableRefunds', function() {
+        it('Should require state  \'Active\'', async function() {
+        });
+
+        it('Should change state to \'Refunding\'', async function() {
+        });
+
+        it('Should have \'Refunding\' event', async function() {
+        });
+    });
+
+    describe('RefundETH', function() {
+        it('Should require state  \'Refunding\'', async function() {
+
+        });
+
+        it('Should fail to refund while state is  \'Active\'', async function() {
+
+        });
+
+        it('Should fail to refund while state is  \'Closed\'', async function() {
+
+        });
+
+        it('Should fail if investor is \'0x0\'', async function() {
+        });
+
+        it('Should fail if investor is not the origin of the tx', async function() {
+        });
+
+        it('Should fail if ETHToRefundAmountWei is 0', async function() {
+        });
+
+        it('Should fail if investor try to ask for a refund more then he invested', async function() {
+        });
+
+        it('Should decrease investor investment according to ether withdrawal', async function() {
+        });
+
+        it('Should send investor withdrawal amount', async function() {
+        });
+
+        it('Should decrease investor token balance according to ether withdrawal proportion', async function() {
+        });
+
+        it('Should transfer tokens to sirin according to ether withdrawal proportion', async function() {
+        });
+
+        it('Should have \'RefundedETH\' event', async function() {
+        });
+    });
+
+    describe('Close', function() {
+        it('Should require state  \'Refunding\'', async function() {
+        });
+
+        it('Should change state to \'Closed\'', async function() {
+        });
+
+        it('Should transfer all ether balance to Sirin Labs wallet \'Close\'', async function() {
+        });
+
+        it('Should fail to refund while state is \'Closed\'', async function() {
+        });
+
+        it('Should have \'Closed\' event', async function() {
+        });
+    });
 
     describe('ClaimToken', function() {
 
