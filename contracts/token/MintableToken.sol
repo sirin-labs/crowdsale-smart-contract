@@ -5,7 +5,6 @@ import './StandardToken.sol';
 import '../ownership/Claimable.sol';
 
 
-
 /**
  * @title Mintable token
  * @dev Simple ERC20 Token example, with mintable token creation

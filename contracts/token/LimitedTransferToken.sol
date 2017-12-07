@@ -51,7 +51,7 @@ contract LimitedTransferToken is ERC20 {
    * @dev Overwriting transferableTokens(address holder, uint64 time) is the way to provide the
    * specific logic for limiting token transferability for a holder over time.
    */
-  function transferableTokens(address holder, uint64 time) public constant returns (uint256) {
+  function transferableTokens(address holder, uint64 time) public view returns (uint256) {
     return balanceOf(holder);
   }
 }
