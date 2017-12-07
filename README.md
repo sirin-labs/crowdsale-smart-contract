@@ -54,13 +54,13 @@ Investors bought SRNs on the refund route can get refund of their ETH or claim t
 
 Refund ETH period is limited to 60 days after the crowd sale ends. SRN token claim is not limited in time.
 
-Any of the actions (refund ETH and SRN token claim) can be executed by the investor directly on the contract.
+Any of the actions (refund ETH and SRN token claim) can be executed by the investor directly on the RefundVault contract.
 
 Any of the actions (refund ETH and SRN token claim) can be done on parts of the amount.
 
 * In case of refund ETH, the proportional amount of SRN tokens will be burned.
 * In case of SRN token claim, the proportional amount of ETH will be transferred to Sirin ETH Wallet.
-* In Case of partial action the remaining ETH and SRN tokens will be available to more refund or claim actions according to the refund period and updated amounts. 
+* In Case of partial action the remaining ETH and SRN tokens will be available to more refund or claim actions according to the refund period and updated amounts.
 
 
 ## Develop
@@ -99,6 +99,11 @@ Adds/Updates address and token allocation for token grants.
 
 Granted tokens are allocated to non-ether, presale, buyers.
 
+**isActive**
+```cs
+function isActive() public view returns (bool)
+```
+Return true if the crowdsale is active, hence users can buy tokens
 
 **deleteGrantee**
 ```cs
@@ -113,38 +118,23 @@ function setFiatRaisedConvertedToWei(uint256 _fiatRaisedConvertedToWei) external
 Sets funds collected outside the crowdsale in wei.
 funds are converted to wei using the market conversion rate of USD\ETH on the day on the purchase.
 
+**claimTokenOwnership**
+```cs
+function claimTokenOwnership() external onlyOwner
+```
+Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used, by the token sale contract itself to claim back ownership of the SirinSmartToken contract.
+
+**claimRefundVaultOwnership**
+```cs
+function claimRefundVaultOwnership() external onlyOwner
+```
+Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used, by the token sale contract itself to claim back ownership of the refundVault contract.
+
 **buyTokensWithGuarantee**
 ```cs
 function buyTokensWithGuarantee() public payable
 ```
-Buy tokes with guarantee, these tokens and the ETH are saved in refundVault, so investor can refund them up to 60 days after the crowdsale ends. 
-
-**refundETH**
-```cs
-function refundETH(uint256 ETHToRefundAmountWei) public
-```
-Investors can claim refunds of part or all of the ETH used to buy the tokens (given that investor bought tokens using the buyTokensWithGuarantee function).
-The proportional amount of the tokens will be taken from the Investor.
-
-**claimTokens**
-```cs
-function claimTokens(uint256 tokenToClaimAmount) public 
-```
-Investors can claim part or all of their tokens (given that investor bought tokens using the buyTokensWithGuarantee function).
-The proportional amount of the ETH will be transfered to the Sirin ETH wallat.
-
-**refundExpired**
-```cs
-function refundExpired() public view returns (bool)
-```
-Check if we passed the refund time frame
-
-**closeVault**
-```cs
-function closeVault() public onlyOwner
-```
-Can be called 60 days after crowdsale has been finalized and only by the owner.
-Transfer all funds from the vault to sirin ETH wallet and move the ownership of the vault to sirin crowdsale owner.
+Buy tokes with guarantee, these tokens and the ETH are saved in refundVault, so investor can refund them up to 60 days after the crowdsale ends.
 
 #### SirinCrowdsale Events
 
@@ -200,18 +190,36 @@ Start the refunding. Should be called after the crowdsale.
 
 **refundETH**
 ```cs
-function refundETH(address investor, uint256 ETHToRefundAmountWei) public
+function refundETH(uint256 ETHToRefundAmountWei) isInRefundTimeFrame isRefundingState public
 ```
 Refund ETH back to the investor in return of proportional amount of SRN back to Sirin wallet.
 
-**claimToken**
+**claimTokens**
 ```cs
-function claimToken(address investor, uint256 tokensToClaim) public 
+function claimTokens(address investor, uint256 tokensToClaim) isRefundingOrCloseState public
 ```
-Transfer tokens from the vault to the investor while transfering proportional amount of ETH to Sirin ETH wallet.
+Transfer tokens from the vault to the investor while transferring proportional amount of ETH to Sirin ETH wallet.
 
+Can be triggerd by the investor or by the owner of the vault (in our case - Sirin`s owner after 60 days).
+
+**claimAllTokens**
+```cs
+function claimAllTokens() public
+```
+Investors can claim all remaining tokens from the vault.
 
 #### RefundVault Events
+
+**Active**
+```cs
+event Active();
+```
+
+
+**Deposit**
+```cs
+event Deposit(address indexed beneficiary, uint256 etherWeiAmount, uint256 tokenWeiAmount);
+```    
 
 **Closed**
 ```cs
