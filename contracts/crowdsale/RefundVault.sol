@@ -144,37 +144,4 @@ contract RefundVault is Claimable {
         TokensClaimed(investor, tokensToClaim);
     }
 
-    function claimAllTokens(address investor) public {
-        require(state == State.Refunding || state == State.Closed);
-        require(investor != address(0));
-        require(tx.origin == investor || msg.sender == owner); // validate input
-
-        uint256 depositedTokenValue = depositedToken[investor];
-        uint256 depositedETHValue = depositedETH[investor];
-
-        uint256 tokensToClaim = depositedToken[investor];
-
-        if (tokensToClaim > depositedTokenValue) {
-            revert();
-        }
-
-        uint256 claimedETH = tokensToClaim.mul(depositedETHValue).div(depositedTokenValue);
-        if(claimedETH == 0) {
-            revert();
-        }
-
-        depositedETH[investor] = depositedETHValue.sub(claimedETH);
-        depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
-
-        token.transfer(investor, tokensToClaim);
-        if(state != State.Closed) {
-            etherWallet.transfer(claimedETH);
-        }
-
-        TokensClaimed(investor, tokensToClaim);
-
-    }
-
-
-
 }
