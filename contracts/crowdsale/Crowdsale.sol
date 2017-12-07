@@ -74,7 +74,7 @@ contract Crowdsale {
         // update state
         weiRaised = weiRaised.add(weiAmount);
 
-        token.mint(beneficiary, tokens);
+        token.issue(beneficiary, tokens);
         TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
         forwardFunds();

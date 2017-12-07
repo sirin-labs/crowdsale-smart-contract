@@ -271,7 +271,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // update state
         weiRaised = weiRaised.add(weiAmount);
 
-        token.mint(address(refundVault), tokens);
+        token.issue(address(refundVault), tokens);
 
         refundVault.deposit.value(msg.value)(msg.sender, tokens);
 
