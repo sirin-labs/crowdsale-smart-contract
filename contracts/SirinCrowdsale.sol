@@ -28,9 +28,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // Refund division rate
     uint256 public constant REFUND_DIVISION_RATE = 2;
 
-    // Refund time frame
-    uint256 public constant REFUND_TIME_FRAME = 60 days;
-
     // =================================================================================================================
     //                                      Modifiers
     // =================================================================================================================
@@ -182,6 +179,8 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // transfer token ownership to crowdsale owner
         token.transferOwnership(owner);
 
+        // transfer refundVault ownership to crowdsale owner
+        refundVault.transferOwnership(owner);
     }
 
     // =================================================================================================================
@@ -282,55 +281,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         weiRaised = weiRaised.add(weiAmount);
 
         token.mint(address(refundVault), tokens);
-        TokenPurchaseWithGuarantee(msg.sender, address(refundVault), weiAmount, tokens);
 
         refundVault.deposit.value(msg.value)(msg.sender, tokens);
-    }
 
-    // @dev investors can claim refunds by calling the function
-    // @param ETHToRefundAmountWei - amount of the ETH to Refund
-    function refundETH(uint256 ETHToRefundAmountWei) public {
-        require(isFinalized);
-        require(canRefund());
-        require(ETHToRefundAmountWei != 0);
-
-        refundVault.refundETH(msg.sender, ETHToRefundAmountWei);
-    }
-
-    // @dev investors can claim tokens by calling the function
-    // @param tokenToClaimAmount - amount of the token to claim
-    function claimTokens(uint256 tokenToClaimAmount) public {
-        require(isFinalized);
-        require(tokenToClaimAmount != 0);
-
-        refundVault.claimToken(msg.sender, tokenToClaimAmount);
-    }
-
-
-    // @dev investors can claim tokens by calling the function
-    // @param tokenToClaimAmount - amount of the token to claim
-    function claimAllTokens() public {
-        require(isFinalized);
-
-        uint256 tokenToClaimAmount = refundVault.depositedToken(msg.sender);
-        refundVault.claimToken(msg.sender, tokenToClaimAmount);
-    }
-
-    // @dev declared the refund time frame
-    function canRefund() public view returns (bool) {
-        return endTime + REFUND_TIME_FRAME > now;
-    }
-
-    // @dev Can be called 60 days after crowdsale has been finalized and only by the owner.
-    // Transfer all funds from the vault to sirin`s ETH wallet and move the ownership
-    // of the vault to sirin crowdsale's owner
-    function closeVault() public onlyOwner {
-        require(isFinalized);
-        require(!canRefund());
-
-        refundVault.close();
-
-        // transfer refundVault ownership to crowdsale owner
-        refundVault.transferOwnership(owner);
+        TokenPurchaseWithGuarantee(msg.sender, address(refundVault), weiAmount, tokens);
     }
 }

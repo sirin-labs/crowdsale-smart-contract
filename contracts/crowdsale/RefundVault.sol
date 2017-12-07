@@ -24,12 +24,16 @@ contract RefundVault is Claimable {
     //                                      Members
     // =================================================================================================================
 
+    // Refund time frame
+    uint256 public constant REFUND_TIME_FRAME = 60 days;
+
     mapping (address => uint256) public depositedETH;
     mapping (address => uint256) public depositedToken;
 
     address public etherWallet;
     SirinSmartToken public token;
     State public state;
+    uint256 refundStartTime;
 
     // =================================================================================================================
     //                                      Events
@@ -41,6 +45,35 @@ contract RefundVault is Claimable {
     event RefundsEnabled();
     event RefundedETH(address beneficiary, uint256 weiAmount);
     event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
+
+    // =================================================================================================================
+    //                                      Modifiers
+    // =================================================================================================================
+
+    modifier isActiveState() {
+        require(state == State.Active);
+        _;
+    }
+
+    modifier isRefundingState() {
+        require(state == State.Refunding);
+        _;
+    }
+
+    modifier isRefundingOrCloseState() {
+        require(state == State.Refunding || state == State.Closed);
+        _;
+    }
+
+    modifier isInRefundTimeFrame() {
+        require(refundStartTime >= now && refundStartTime + REFUND_TIME_FRAME > now);
+        _;
+    }
+
+    modifier isRefundTimeFrameExceeded() {
+        require(refundStartTime + REFUND_TIME_FRAME < now);
+        _;
+    }
 
     // =================================================================================================================
     //                                      Ctors
@@ -59,8 +92,7 @@ contract RefundVault is Claimable {
     //                                      Public Functions
     // =================================================================================================================
 
-    function deposit(address investor, uint256 tokensAmount) onlyOwner public payable {
-        require(state == State.Active);
+    function deposit(address investor, uint256 tokensAmount) isActiveState onlyOwner public payable {
 
         depositedETH[investor] = depositedETH[investor].add(msg.value);
         depositedToken[investor] = depositedToken[investor].add(tokensAmount);
@@ -68,40 +100,34 @@ contract RefundVault is Claimable {
         Deposit(investor, msg.value, tokensAmount);
     }
 
-    function close() onlyOwner public {
-        require(state == State.Refunding);
-
+    function close() isRefundingState onlyOwner public {
         state = State.Closed;
         Closed();
         etherWallet.transfer(this.balance);
     }
 
-    function enableRefunds() onlyOwner public {
-        require(state == State.Active);
+    function enableRefunds() isActiveState onlyOwner public {
         state = State.Refunding;
+        refundStartTime = now;
+
         RefundsEnabled();
     }
 
     //@dev Refund ether back to the investor in returns of proportional amount of SRN
     //back to the Sirin`s wallet
-    function refundETH(address investor, uint256 ETHToRefundAmountWei) public {
-        require(state == State.Refunding);
+    function refundETH(address investor, uint256 ETHToRefundAmountWei) isInRefundTimeFrame isRefundingState public {
         require(investor != address(0));
         require(ETHToRefundAmountWei != 0);
-        require(tx.origin == investor); // validate input
+        require(msg.sender == investor); // validate input
 
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
-        if (ETHToRefundAmountWei > depositedETHValue) {
-            revert();
-        }
+        assert(ETHToRefundAmountWei <= depositedETHValue);
 
         uint256 refundTokens = ETHToRefundAmountWei.mul(depositedTokenValue).div(depositedETHValue);
 
-        if(refundTokens == 0) {
-            revert();
-        }
+        assert(refundTokens > 0);
 
         depositedETH[investor] = depositedETHValue.sub(ETHToRefundAmountWei);
         depositedToken[investor] = depositedTokenValue.sub(refundTokens);
@@ -115,23 +141,19 @@ contract RefundVault is Claimable {
     //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
     //to Sirin`s wallet.
     //Can be triggerd by the investor or by the owner of the vault (in our case - Sirin`s owner after 60 days)
-    function claimToken(address investor, uint256 tokensToClaim) public {
-        require(state == State.Refunding || state == State.Closed);
+    function claimTokens(address investor, uint256 tokensToClaim) isRefundingOrCloseState public {
         require(tokensToClaim != 0);
         require(investor != address(0));
-        require(tx.origin == investor || msg.sender == owner); // validate input
+        require(msg.sender == investor || msg.sender == owner); // validate input
 
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
-        if (tokensToClaim > depositedTokenValue) {
-            revert();
-        }
+        assert(tokensToClaim <= depositedTokenValue);
 
         uint256 claimedETH = tokensToClaim.mul(depositedETHValue).div(depositedTokenValue);
-        if(claimedETH == 0) {
-            revert();
-        }
+
+        assert(claimedETH > 0);
 
         depositedETH[investor] = depositedETHValue.sub(claimedETH);
         depositedToken[investor] = depositedTokenValue.sub(tokensToClaim);
@@ -143,5 +165,13 @@ contract RefundVault is Claimable {
 
         TokensClaimed(investor, tokensToClaim);
     }
+
+    // @dev investors can claim tokens by calling the function
+    // @param tokenToClaimAmount - amount of the token to claim
+    function claimAllTokens() public  {
+        uint256 depositedTokenValue = depositedToken[msg.sender];
+        claimTokens(msg.sender, depositedTokenValue);
+    }
+
 
 }

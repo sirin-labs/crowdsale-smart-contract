@@ -179,7 +179,6 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
     })
 
-
     describe('Token transfer', function() {
 
         it('should not allow transfer before after finalize', async function() {
@@ -218,7 +217,6 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             });
         })
     })
-
 
     describe('Finalize allocation', function() {
 
@@ -279,6 +277,21 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             assert.equal(tokenOwner, owner);
         })
 
+        it('should set vault owner to crowdsale owner', async function() {
+
+            await this.refundVault.claimOwnership({
+                from: owner
+            })
+
+            let tokenOwner = await this.refundVault.owner();
+            assert.equal(tokenOwner, owner);
+        })
+
+        it('should set vault state to \'Refunding\'', async function() {
+            let stateRefunding = "1";
+            let state = await this.refundVault.state();
+            assert.equal(state, stateRefunding);
+        })
     })
 
     describe('Grant tokens', function() {
@@ -757,6 +770,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
     })
 
+<<<<<<< HEAD
     describe('Refund from vault', function() {
          it('should refund ether', async function() {
 
@@ -1005,5 +1019,9 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
 
      })
 
-
+    describe('vault ownership', function() {
+        it('crowdsale is vaults owner', async function() {
+            assert(await this.refundVault.owner() == await this.crowdsale.address, "RefundVault is not crowdsale owner")
+        })
+    })
 })

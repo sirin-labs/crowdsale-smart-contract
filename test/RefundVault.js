@@ -49,10 +49,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             assert.equal(state, STATE_ACTIVE);
         });
 
-         it('Token Refund Wallet Should be set ', async function() {
-             let tokenRefundWallet = await this.vault.etherWallet()
-             assert.notEqual(tokenRefundWallet, null);
-         });
+        it('Token Refund Wallet Should be set ', async function() {
+            let tokenRefundWallet = await this.vault.etherWallet()
+            assert.notEqual(tokenRefundWallet, null);
+        });
 
 
         it('Ether Wallet Should be set ', async function() {
@@ -150,7 +150,13 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         });
 
         it('Should fail to refund while state is \'Closed\'', async function() {
-            await this.vault.claimToken(investor, 1 ,{from:investor}).should.be.rejectedWith(EVMThrow);
+
+            try {
+                await this.vault.claimTokens(investor, 1 ,{from:investor})
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+            assert(false, "did not throw with error if state is \'Closed\'")
         });
 
         it('Should have \'Closed\' event', async function() {
@@ -195,7 +201,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
 
             const {
-               logs
+                logs
             } = await this.vault.enableRefunds({from:owner});
             const event = logs.find(e => e.event === "RefundsEnabled")
             should.exist(event)
@@ -205,8 +211,12 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
     describe('RefundETH', function() {
 
         beforeEach(async function() {
+
             this.token = await SirinSmartToken.new({from: owner});
             this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
+
+            this.startTime = latestTime() + duration.weeks(1);
+            await increaseTimeTo(this.startTime)
         })
 
         it('Should require state  \'Refunding\'', async function() {
@@ -386,7 +396,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
         });
 
-        it('Should burn tokens to according to ether withdrawal proportion', async function() {
+        it('Should burn tokens according to ether withdrawal proportion', async function() {
             let tokensAmount = ether(1);
             this.token.issue(this.vault.address, tokensAmount, {from: owner});
             this.token.disableTransfers(false, {from:owner});
@@ -417,202 +427,229 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         });
     });
 
-  describe('ClaimToken', function() {
+    describe('ClaimToken', function() {
 
-      beforeEach(async function() {
-          this.token = await SirinSmartToken.new({from: owner});
-          this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
-      })
+        beforeEach(async function() {
+            this.token = await SirinSmartToken.new({from: owner});
+            this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
+        })
 
-      it('Should require state  \'Refunding\' or \'Closed\'', async function() {
+        it('Should require state  \'Refunding\' or \'Closed\'', async function() {
 
-          let tokensAmount = ether(1);
-          this.token.issue(this.vault.address, tokensAmount, {from: owner});
-          this.token.disableTransfers(false, {from:owner});
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
 
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          this.vault.enableRefunds({from:owner});
+            this.vault.enableRefunds({from:owner});
 
-          await this.vault.claimToken(investor, tokensAmount/2 ,{from:investor});
-          this.vault.close({from:owner});
+            await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
+            this.vault.close({from:owner});
 
-          await this.vault.claimToken(investor, tokensAmount/2 ,{from:investor});
+            await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
 
-      });
+        });
 
-      it('Should fail to claim while \'Active\'', async function() {
+        it('Should fail to claim while \'Active\'', async function() {
 
-          let tokensAmount = ether(1);
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            let tokensAmount = ether(1);
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          try {
-              await this.vault.claimToken(investor, tokensAmount ,{from:investor});
-          } catch (error) {
-              return utils.ensureException(error);
-          }
+            try {
+                await this.vault.claimTokens(investor, tokensAmount ,{from:investor});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
 
-          assert(false, "did not throw with error claim without Refund or Close state")
+            assert(false, "did not throw with error claim without Refund or Close state")
 
-      });
+        });
 
-      it('Should fail if investor is \'0x0\'', async function() {
+        it('Should fail if investor is \'0x0\'', async function() {
 
-          let tokensAmount = ether(1);
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            let tokensAmount = ether(1);
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          try {
-              await this.vault.claimToken(investor, tokensAmount ,{from:0x0});
-          } catch (error) {
-              return utils.ensureException(error);
-          }
+            try {
+                await this.vault.claimTokens(investor, tokensAmount ,{from:0x0});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
 
-          assert(false, "did not throw with error if investor address is 0x0")
+            assert(false, "did not throw with error if investor address is 0x0")
 
-      });
+        });
 
-      it('Should fail if investor is not the origin or the sender is the owner', async function() {
+        it('Should fail if investor is not the origin or the sender is the owner', async function() {
 
-          let tokensAmount = ether(1);
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            let tokensAmount = ether(1);
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          try {
-              await this.vault.claimToken(investor, tokensAmount ,{from:walletFounder});
-          } catch (error) {
-              return utils.ensureException(error);
-          }
+            try {
+                await this.vault.claimTokens(investor, tokensAmount ,{from:walletFounder});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
 
-          assert(false, "did not throw with error if not investor address")
+            assert(false, "did not throw with error if not investor address")
 
-      });
+        });
 
-      it('Should fail if tokensToClaim is 0', async function() {
+        it('Should fail if tokensToClaim is 0', async function() {
 
-          let tokensAmount = ether(1);
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            let tokensAmount = ether(1);
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          try {
-              await this.vault.claimToken(investor, 0 ,{from:walletFounder});
-          } catch (error) {
-              return utils.ensureException(error);
-          }
+            try {
+                await this.vault.claimTokens(investor, 0 ,{from:walletFounder});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
 
-          assert(false, "did not throw with error with tokensAmount is 0")
+            assert(false, "did not throw with error with tokensAmount is 0")
 
-      });
+        });
 
-      it('Should fail if investor try to claim more tokens then he has bought', async function() {
+        it('Should fail if investor try to claim more tokens then he has bought', async function() {
 
-          let tokensAmount = ether(1);
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            let tokensAmount = ether(1);
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          try {
-              await this.vault.claimToken(investor, ether(101 * 500) ,{from:0x0});
-          } catch (error) {
-              return utils.ensureException(error);
-          }
+            try {
+                await this.vault.claimTokens(investor, ether(101 * 500) ,{from:0x0});
+            } catch (error) {
+                return utils.ensureException(error);
+            }
 
-          assert(false, "did not throw with error if investor try to claim more tokens then he has bought")
+            assert(false, "did not throw with error if investor try to claim more tokens then he has bought")
 
-      });
+        });
 
-      it('Should decrease investor tokens balance according to token withdrawal', async function() {
+        it('Should decrease investor tokens balance according to token withdrawal', async function() {
 
-          let tokensAmount = ether(1);
-          this.token.issue(this.vault.address, tokensAmount, {from: owner});
-          this.token.disableTransfers(false, {from:owner});
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
 
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          this.vault.enableRefunds({from:owner});
+            this.vault.enableRefunds({from:owner});
 
-          await this.vault.claimToken(investor, tokensAmount ,{from:investor});
+            await this.vault.claimTokens(investor, tokensAmount ,{from:investor});
 
-          tokensAmount = await this.token.balanceOf(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
-      });
+            tokensAmount = await this.token.balanceOf(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+        });
 
-      it('Should transfer the investor tokens according to claim amount', async function() {
+        it('Should transfer the investor tokens according to claim amount', async function() {
 
-          let tokensAmount = ether(1);
-          this.token.issue(this.vault.address, tokensAmount, {from: owner});
-          this.token.disableTransfers(false, {from:owner});
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
 
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount);
 
-          this.vault.enableRefunds({from:owner});
+            this.vault.enableRefunds({from:owner});
 
-          await this.vault.claimToken(investor, tokensAmount /2 , {from:investor});
+            let result = ether(0.5);
+            await this.vault.claimTokens(investor, result , {from:investor});
 
-          var invsetorTokensAmount = await this.token.balanceOf(investor);
-          invsetorTokensAmount.should.be.bignumber.equal(tokensAmount/2)
+            var invsetorTokensAmount = await this.token.balanceOf(investor);
+            invsetorTokensAmount.should.be.bignumber.equal(result);
 
-      });
+        });
 
-      it('Should decrease investor ether balance according to token withdrawal proportion', async function() {
+        it('Should decrease investor ether balance according to token withdrawal proportion', async function() {
 
-          let tokensAmount = ether(1);
-          this.token.issue(this.vault.address, tokensAmount, {from: owner});
-          this.token.disableTransfers(false, {from:owner});
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
 
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
 
-          this.vault.enableRefunds({from:owner});
+            this.vault.enableRefunds({from:owner});
 
-          await this.vault.claimToken(investor, tokensAmount /2 , {from:investor});
-          let investorETH = await this.vault.depositedETH(investor);
-          investorETH.should.be.bignumber.equal(value/2)
-      });
+            await this.vault.claimTokens(investor, tokensAmount /2 , {from:investor});
+            let investorETH = await this.vault.depositedETH(investor);
+            investorETH.should.be.bignumber.equal(value/2)
+        });
 
-      it('Should send ether to sirin according to token withdrawal proportion', async function() {
-          let tokensAmount = ether(1);
-          this.token.issue(this.vault.address, tokensAmount, {from: owner});
-          this.token.disableTransfers(false, {from:owner});
+        it('Should send ether to sirin according to token withdrawal proportion', async function() {
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
 
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
 
-          this.vault.enableRefunds({from:owner});
-          let walletBalanceBefore = await web3.eth.getBalance(wallet);
+            this.vault.enableRefunds({from:owner});
+            let walletBalanceBefore = await web3.eth.getBalance(wallet);
 
-          await this.vault.claimToken(investor, tokensAmount , {from:investor});
-          let walletBalanceAfter = await web3.eth.getBalance(wallet);
+            await this.vault.claimTokens(investor, tokensAmount , {from:investor});
+            let walletBalanceAfter = await web3.eth.getBalance(wallet);
 
-          walletBalanceAfter.minus(walletBalanceBefore).should.be.bignumber.equal(value)
-      });
+            walletBalanceAfter.minus(walletBalanceBefore).should.be.bignumber.equal(value)
+        });
 
-      it('Should have \'TokensClaimed\' event', async function() {
+        it('Should have \'TokensClaimed\' event', async function() {
 
-          let tokensAmount = ether(100 * 500);
+            let tokensAmount = ether(100 * 500);
 
-          this.token.issue(this.vault.address, tokensAmount, {from: owner});
-          this.token.disableTransfers(false, {from:owner});
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
 
-          await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
-          let tokensAmountActual = await this.vault.depositedToken(investor);
-          tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
-          this.vault.enableRefunds({from:owner});
+            this.vault.enableRefunds({from:owner});
 
-          const {logs} = await this.vault.claimToken(investor, tokensAmount/2 ,{from:investor});
-          const event = logs.find(e => e.event === "TokensClaimed")
-          should.exist(event)
+            const {logs} = await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
+            const event = logs.find(e => e.event === "TokensClaimed")
+            should.exist(event)
 
-      });
-  });
+        });
+    });
+
+    describe('claimAllTokens', function() {
+
+        beforeEach(async function() {
+            this.token = await SirinSmartToken.new({from: owner});
+            this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
+        })
+
+        it('Should claim all', async function() {
+
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
+
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            tokensAmountActual.should.be.bignumber.equal(tokensAmount)
+
+            this.vault.enableRefunds({from:owner});
+
+            await this.vault.claimAllTokens({from:investor});
+
+            var invsetorTokensAmount = await this.token.balanceOf(investor);
+            invsetorTokensAmount.should.be.bignumber.equal(tokensAmount)
+        });
+    });
 })
