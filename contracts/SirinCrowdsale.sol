@@ -137,7 +137,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         super.finalization();
 
         // granting bonuses for the pre crowdsale grantees:
-        for (uint8 i = 0; i < presaleGranteesMapKeys.length; i++) {
+        for (uint256 i = 0; i < presaleGranteesMapKeys.length; i++) {
             token.issue(presaleGranteesMapKeys[i], presaleGranteesMap[presaleGranteesMapKeys[i]]);
         }
 
