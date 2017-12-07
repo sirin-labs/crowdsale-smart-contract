@@ -87,7 +87,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     SirinSmartToken _sirinSmartToken,
     RefundVault _refundVault)
     public
-    Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet) {
+    Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet, _sirinSmartToken) {
         require(_walletFounder != address(0));
         require(_walletOEM != address(0));
         require(_walletBounties != address(0));
@@ -133,12 +133,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
     //                                      Impl FinalizableCrowdsale
     // =================================================================================================================
-
-    // creates the token to be sold.
-    // override this method to have crowdsale of a specific mintable token.
-    function createTokenContract() internal returns (SirinSmartToken) {
-        // we not create the token here, we got it on the Ctor
-    }
 
     //@Override
     function finalization() internal onlyOwner {

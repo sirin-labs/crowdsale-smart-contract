@@ -31,11 +31,10 @@ contract('FinalizableCrowdsale', function([_, owner, wallet, thirdparty]) {
         this.endTime = this.startTime + duration.weeks(1);
         this.afterEndTime = this.endTime + duration.seconds(1);
 
-        this.crowdsale = await FinalizableCrowdsale.new(this.startTime, this.endTime, rate, wallet, {
+        this.token = await MintableToken.new();
+        this.crowdsale = await FinalizableCrowdsale.new(this.startTime, this.endTime, rate, wallet, this.token.address, {
             from: owner
         });
-
-        this.token = MintableToken.at(await this.crowdsale.token());
     });
 
     it('cannot be finalized before ending', async function() {

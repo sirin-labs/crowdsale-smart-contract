@@ -10,7 +10,7 @@ const should = require('chai')
     .use(require('chai-bignumber')(BigNumber))
     .should();
 
-const Crowdsale = artifacts.require('Crowdsale');
+const Crowdsale = artifacts.require('./helpers/CrowdsaleMock');
 const MintableToken = artifacts.require('MintableToken')
 
 contract('Crowdsale', function([_, investor, wallet, purchaser]) {
@@ -21,7 +21,7 @@ contract('Crowdsale', function([_, investor, wallet, purchaser]) {
 
     before(async function() {
         //Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
-        await advanceBlock()
+        await advanceBlock();
     });
 
     beforeEach(async function() {
@@ -29,10 +29,12 @@ contract('Crowdsale', function([_, investor, wallet, purchaser]) {
         this.endTime = this.startTime + duration.weeks(1);
         this.afterEndTime = this.endTime + duration.seconds(1);
 
-        // TBD
-        this.crowdsale = await Crowdsale.new(this.startTime, this.endTime, rate, wallet);
+        this.token = await MintableToken.new();
+        this.crowdsale = await Crowdsale.new(this.startTime, this.endTime, rate, wallet, this.token.address);
 
-        this.token = MintableToken.at(await this.crowdsale.token());
+        await this.token.transferOwnership(this.crowdsale.address);
+
+        await this.crowdsale.claimTokenOwnership();
     });
 
     it('should be token owner', async function() {
@@ -73,8 +75,8 @@ contract('Crowdsale', function([_, investor, wallet, purchaser]) {
                 value: value,
                 from: purchaser
             }).should.be.rejectedWith(EVMThrow);
-        })
-     })
+        });
+    });
 
     describe('high-level purchase', function() {
         beforeEach(async function() {
