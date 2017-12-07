@@ -757,7 +757,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
     })
 
-   describe('Refund Vault', function() {
+   describe('Refund from vault', function() {
          it('should refund ether', async function() {
 
              await increaseTimeTo(this.startTime)
@@ -843,7 +843,8 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
           assert(false, "did not throw if user trying to refund before finalize")
 
          })
-
+       })
+       describe('claim from vault', function() {
 
          it('should claim ether', async function() {
             await increaseTimeTo(this.startTime)
@@ -952,8 +953,6 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
 
             assert(false, "did not throw if user trying to refund before finalize")
         })
-
-
      })
 
      describe('vault ownership', function() {
