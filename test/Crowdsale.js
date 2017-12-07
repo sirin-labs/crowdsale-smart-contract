@@ -11,7 +11,7 @@ const should = require('chai')
     .should();
 
 const Crowdsale = artifacts.require('./helpers/CrowdsaleMock');
-const MintableToken = artifacts.require('MintableToken')
+const SirinSmartToken = artifacts.require('SirinSmartToken')
 
 contract('Crowdsale', function([_, investor, wallet, purchaser]) {
     const rate = new BigNumber(1000);
@@ -29,7 +29,7 @@ contract('Crowdsale', function([_, investor, wallet, purchaser]) {
         this.endTime = this.startTime + duration.weeks(1);
         this.afterEndTime = this.endTime + duration.seconds(1);
 
-        this.token = await MintableToken.new();
+        this.token = await SirinSmartToken.new();
         this.crowdsale = await Crowdsale.new(this.startTime, this.endTime, rate, wallet, this.token.address);
 
         await this.token.transferOwnership(this.crowdsale.address);
