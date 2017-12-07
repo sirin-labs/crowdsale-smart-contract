@@ -222,10 +222,9 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         delete presaleGranteesMap[_grantee];
 
         //delete from the array (keys):
-        uint8 index;
-        for (uint8 i = 0; i < presaleGranteesMapKeys.length; i++) {
-            if (presaleGranteesMapKeys[i] == _grantee)
-            {
+        uint256 index;
+        for (uint256 i = 0; i < presaleGranteesMapKeys.length; i++) {
+            if (presaleGranteesMapKeys[i] == _grantee) {
                 index = i;
                 break;
             }
