@@ -14,6 +14,6 @@ contract CrowdsaleMock is Crowdsale {
   	/// @dev Accepts new ownership on behalf of the SirinCrowdsale contract. This can be used, by the token sale
   	/// contract itself to claim back ownership of the SirinSmartToken contract.
   	function claimTokenOwnership() external {
-        token.claimOwnership();
-    }
+    	token.claimOwnership();
+	}
 }
