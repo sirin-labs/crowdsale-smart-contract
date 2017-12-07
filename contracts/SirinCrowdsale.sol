@@ -127,7 +127,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         if (now < (startTime + 13 days)) {return 525;}
 
         return rate;
-
     }
 
     // =================================================================================================================
