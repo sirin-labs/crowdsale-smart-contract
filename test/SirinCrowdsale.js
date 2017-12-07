@@ -758,7 +758,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
     })
 
    describe('Refund Vault', function() {
-      it('should refund ether', async function() {
+         it('should refund ether', async function() {
 
              await increaseTimeTo(this.startTime)
              await this.crowdsale.buyTokensWithGuarantee({
@@ -770,7 +770,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
              await this.crowdsale.finalize({
                 from: owner
              })
-             await this.crowdsale.refundETH(ether(1), {
+             await this.crowdsale.refundETH(ether(10), {
                 from: investor
              })
              let fundAfterRefund = web3.eth.getBalance(investor);
@@ -779,94 +779,179 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
              assert(fundAfterRefund >= fundAfterBuy, "investor did not received refund");
             })
 
-            it('should claim ether', async function() {
-               await increaseTimeTo(this.startTime)
-
+        it('should not allow to refund ether before finalize', async function() {
+           try {
+               await increaseTimeTo(this.startTime);
                await this.crowdsale.buyTokensWithGuarantee({
-                   value: ether(1),
-                   from: investor
-               })
-               let tokensToClaim = await this.refundVault.depositedToken(investor);
-
-               await increaseTimeTo(this.afterEndTime)
-               await this.crowdsale.finalize({
-                   from: owner
-               })
-
-               await this.crowdsale.claimTokens(tokensToClaim, {
+                     value: ether(1),
                      from: investor
-               });
+               })
+               await increaseTimeTo(this.afterEndTime);
+               await this.crowdsale.refundETH(ether(1), {
+                     from: investor
+               })
+           }catch (error) {
+               return utils.ensureException(error);
+           }
 
-               let claimedTokensAmount = await this.token.balanceOf(investor);
+           assert(false, "did not throw if user trying to refund before finalize")
 
-               assert.equal(tokensToClaim + "", claimedTokensAmount + "", "investor failed to claim tokens" );
+         })
+
+        it('should not allow to refund with 0 ether', async function() {
+           try{
+              await increaseTimeTo(this.startTime)
+              await this.crowdsale.buyTokensWithGuarantee({
+                  value: ether(10),
+                  from: investor
+              })
+              let fundAfterBuy = web3.eth.getBalance(investor);
+              await increaseTimeTo(this.afterEndTime)
+              await this.crowdsale.finalize({
+                 from: owner
+              })
+              await this.crowdsale.refundETH(ether(0), {
+                 from: investor
+             })
+             }catch (error) {
+                 return utils.ensureException(error);
+             }
+             assert(false, "did not throw if user trying to refund 0 ether")
+
+          })
+
+          it('should not allow refund ether after REFUND_TIME_FRAME', async function() {
+             try {
+              await increaseTimeTo(this.startTime);
+              await this.crowdsale.buyTokensWithGuarantee({
+                    value: ether(1),
+                    from: investor
+              })
+              await increaseTimeTo(this.afterEndTime);
+              await this.crowdsale.finalize({
+                 from: owner
+              })
+              await increaseTimeTo(this.afterEndTime + duration.days(await this.crowdsale.REFUND_TIME_FRAME())
+              + duration.seconds(1));
+              await this.crowdsale.refundETH(ether(1), {
+                    from: investor
+              })
+          }catch (error) {
+              return utils.ensureException(error);
+          }
+
+          assert(false, "did not throw if user trying to refund before finalize")
+
+         })
+
+
+         it('should claim ether', async function() {
+            await increaseTimeTo(this.startTime)
+
+            await this.crowdsale.buyTokensWithGuarantee({
+                value: ether(1),
+                from: investor
+            })
+            let tokensToClaim = await this.refundVault.depositedToken(investor);
+
+            await increaseTimeTo(this.afterEndTime)
+            await this.crowdsale.finalize({
+                from: owner
             })
 
-            it('should not allow to refund ether before finalize', async function() {
-               try {
-                   await increaseTimeTo(this.startTime);
-                   await this.crowdsale.buyTokensWithGuarantee({
-                         value: ether(1),
-                         from: investor
-                   })
-                   await increaseTimeTo(this.afterEndTime);
-                   await this.crowdsale.refundETH(ether(1), {
-                         from: investor
-                   })
-               }catch (error) {
-                   return utils.ensureException(error);
-               }
+            await this.crowdsale.claimTokens(tokensToClaim, {
+                  from: investor
+            });
 
-               assert(false, "did not throw if user trying to refund before finalize")
+            let claimedTokensAmount = await this.token.balanceOf(investor);
 
+            assert.equal(tokensToClaim + "", claimedTokensAmount + "", "investor failed to claim tokens" );
              })
 
-            it('should not allow refund ether after REFUND_TIME_FRAME', async function() {
-              try {
-                  await increaseTimeTo(this.startTime);
-                  await this.crowdsale.buyTokensWithGuarantee({
-                        value: ether(1),
-                        from: investor
-                  })
-                  await increaseTimeTo(this.afterEndTime);
-                  await this.crowdsale.finalize({
-                     from: owner
-                  })
-                  await increaseTimeTo(this.afterEndTime + duration.days(await this.crowdsale.REFUND_TIME_FRAME())
-                  + duration.seconds(1));
-                  await this.crowdsale.refundETH(ether(1), {
-                        from: investor
-                  })
-              }catch (error) {
-                  return utils.ensureException(error);
-              }
+         it('should not allow to claim 0 tokens', async function() {
+           try{
+            await increaseTimeTo(this.startTime)
 
-              assert(false, "did not throw if user trying to refund before finalize")
-
-             })
-
-            it('should allow to claim all', async function() {
-               await increaseTimeTo(this.startTime)
-
-               await this.crowdsale.buyTokensWithGuarantee({
-                   value: ether(1),
-                   from: investor
-               })
-               let tokensToClaim = await this.refundVault.depositedToken(investor);
-
-               await increaseTimeTo(this.afterEndTime)
-               await this.crowdsale.finalize({
-                   from: owner
-               })
-
-               await this.crowdsale.claimAllTokens({
-                     from: investor
-               });
-
-               let claimedTokensAmount = await this.token.balanceOf(investor);
-
-               assert.equal(tokensToClaim + "", claimedTokensAmount + "", "investor failed to claim tokens" );
+            await this.crowdsale.buyTokensWithGuarantee({
+                value: ether(1),
+                from: investor
             })
+
+            await increaseTimeTo(this.afterEndTime)
+            await this.crowdsale.finalize({
+                from: owner
+            })
+
+            await this.crowdsale.claimTokens(0, {
+                  from: investor
+            })
+           }catch (error) {
+              return utils.ensureException(error);
+           }
+
+           assert(false, "did not throw if user trying to claim 0 tokens")
+
+         })
+
+         it('should not allow to claim ether before finalize', async function() {
+           try {
+            await increaseTimeTo(this.startTime);
+            await this.crowdsale.buyTokensWithGuarantee({
+                  value: ether(1),
+                  from: investor
+            })
+            await increaseTimeTo(this.afterEndTime);
+            let tokensToClaim = await this.refundVault.depositedToken(investor);
+            await this.crowdsale.claimTokens(tokensToClaim, {
+                  from: investor
+            });
+          }catch (error) {
+            return utils.ensureException(error);
+          }
+
+          assert(false, "did not throw if user trying to refund before finalize")
+         })
+
+         it('should allow to claim all', async function() {
+           await increaseTimeTo(this.startTime)
+
+           await this.crowdsale.buyTokensWithGuarantee({
+               value: ether(1),
+               from: investor
+           })
+           let tokensToClaim = await this.refundVault.depositedToken(investor);
+
+           await increaseTimeTo(this.afterEndTime)
+           await this.crowdsale.finalize({
+               from: owner
+           })
+
+           await this.crowdsale.claimAllTokens({
+                 from: investor
+           });
+
+           let claimedTokensAmount = await this.token.balanceOf(investor);
+
+           assert.equal(tokensToClaim + "", claimedTokensAmount + "", "investor failed to claim tokens" );
+         })
+
+         it('should not allow to claim all ether before finalize', async function() {
+           try {
+                await increaseTimeTo(this.startTime);
+                await this.crowdsale.buyTokensWithGuarantee({
+                      value: ether(1),
+                      from: investor
+                })
+                await increaseTimeTo(this.afterEndTime);
+                await this.crowdsale.claimAllTokens({
+                      from: investor
+                });
+            }catch (error) {
+                return utils.ensureException(error);
+            }
+
+            assert(false, "did not throw if user trying to refund before finalize")
+        })
 
 
      })
