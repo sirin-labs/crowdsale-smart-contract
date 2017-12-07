@@ -757,7 +757,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
     })
 
-   describe('Refund from vault', function() {
+    describe('Refund from vault', function() {
          it('should refund ether', async function() {
 
              await increaseTimeTo(this.startTime)
@@ -844,7 +844,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
 
          })
        })
-       describe('claim from vault', function() {
+    describe('claim from vault', function() {
 
          it('should claim ether', async function() {
             await increaseTimeTo(this.startTime)
@@ -955,10 +955,54 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         })
      })
 
-     describe('vault ownership', function() {
+     describe('vault', function() {
          it('crowdsale is vaults owner', async function() {
             assert(await this.refundVault.owner() == await this.crowdsale.address, "RefundVault is not crowdsale owner")
          })
+
+         it('allow close vault before time', async function() {
+          try {
+              await increaseTimeTo(this.startTime);
+              await increaseTimeTo(this.afterEndTime);
+              await this.crowdsale.finalize({
+                 from: owner
+              })
+              await this.crowdsale.closeVault({from: owner});
+               }catch (error) {
+                 return utils.ensureException(error);
+               }
+
+               assert(false, "did not throw if trying to close vault before time")
+         })
+
+          it('allow only owner to close vault', async function() {
+           try {
+             await increaseTimeTo(this.startTime);
+             await increaseTimeTo(this.afterEndTime);
+             await this.crowdsale.finalize({
+                from: owner
+             })
+             await increaseTimeTo(this.afterEndTime + duration.days(await this.crowdsale.REFUND_TIME_FRAME()) + duration.days(1));
+             await this.crowdsale.closeVault({from: investor});
+           }catch (error) {
+             return utils.ensureException(error);
+           }
+            assert(false, "did not throw if non owner try to close vault")
+           })
+
+          it('allow close vault after endTime + REFUND_TIME_FRAME', async function() {
+
+             await increaseTimeTo(this.startTime);
+             await increaseTimeTo(this.afterEndTime);
+             await this.crowdsale.finalize({
+                from: owner
+             })
+             await increaseTimeTo(this.afterEndTime + duration.days(await this.crowdsale.REFUND_TIME_FRAME()));
+             await this.crowdsale.closeVault({from: owner});
+
+          })
+
+
      })
 
 
