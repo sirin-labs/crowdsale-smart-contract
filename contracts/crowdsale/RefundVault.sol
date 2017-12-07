@@ -33,7 +33,7 @@ contract RefundVault is Claimable {
     address public etherWallet;
     SirinSmartToken public token;
     State public state;
-    uint256 refundStartTime;
+    uint256 public refundStartTime;
 
     // =================================================================================================================
     //                                      Events
