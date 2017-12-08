@@ -489,7 +489,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
         });
 
-        it('Should fail if investor is not the origin or the sender is the owner', async function() {
+        it('Should fail if investor is not the sender is the owner', async function() {
 
             let tokensAmount = ether(1);
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
@@ -653,5 +653,95 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             var invsetorTokensAmount = await this.token.balanceOf(investor);
             invsetorTokensAmount.should.be.bignumber.equal(tokensAmount)
         });
+    });
+   
+    describe('claimTokens', function(){
+         beforeEach(async function() {
+            this.token = await SirinSmartToken.new({from: owner});
+            this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
+        })
+        
+        it('allow only investor to claim tokens', async function() {
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
+
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+
+            this.vault.enableRefunds({from:owner});
+
+            await this.vault.claimTokens(investor, tokensAmountActual, {from:investor});
+
+            var invsetorTokensAmount = await this.token.balanceOf(investor);
+            invsetorTokensAmount.should.be.bignumber.equal(tokensAmount)
+        })
+        
+         it('should throw if owner try to clain investor tokens', async function() {
+            try {
+                let tokensAmount = ether(1);
+                this.token.issue(this.vault.address, tokensAmount, {from: owner});
+                this.token.disableTransfers(false, {from:owner});
+
+                await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+                let tokensAmountActual = await this.vault.depositedToken(investor);
+
+                this.vault.enableRefunds({from:owner});
+
+                await this.vault.claimTokens(investor, tokensAmountActual, {from:owner});
+
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+            assert(false, "did not throw with error if owner try to claim investor tokens")          
+         
+        })
+    });
+    
+     describe('claimAllInvestorTokensByOwner', function(){
+         beforeEach(async function() {
+            this.token = await SirinSmartToken.new({from: owner});
+            this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
+        })
+        
+        it('allow owner claim investors tokens', async function() {
+            let tokensAmount = ether(1);
+            this.token.issue(this.vault.address, tokensAmount, {from: owner});
+            this.token.disableTransfers(false, {from:owner});
+            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            let tokensAmountActual = await this.vault.depositedToken(investor);
+            await this.vault.enableRefunds({from:owner});
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await this.vault.close({from:owner});
+
+            await this.vault.claimAllInvestorTokensByOwner(investor, {from:owner});
+            var invsetorTokensAmount = await this.token.balanceOf(investor);
+            invsetorTokensAmount.should.be.bignumber.equal(tokensAmount)
+        })
+         
+        it('Should fail to claim while state is active', async function() {
+            try {
+                await this.vault.claimAllInvestorTokensByOwner(investor ,{from:owner})
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+            assert(false, "did not throw with error if state is active")
+        });
+         
+        it('Should fail to claim while state is refunding', async function() {
+            try {
+                await increaseTime((await this.vault.refundStartTime()).toNumber() );
+                const {
+                    logs
+                } = await this.vault.enableRefunds({from:owner});
+                
+                await this.vault.claimAllInvestorTokensByOwner(investor ,{from:owner})
+            } catch (error) {
+                return utils.ensureException(error);
+            }
+            assert(false, "did not throw with error if state is refunding")
+        });
+
     });
 })

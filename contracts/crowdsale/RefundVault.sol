@@ -59,6 +59,11 @@ contract RefundVault is Claimable {
         require(state == State.Refunding);
         _;
     }
+    
+    modifier isCloseState() {
+        require(state == State.Closed);
+        _;
+    }
 
     modifier isRefundingOrCloseState() {
         require(state == State.Refunding || state == State.Closed);
@@ -74,6 +79,7 @@ contract RefundVault is Claimable {
         require(refundStartTime + REFUND_TIME_FRAME < now);
         _;
     }
+    
 
     // =================================================================================================================
     //                                      Ctors
@@ -139,11 +145,11 @@ contract RefundVault is Claimable {
 
     //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
     //to Sirin`s wallet.
-    //Can be triggerd by the investor or by the owner of the vault (in our case - Sirin`s owner after 60 days)
+    //Can be triggerd by the investor only
     function claimTokens(address investor, uint256 tokensToClaim) isRefundingOrCloseState public {
         require(tokensToClaim != 0);
         require(investor != address(0));
-        require(msg.sender == investor || msg.sender == owner); // validate input
+        require(msg.sender == investor); // validate input
 
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
@@ -163,6 +169,18 @@ contract RefundVault is Claimable {
         }
 
         TokensClaimed(investor, tokensToClaim);
+    }
+    
+    //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
+    //to Sirin`s wallet.
+    //Can be triggerd by the owner of the vault (in our case - Sirin`s owner after 60 days)
+    function claimAllInvestorTokensByOwner(address investor) isCloseState onlyOwner public {
+
+        uint256 depositedTokenValue = depositedToken[investor];
+
+        token.transfer(investor, depositedTokenValue);
+        
+        TokensClaimed(investor, depositedTokenValue);
     }
 
     // @dev investors can claim tokens by calling the function
