@@ -81,6 +81,7 @@ contract RefundVault is Claimable {
 
     function RefundVault(address _etherWallet, SirinSmartToken _token) public {
         require(_etherWallet != address(0));
+        require(_token != address(0));
 
         etherWallet = _etherWallet;
         token = _token;
