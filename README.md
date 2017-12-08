@@ -200,7 +200,15 @@ function claimTokens(address investor, uint256 tokensToClaim) isRefundingOrClose
 ```
 Transfer tokens from the vault to the investor while transferring proportional amount of ETH to Sirin ETH wallet.
 
-Can be triggerd by the investor or by the owner of the vault (in our case - Sirin`s owner after 60 days).
+Can be triggered by the investor only.
+
+**claimAllInvestorTokensByOwner**
+```cs
+function claimAllInvestorTokensByOwner (address investor) isCloseState onlyOwner public 
+```
+Transfer tokens from the vault to the investor while transferring proportional amount of ETH to Sirin ETH wallet.
+
+Can be triggered only by the owner of the vault and only after the 60 days refund period has expired.
 
 **claimAllTokens**
 ```cs
