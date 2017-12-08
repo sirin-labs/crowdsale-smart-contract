@@ -259,7 +259,6 @@ contract SirinCrowdsale is FinalizableCrowdsale {
 
     // @dev Buy tokes with guarantee
     function buyTokensWithGuarantee() public payable {
-        require(msg.sender != address(0));
         require(validPurchase());
 
         uint256 weiAmount = msg.value;
