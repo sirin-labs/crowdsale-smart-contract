@@ -65,8 +65,8 @@ contract RefundVault is Claimable {
         _;
     }
 
-    modifier isInRefundTimeFrame() {
-        require(refundStartTime >= now && refundStartTime + REFUND_TIME_FRAME > now);
+    modifier  isInRefundTimeFrame() {
+        require(refundStartTime <= now && refundStartTime + REFUND_TIME_FRAME > now);
         _;
     }
 
@@ -100,7 +100,7 @@ contract RefundVault is Claimable {
         Deposit(investor, msg.value, tokensAmount);
     }
 
-    function close() isRefundingState onlyOwner public {
+    function close() isRefundingState onlyOwner isRefundTimeFrameExceeded public {
         state = State.Closed;
         Closed();
         etherWallet.transfer(this.balance);
