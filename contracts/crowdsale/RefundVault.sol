@@ -146,11 +146,12 @@ contract RefundVault is Claimable {
     //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
     //to Sirin`s wallet.
     //Can be triggerd by the investor only
-    function claimTokens(address investor, uint256 tokensToClaim) isRefundingOrCloseState public {
+    function claimTokens(uint256 tokensToClaim) isRefundingOrCloseState public {
         require(tokensToClaim != 0);
-        require(investor != address(0));
-        require(msg.sender == investor); // validate input
-
+        
+        address investor = msg.sender;
+        require(depositedToken[investor] > 0);
+        
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
@@ -175,8 +176,9 @@ contract RefundVault is Claimable {
     //to Sirin`s wallet.
     //Can be triggerd by the owner of the vault (in our case - Sirin`s owner after 60 days)
     function claimAllInvestorTokensByOwner(address investor) isCloseState onlyOwner public {
-
         uint256 depositedTokenValue = depositedToken[investor];
+        require(depositedTokenValue > 0);
+        
 
         token.transfer(investor, depositedTokenValue);
         
@@ -185,9 +187,9 @@ contract RefundVault is Claimable {
 
     // @dev investors can claim tokens by calling the function
     // @param tokenToClaimAmount - amount of the token to claim
-    function claimAllTokens() public  {
+    function claimAllTokens() isRefundingOrCloseState public  {
         uint256 depositedTokenValue = depositedToken[msg.sender];
-        claimTokens(msg.sender, depositedTokenValue);
+        claimTokens(depositedTokenValue);
     }
 
 

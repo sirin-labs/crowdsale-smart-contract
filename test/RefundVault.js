@@ -148,7 +148,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
         it('Should fail to refund while state is \'Closed\'', async function() {
 
             try {
-                await this.vault.claimTokens(investor, 1 ,{from:investor})
+                await this.vault.claimTokens(1 ,{from:investor})
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -445,25 +445,30 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             this.vault.enableRefunds({from:owner});
 
-            await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
+            await this.vault.claimTokens(tokensAmount/2 ,{from:investor});
             await increaseTime((await this.vault.refundStartTime()).toNumber());
             await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
             await increaseTime(1);
             this.vault.close({from:owner});
 
-            await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
+            await this.vault.claimTokens( tokensAmount/2 ,{from:investor});
 
         });
 
         it('Should fail to claim while \'Active\'', async function() {
-
+            console.log("1");
             let tokensAmount = ether(1);
-            await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
+            console.log("2");
+            await this.vault.deposit(investor,tokensAmount, {value: value, from:owner});
+            console.log("3");
             let tokensAmountActual = await this.vault.depositedToken(investor);
+            console.log("4");
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
-
+            console.log("5");
             try {
-                await this.vault.claimTokens(investor, tokensAmount ,{from:investor});
+                console.log("6");
+                await this.vault.claimTokens(tokensAmount ,{from:investor});
+                console.log("7");
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -480,7 +485,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
             try {
-                await this.vault.claimTokens(investor, tokensAmount ,{from:0x0});
+                await this.vault.claimTokens(tokensAmount ,{from:0x0});
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -497,7 +502,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
             try {
-                await this.vault.claimTokens(investor, tokensAmount ,{from:walletFounder});
+                await this.vault.claimTokens(tokensAmount ,{from:walletFounder});
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -514,7 +519,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
             try {
-                await this.vault.claimTokens(investor, 0 ,{from:walletFounder});
+                await this.vault.claimTokens(0 ,{from:walletFounder});
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -531,7 +536,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
             try {
-                await this.vault.claimTokens(investor, ether(101 * 500) ,{from:0x0});
+                await this.vault.claimTokens(ether(101 * 500) ,{from:0x0});
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -552,7 +557,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             this.vault.enableRefunds({from:owner});
 
-            await this.vault.claimTokens(investor, tokensAmount ,{from:investor});
+            await this.vault.claimTokens(tokensAmount ,{from:investor});
 
             tokensAmount = await this.token.balanceOf(investor);
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
@@ -571,7 +576,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.vault.enableRefunds({from:owner});
 
             let result = ether(0.5);
-            await this.vault.claimTokens(investor, result , {from:investor});
+            await this.vault.claimTokens(result , {from:investor});
 
             var invsetorTokensAmount = await this.token.balanceOf(investor);
             invsetorTokensAmount.should.be.bignumber.equal(result);
@@ -588,7 +593,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             this.vault.enableRefunds({from:owner});
 
-            await this.vault.claimTokens(investor, tokensAmount /2 , {from:investor});
+            await this.vault.claimTokens(tokensAmount /2 , {from:investor});
             let investorETH = await this.vault.depositedETH(investor);
             investorETH.should.be.bignumber.equal(value/2)
         });
@@ -603,7 +608,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.vault.enableRefunds({from:owner});
             let walletBalanceBefore = await web3.eth.getBalance(wallet);
 
-            await this.vault.claimTokens(investor, tokensAmount , {from:investor});
+            await this.vault.claimTokens(tokensAmount , {from:investor});
             let walletBalanceAfter = await web3.eth.getBalance(wallet);
 
             walletBalanceAfter.minus(walletBalanceBefore).should.be.bignumber.equal(value)
@@ -622,7 +627,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             this.vault.enableRefunds({from:owner});
 
-            const {logs} = await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
+            const {logs} = await this.vault.claimTokens(tokensAmount/2 ,{from:investor});
             const event = logs.find(e => e.event === "TokensClaimed")
             should.exist(event)
 
@@ -671,7 +676,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             this.vault.enableRefunds({from:owner});
 
-            await this.vault.claimTokens(investor, tokensAmountActual, {from:investor});
+            await this.vault.claimTokens(tokensAmountActual, {from:investor});
 
             var invsetorTokensAmount = await this.token.balanceOf(investor);
             invsetorTokensAmount.should.be.bignumber.equal(tokensAmount)
@@ -688,7 +693,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
                 this.vault.enableRefunds({from:owner});
 
-                await this.vault.claimTokens(investor, tokensAmountActual, {from:owner});
+                await this.vault.claimTokens(tokensAmountActual, {from:owner});
 
             } catch (error) {
                 return utils.ensureException(error);

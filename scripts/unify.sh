@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 UNIFIED="Unified.sol";
 rm -rf Unified.sol
