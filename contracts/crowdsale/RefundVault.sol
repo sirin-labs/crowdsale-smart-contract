@@ -116,27 +116,25 @@ contract RefundVault is Claimable {
 
     //@dev Refund ether back to the investor in returns of proportional amount of SRN
     //back to the Sirin`s wallet
-    function refundETH(address investor, uint256 ETHToRefundAmountWei) isInRefundTimeFrame isRefundingState public {
-        require(investor != address(0));
+    function refundETH(uint256 ETHToRefundAmountWei) isInRefundTimeFrame isRefundingState public {
         require(ETHToRefundAmountWei != 0);
-        require(msg.sender == investor); // validate input
 
-        uint256 depositedTokenValue = depositedToken[investor];
-        uint256 depositedETHValue = depositedETH[investor];
+        uint256 depositedTokenValue = depositedToken[msg.sender];
+        uint256 depositedETHValue = depositedETH[msg.sender];
 
-        assert(ETHToRefundAmountWei <= depositedETHValue);
+        require(ETHToRefundAmountWei <= depositedETHValue);
 
         uint256 refundTokens = ETHToRefundAmountWei.mul(depositedTokenValue).div(depositedETHValue);
 
         assert(refundTokens > 0);
 
-        depositedETH[investor] = depositedETHValue.sub(ETHToRefundAmountWei);
-        depositedToken[investor] = depositedTokenValue.sub(refundTokens);
+        depositedETH[msg.sender] = depositedETHValue.sub(ETHToRefundAmountWei);
+        depositedToken[msg.sender] = depositedTokenValue.sub(refundTokens);
 
         token.destroy(address(this),refundTokens);
-        investor.transfer(ETHToRefundAmountWei);
+        msg.sender.transfer(ETHToRefundAmountWei);
 
-        RefundedETH(investor, ETHToRefundAmountWei);
+        RefundedETH(msg.sender, ETHToRefundAmountWei);
     }
 
     //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
