@@ -25,7 +25,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
     const value = ether(1)
 
     before(async function() {
-        //Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
+     //   Advance to the next block to correctly read time in the solidity "now" function interpreted by testrpc
         await advanceBlock()
     })
 
@@ -77,10 +77,6 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
         });
 
-        beforeEach(async function() {
-            await advanceBlock()
-        });
-
         it('state Should only be \'active\' ', async function() {
             let state = await this.vault.state();
             assert.equal(state, STATE_ACTIVE);
@@ -122,10 +118,6 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
             await this.vault.enableRefunds({ from : owner });
 
-        });
-
-        beforeEach(async function() {
-            await advanceBlock()
         });
 
         it('Should require state  \'Refunding\'', async function() {
