@@ -1,7 +1,7 @@
 import latestTime from './latestTime'
 
 // Increases testrpc time by the passed duration in seconds
-export default function increaseTime(duration) {
+export function increaseTime(duration) {
     const id = Date.now()
 
     return new Promise((resolve, reject) => {

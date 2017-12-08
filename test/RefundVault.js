@@ -1,6 +1,6 @@
 import ether from './helpers/ether'
 import {advanceBlock} from './helpers/advanceToBlock'
-import {increaseTimeTo, duration} from './helpers/increaseTime'
+import {increaseTimeTo, increaseTime, duration} from './helpers/increaseTime'
 import latestTime from './helpers/latestTime'
 import EVMThrow from './helpers/EVMThrow'
 
@@ -137,6 +137,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             let vaultBalance = await web3.eth.getBalance(this.vault.address);
             let walletBalanceBefore = await web3.eth.getBalance(wallet);
 
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
+
             await this.vault.close({ from : owner });
 
             let walletBalanceAfter = await web3.eth.getBalance(wallet);
@@ -163,6 +167,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.token = await SirinSmartToken.new({from: owner});
             this.vault = await RefundVault.new(wallet, this.token.address,{from: owner});
             await this.vault.enableRefunds({ from : owner });
+
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
 
             const {
                 logs
@@ -228,6 +236,9 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
             this.vault.enableRefunds({from:owner});
 
+            let investorEthBlance = await this.vault.depositedETH(investor);
+            console.log("###########investorEthBlance: " + investorEthBlance);
+
             await this.vault.refundETH(investor, ether(1) ,{from:investor});
         });
 
@@ -258,6 +269,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
             await this.vault.enableRefunds({from:owner});
+
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
             await this.vault.close({from:owner});
 
             try {
@@ -277,6 +292,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
             await this.vault.enableRefunds({from:owner});
+
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
             await this.vault.close({from:owner});
 
             try {
@@ -296,6 +315,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
             await this.vault.enableRefunds({from:owner});
+
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
             await this.vault.close({from:owner});
 
             try {
@@ -316,6 +339,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
             await this.vault.enableRefunds({from:owner});
+
+            await increaseTime((await this.vault.refundStartTime()).toNumber() );
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
             await this.vault.close({from:owner});
 
             try {
@@ -336,6 +363,10 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
 
             await this.vault.deposit(investor, tokensAmount, {value: value, from:owner});
             await this.vault.enableRefunds({from:owner});
+
+            await increaseTime((await this.vault.refundStartTime()).toNumber());
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
             await this.vault.close({from:owner});
 
             try {
