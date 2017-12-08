@@ -148,7 +148,7 @@ contract RefundVault is Claimable {
         uint256 depositedTokenValue = depositedToken[investor];
         uint256 depositedETHValue = depositedETH[investor];
 
-        assert(tokensToClaim <= depositedTokenValue);
+        require(tokensToClaim <= depositedTokenValue);
 
         uint256 claimedETH = tokensToClaim.mul(depositedETHValue).div(depositedTokenValue);
 
