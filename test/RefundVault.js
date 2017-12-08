@@ -478,6 +478,9 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             this.vault.enableRefunds({from:owner});
 
             await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
+            await increaseTime((await this.vault.refundStartTime()).toNumber());
+            await increaseTime((await this.vault.REFUND_TIME_FRAME()).toNumber());
+            await increaseTime(1);
             this.vault.close({from:owner});
 
             await this.vault.claimTokens(investor, tokensAmount/2 ,{from:investor});
