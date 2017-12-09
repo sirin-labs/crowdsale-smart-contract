@@ -73,9 +73,15 @@ Any of the actions (refund ETH and SRN token claim) can be done on parts of the 
 
 ## Audit
 
+<<<<<<< HEAD
 The crowdsale contracts were audited by [Matthew di Ferrante][mattdf] and [Dean Eigenmann][decnus].
 
 The audit report can be viewed [here](audit/sirin-audit.pdf).
+=======
+The crowdsale contracts were audited by [mattdf][Matthew di Ferrante] and [decnus][Dean Eigenmann].
+
+The audit report can be viewed here: [Link]
+>>>>>>> README.md add audit section
 
 ## Code
 
@@ -295,11 +301,7 @@ $ ./scripts/coverage.sh
 * **[Yossi Gruner](https://github.com/yossigruner)**
 * **[Gilad Or](https://github.com/gilador)**
 * **[Yaron Shlomo](https://github.com/yaronshlomo)**
-<<<<<<< HEAD
 * **[Lior David](https://github.com/liordavid)**
-=======
-* **[Lior_David](https://github.com/liordavid)**
->>>>>>> package-lock.json updated
 
 
 
