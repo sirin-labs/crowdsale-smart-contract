@@ -45,7 +45,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
 
     // wallets address for 60% of SRN allocation
-    address public walletFounder;   //10% of the total number of SRN tokens will be allocated to the founders and team
+    address public walletFounder;   //10% of the total number of SRN tokens will be allocated to the team
     address public walletOEM;       //10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation, SDK developers and rebate to device and Shield OS™ users
     address public walletBounties;  //5% of the total number of SRN tokens will be allocated to professional fees and Bounties
     address public walletReserve;   //35% of the total number of SRN tokens will be allocated to SIRIN LABS and as a reserve for the company to be used for future strategic plans for the created ecosystem
@@ -145,11 +145,11 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         // 40 * 2.5 = 100
         uint256 newTotalSupply = token.totalSupply().mul(250).div(100);
 
-        // 10% of the total number of SRN tokens will be allocated to the founders and team
+        // 10% of the total number of SRN tokens will be allocated to the team
         token.issue(walletFounder, newTotalSupply.mul(10).div(100));
 
         // 10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation,
-        // SDK developers and rebate to device and Shield OS™ users
+        // SDK developers and rebate to device and Sirin OS™ users
         token.issue(walletOEM, newTotalSupply.mul(10).div(100));
 
         // 5% of the total number of SRN tokens will be allocated to professional fees and Bounties

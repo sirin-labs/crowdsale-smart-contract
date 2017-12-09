@@ -18,7 +18,7 @@ Please see the [contracts/](contracts) directory.
 *	SRN Token is [Bancor][bancor] compliant.
 *	Token allocation:
 	* 40% of the total number of SRN tokens will be allocated to contributors during the token sale.
-	* 10% of the total number of SRN tokens will be allocated to the founders and team.
+	* 10% of the total number of SRN tokens will be allocated to the team.
 	* 10% of the total number of SRN tokens will be allocated to OEMs, Operating System implementation, SDK developers and rebate of sold devices.
 	* 5% of the total number of SRN tokens will be allocated to professional fees and bounties.
 	* 35% of the total number of SRN tokens will be allocated to SIRIN LABS, to be used for future strategic plans and to develop the SIRIN LABS' ecosystem.
