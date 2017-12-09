@@ -70,6 +70,13 @@ Any of the actions (refund ETH and SRN token claim) can be done on parts of the 
 * Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
 
 * SRN token is a **SmartToken�**, implementing Bancor's SmartToken contract.
+
+## Audit
+
+The crowdsale contracts were audited by [mattdf][Matthew di Ferrante] and [decnus][Dean Eigenmann].
+
+The audit report can be viewed here: [Link]
+
 ## Code
 
 #### Class Diagram  
@@ -299,3 +306,5 @@ Apache License v2.0
 [bancor]: https://github.com/bancorprotocol/contracts
 [openzeppelin]: https://openzeppelin.org
 [openzeppelin_v1.3.0]: https://github.com/OpenZeppelin/zeppelin-solidity/releases/tag/v1.3.0
+[mattdf]: http://github.com/mattdf
+[decnus]: http://github.com/decnus
