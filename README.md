@@ -73,7 +73,7 @@ Any of the actions (refund ETH and SRN token claim) can be done on parts of the 
 
 ## Audit
 
-The crowdsale contracts were audited by [mattdf][Matthew di Ferrante] and [decnus][Dean Eigenmann].
+The crowdsale contracts were audited by [Matthew di Ferrante][mattdf] and [Dean Eigenmann][decnus].
 
 The audit report can be viewed here: [Link]
 
