@@ -18,7 +18,7 @@ const SirinCrowdsale = artifacts.require('../contracts/SirinCrowdsale.sol')
 const RefundVault = artifacts.require('../contracts/crowdsale/RefundVault.sol')
 const SirinSmartToken = artifacts.require('SirinSmartToken.sol')
 
-contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, walletOEM, walletBounties, walletReserve]) {
+contract('SirinCrowdsale', function([_, investor, owner, wallet, walletTeam, walletOEM, walletBounties, walletReserve]) {
 
     const value = ether(1)
 
@@ -37,7 +37,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
         this.crowdsale = await SirinCrowdsale.new(this.startTime,
             this.endTime,
             wallet,
-            walletFounder,
+            walletTeam,
             walletOEM,
             walletBounties,
             walletReserve,
@@ -235,32 +235,32 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             this.totalSupply = await this.token.totalSupply()
         })
 
-        it('Allocate founder token amount as 10% of the total supply', async function() {
-            const expectedFounderTokenAmount = this.totalSupply.mul(0.1);
-            let walletFounderBalance = await this.token.balanceOf(walletFounder);
+        it('Allocate Team token amount as 10% of the total supply', async function() {
+            const expectedTeamTokenAmount = this.totalSupply.mul(0.1);
+            let walletTeamBalance = await this.token.balanceOf(walletTeam);
 
-            walletFounderBalance.should.be.bignumber.equal(expectedFounderTokenAmount);
+            walletTeamBalance.should.be.bignumber.equal(expectedTeamTokenAmount);
         })
 
         it('Allocate OEM token amount as 10% of the total supply', async function() {
             const expectedOEMTokenAmount = this.totalSupply.mul(0.1);
-            let OEMFounderBalance = await this.token.balanceOf(walletOEM);
+            let OEMTeamBalance = await this.token.balanceOf(walletOEM);
 
-            OEMFounderBalance.should.be.bignumber.equal(expectedOEMTokenAmount);
+            OEMTeamBalance.should.be.bignumber.equal(expectedOEMTokenAmount);
         })
 
         it('Allocate professional fees and Bounties token amount as 5% of the total supply', async function() {
             const expectedBountiesTokenAmount = this.totalSupply.mul(0.05);
-            let walletFounderBalance = await this.token.balanceOf(walletBounties);
+            let walletTeamBalance = await this.token.balanceOf(walletBounties);
 
-            walletFounderBalance.should.be.bignumber.equal(expectedBountiesTokenAmount);
+            walletTeamBalance.should.be.bignumber.equal(expectedBountiesTokenAmount);
         })
 
         it('Allocate Reserve token amount as 35% of the total supply', async function() {
             const expectedReserveTokenAmount = this.totalSupply.mul(0.35);
-            let walletFounderBalance = await this.token.balanceOf(walletReserve);
+            let walletTeamBalance = await this.token.balanceOf(walletReserve);
 
-            walletFounderBalance.should.be.bignumber.equal(expectedReserveTokenAmount);
+            walletTeamBalance.should.be.bignumber.equal(expectedReserveTokenAmount);
         })
 
         it('should set finalized true value', async function() {
@@ -576,7 +576,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
     })
 
     describe('Constructor Parameters', function() {
-        it('should initilaized with a valid walletFounder adderss', async function() {
+        it('should initilaized with a valid walletTeam adderss', async function() {
             try {
                 this.token = await SirinSmartToken.new({from: owner});
                 this.refundVault = await RefundVault.new(wallet, this.token.address,{from: owner});
@@ -603,7 +603,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 return utils.ensureException(error);
             }
 
-            assert(false, "did not throw with invalid walletFounder address")
+            assert(false, "did not throw with invalid walletTeam address")
         })
 
         it('should initilaized with a valid walletOEM adderss', async function() {
@@ -611,7 +611,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,
                     wallet,
-                    walletFounder,
+                    walletTeam,
                     0x0,
                     walletBounties,
                     walletReserve,
@@ -638,7 +638,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,
                     wallet,
-                    walletFounder,
+                    walletTeam,
                     walletOEM,
                     0x0,
                     walletReserve,
@@ -664,7 +664,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,
                     wallet,
-                    walletFounder,
+                    walletTeam,
                     walletOEM,
                     walletBounties,
                     0x0,
@@ -691,7 +691,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,
                     wallet,
-                    walletFounder,
+                    walletTeam,
                     walletOEM,
                     walletBounties,
                     walletReserve,
@@ -720,7 +720,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
                 this.crowdsale = await SirinCrowdsale.new(this.startTime,
                     this.endTime,
                     wallet,
-                    walletFounder,
+                    walletTeam,
                     walletOEM,
                     walletBounties,
                     walletReserve,
@@ -744,7 +744,7 @@ contract('SirinCrowdsale', function([_, investor, owner, wallet, walletFounder, 
             this.crowdsale = await SirinCrowdsale.new(this.startTime,
                 this.endTime,
                 wallet,
-                walletFounder,
+                walletTeam,
                 walletOEM,
                 walletBounties,
                 walletReserve,

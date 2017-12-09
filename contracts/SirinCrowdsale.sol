@@ -45,7 +45,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     // =================================================================================================================
 
     // wallets address for 60% of SRN allocation
-    address public walletFounder;   //10% of the total number of SRN tokens will be allocated to the team
+    address public walletTeam;   //10% of the total number of SRN tokens will be allocated to the team
     address public walletOEM;       //10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation, SDK developers and rebate to device and Shield OS™ users
     address public walletBounties;  //5% of the total number of SRN tokens will be allocated to professional fees and Bounties
     address public walletReserve;   //35% of the total number of SRN tokens will be allocated to SIRIN LABS and as a reserve for the company to be used for future strategic plans for the created ecosystem
@@ -80,7 +80,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     function SirinCrowdsale(uint256 _startTime,
     uint256 _endTime,
     address _wallet,
-    address _walletFounder,
+    address _walletTeam,
     address _walletOEM,
     address _walletBounties,
     address _walletReserve,
@@ -88,14 +88,14 @@ contract SirinCrowdsale is FinalizableCrowdsale {
     RefundVault _refundVault)
     public
     Crowdsale(_startTime, _endTime, EXCHANGE_RATE, _wallet, _sirinSmartToken) {
-        require(_walletFounder != address(0));
+        require(_walletTeam != address(0));
         require(_walletOEM != address(0));
         require(_walletBounties != address(0));
         require(_walletReserve != address(0));
         require(_sirinSmartToken != address(0));
         require(_refundVault != address(0));
 
-        walletFounder = _walletFounder;
+        walletTeam = _walletTeam;
         walletOEM = _walletOEM;
         walletBounties = _walletBounties;
         walletReserve = _walletReserve;
@@ -146,7 +146,7 @@ contract SirinCrowdsale is FinalizableCrowdsale {
         uint256 newTotalSupply = token.totalSupply().mul(250).div(100);
 
         // 10% of the total number of SRN tokens will be allocated to the team
-        token.issue(walletFounder, newTotalSupply.mul(10).div(100));
+        token.issue(walletTeam, newTotalSupply.mul(10).div(100));
 
         // 10% of the total number of SRN tokens will be allocated to OEM’s, Operating System implementation,
         // SDK developers and rebate to device and Sirin OS™ users

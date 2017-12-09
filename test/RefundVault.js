@@ -20,7 +20,7 @@ const STATE_ACTIVE = "0";
 const STATE_REFUNDING = "1";
 const STATE_CLOSED = "2";
 
-contract('RefundVault', function([_, investor, owner, wallet, walletFounder, walletOEM, walletBounties, walletReserve]) {
+contract('RefundVault', function([_, investor, owner, wallet, walletTeam, walletOEM, walletBounties, walletReserve]) {
 
     const value = ether(1)
 
@@ -502,7 +502,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
             try {
-                await this.vault.claimTokens(tokensAmount ,{from:walletFounder});
+                await this.vault.claimTokens(tokensAmount ,{from:walletTeam});
             } catch (error) {
                 return utils.ensureException(error);
             }
@@ -519,7 +519,7 @@ contract('RefundVault', function([_, investor, owner, wallet, walletFounder, wal
             tokensAmountActual.should.be.bignumber.equal(tokensAmount)
 
             try {
-                await this.vault.claimTokens(0 ,{from:walletFounder});
+                await this.vault.claimTokens(0 ,{from:walletTeam});
             } catch (error) {
                 return utils.ensureException(error);
             }
