@@ -307,4 +307,4 @@ Apache License v2.0
 [openzeppelin]: https://openzeppelin.org
 [openzeppelin_v1.3.0]: https://github.com/OpenZeppelin/zeppelin-solidity/releases/tag/v1.3.0
 [mattdf]: http://github.com/mattdf
-[decnus]: http://github.com/decnus
+[decnus]: http://github.com/decanus
