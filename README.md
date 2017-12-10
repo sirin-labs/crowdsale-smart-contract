@@ -7,7 +7,7 @@ Please see below Sirin Labs smart contracts' for the [Sirin Crowdsale][sirinlabs
 SRN is an ERC-20 compliant cryptocurrency built on top of the [Ethereum][ethereum] blockchain.
 
 ## Overview
-SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEY�,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEY�) with SIRIN LABS token, the SRN.
+SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEY,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEY) with SIRIN LABS token, the SRN.
 
 ## Contracts
 
@@ -69,19 +69,13 @@ Any of the actions (refund ETH and SRN token claim) can be done on parts of the 
 
 * Our smart contract is based on [Open Zeppelin][openzeppelin] smart contracts [v1.3.0][openzeppelin_v1.3.0] (latest OZ commit merged is 8e01dd14f9211239213ae7bd4c6af92dd18d4ab7 from 24.10.2017).
 
-* SRN token is a **SmartToken�**, implementing Bancor's SmartToken contract.
+* SRN token is a **SmartToken**, implementing Bancor's SmartToken contract.
 
 ## Audit
 
-<<<<<<< HEAD
 The crowdsale contracts were audited by [Matthew di Ferrante][mattdf] and [Dean Eigenmann][decnus].
 
 The audit report can be viewed [here](audit/sirin-audit.pdf).
-=======
-The crowdsale contracts were audited by [mattdf][Matthew di Ferrante] and [decnus][Dean Eigenmann].
-
-The audit report can be viewed here: [Link]
->>>>>>> README.md add audit section
 
 ## Code
 
