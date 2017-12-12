@@ -73,10 +73,21 @@ Any of the actions (refund ETH and SRN token claim) can be done on parts of the 
 
 ## Audit
 
-The crowdsale contracts were audited by [Matthew di Ferrante][mattdf] and [Dean Eigenmann][decnus].
+The contract was audited by several Ethereum blockchain experts.
 
-The audit report can be viewed [here](audit/sirin-audit.pdf).
+No potential vulnerabilities have been identified in the crowdsale and token contract.
 
+* [Matthew di Ferrante][mattdf] and [Dean Eigenmann][decnus], well-known Ethereum experts who have provided auditing services for many other token sale contracts. 
+
+  The audit report is available here:
+     
+  https://github.com/sirin-labs/crowdsale-smart-contract/blob/master/audit/sirin-audit.pdf
+* [Leonid Beder][leonid], a renowned external security expert.
+* [Bokky Poobah][bokk], a well-known cybersecurity auditor that provides auditing services for Ethereum based projects.
+  
+  The audit report is available here:
+  https://github.com/bokkypoobah/SirinLabsCrowdsaleContractAudit/tree/master/bokkyAudit
+  
 ## Code
 
 #### Class Diagram  
@@ -300,3 +311,5 @@ Apache License v2.0
 [openzeppelin_v1.3.0]: https://github.com/OpenZeppelin/zeppelin-solidity/releases/tag/v1.3.0
 [mattdf]: http://github.com/mattdf
 [decnus]: http://github.com/decanus
+[leonid]: https://www.linkedin.com/in/leonidb/
+[bokk]: https://github.com/bokkypoobah/
