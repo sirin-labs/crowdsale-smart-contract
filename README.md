@@ -209,14 +209,6 @@ Transfer tokens from the vault to the investor while transferring proportional a
 
 Can be triggered by the investor only.
 
-**claimAllInvestorTokensByOwner**
-```cs
-function claimAllInvestorTokensByOwner (address investor) isCloseState onlyOwner public
-```
-Transfer tokens from the vault to the investor while transferring proportional amount of ETH to Sirin ETH wallet.
-
-Can be triggered only by the owner of the vault and only after the 60 days refund period has expired.
-
 **claimAllTokens**
 ```cs
 function claimAllTokens() public
