@@ -9,14 +9,6 @@ SRN is an ERC-20 compliant cryptocurrency built on top of the [Ethereum][ethereu
 ## Overview
 SIRIN LABS - the developer of SOLARIN, the ultra-secure smartphone - is holding a crowdsale event. Funds raised	will	support	the	development	of	FINNEY,	the	first	open	source	smartphone	and	all-in-one	PC built for the blockchain era. Customers will be able to purchase all SIRIN LABS products (SOLARIN and FINNEY) with SIRIN LABS token, the SRN.
 
-## Crowdsale Mainnet Addresses
-
-The crowdsale contract has been deployed to [0x29AfA3443f752eb29d814d9042Fd88A4a2dc0F1e](https://etherscan.io/address/0x29AfA3443f752eb29d814d9042Fd88A4a2dc0F1e#code).
-
-The crowdsale wallet has been deployed to [0x5978c1473ee84Dd9cF3d90D0e931a79906eE52c5](https://etherscan.io/address/0x5978c1473ee84Dd9cF3d90D0e931a79906eE52c5#internaltx).
-
-The *RefundVault* contract has been deployed to [0xa4dDd3977920796BFb14cA8d0FB97491fA72a11d](https://etherscan.io/address/0xa4dDd3977920796BFb14cA8d0FB97491fA72a11d#internaltx).
-
 ## Contracts
 
 Please see the [contracts/](contracts) directory.
