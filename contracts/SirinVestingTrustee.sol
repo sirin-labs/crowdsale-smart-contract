@@ -32,7 +32,7 @@ contract SirinVestingTrustee is Claimable {
 
     /// @dev Constructor that initializes the address of the SirnSmartToken contract.
     /// @param _token SirinSmartToken The address of the previously deployed SirnSmartToken smart contract.
-    function Trustee(SirinSmartToken _token) {
+    function SirinVestingTrustee(SirinSmartToken _token) {
         require(_token != address(0));
 
         token = _token;
