@@ -4,7 +4,7 @@ import './math/SafeMath.sol';
 import './ownership/Claimable.sol';
 import './SirinSmartToken.sol';
 
-/// @title Vesting trustee contract for Kin token.
+/// @title Vesting trustee contract for Sirin Labs token.
 contract SirinVestingTrustee is Claimable {
     using SafeMath for uint256;
 
