@@ -262,6 +262,55 @@ event RefundedETH(address indexed beneficiary, uint256 weiAmount);
 event TokensClaimed(address indexed beneficiary, uint256 weiAmount);
 ```
 
+#### SirinVestingTrustee Functions
+
+Vesting trustee contract for Sirin Labs token.
+
+**grant**
+```cs
+function grant(address _to, uint256 _value, uint256 _start, uint256 _cliff, uint256 _end, bool _revokable)
+    public onlyOwner 
+```
+Grant tokens to a specified address.
+
+**revoke**
+```cs
+function revoke(address _holder) public onlyOwner
+```
+Revoke the grant of tokens of a specifed address.
+
+**vestedTokens**
+```cs
+ function vestedTokens(address _holder, uint256 _time) public constant returns (uint256)
+```
+Calculate the total amount of vested tokens of a holder at a given time.
+
+**unlockVestedTokens**
+```cs
+ function unlockVestedTokens() public 
+```
+Unlock vested tokens and transfer them to their holder.
+
+#### SirinVestingTrustee Events
+
+
+**NewGrant**
+```cs
+event NewGrant(address indexed _from, address indexed _to, uint256 _value);
+```
+
+
+**UnlockGrant**
+```cs
+event UnlockGrant(address indexed _holder, uint256 _value);
+```
+
+
+**RevokeGrant**
+```cs
+event RevokeGrant(address indexed _holder, uint256 _refund);
+```
+
 ### Dependencies
 
 ```bash
