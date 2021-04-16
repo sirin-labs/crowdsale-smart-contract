@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 
 import '../token/MintableToken.sol';
 import '../math/SafeMath.sol';
-import '../SirinSmartToken.sol';
+import '../PAUSmartToken.sol';
 
 /**
  * @title Crowdsale
@@ -17,7 +17,7 @@ contract Crowdsale {
     using SafeMath for uint256;
 
     // The token being sold
-    SirinSmartToken public token;
+    PAUSmartToken public token;
 
     // start and end timestamps where investments are allowed (both inclusive)
     uint256 public startTime;
@@ -42,7 +42,7 @@ contract Crowdsale {
      */
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-    function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet, SirinSmartToken _token) public {
+    function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet, PAUSmartToken _token) public {
         require(_startTime >= now);
         require(_endTime >= _startTime);
         require(_rate > 0);
