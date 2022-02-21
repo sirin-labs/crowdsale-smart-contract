@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import '../math/SafeMath.sol';
 import '../ownership/Claimable.sol';
 import '../token/ERC20.sol';
-import '../SirinSmartToken.sol';
+import '../PAUSmartToken.sol';
 
 /**
  * @title RefundVault
@@ -31,7 +31,7 @@ contract RefundVault is Claimable {
     mapping (address => uint256) public depositedToken;
 
     address public etherWallet;
-    SirinSmartToken public token;
+    PAUSmartToken public token;
     State public state;
     uint256 public refundStartTime;
 
@@ -85,7 +85,7 @@ contract RefundVault is Claimable {
     //                                      Ctors
     // =================================================================================================================
 
-    function RefundVault(address _etherWallet, SirinSmartToken _token) public {
+    function RefundVault(address _etherWallet, PAUSmartToken _token) public {
         require(_etherWallet != address(0));
         require(_token != address(0));
 
@@ -121,7 +121,7 @@ contract RefundVault is Claimable {
     }
 
     //@dev Refund ether back to the investor in returns of proportional amount of SRN
-    //back to the Sirin`s wallet
+    //back to the PAU`s wallet
     function refundETH(uint256 ETHToRefundAmountWei) isInRefundTimeFrame isRefundingState public {
         require(ETHToRefundAmountWei != 0);
 
@@ -144,7 +144,8 @@ contract RefundVault is Claimable {
     }
 
     //@dev Transfer tokens from the vault to the investor while releasing proportional amount of ether
-    //to Sirin`s wallet.
+    //to PAU
+    `s wallet.
     //Can be triggerd by the investor only
     function claimTokens(uint256 tokensToClaim) isRefundingOrCloseState public {
         require(tokensToClaim != 0);
